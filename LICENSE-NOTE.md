@@ -1,5 +1,7 @@
 # About the license
 
+Copyright (C) 2026 Exonerv
+
 Exomyth is distributed under the **GNU Affero General Public License v3.0 only**
 (`AGPL-3.0-only`). The full license text is in the `LICENSE` file.
 
