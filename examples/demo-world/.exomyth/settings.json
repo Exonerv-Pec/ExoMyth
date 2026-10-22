@@ -1,0 +1,40 @@
+{
+  "relationTypes": [
+    {
+      "id": "father",
+      "inverse": "children"
+    },
+    {
+      "id": "mother",
+      "inverse": "children"
+    },
+    {
+      "id": "spouse",
+      "symmetric": true
+    },
+    {
+      "id": "ally",
+      "symmetric": true
+    },
+    {
+      "id": "enemy",
+      "symmetric": true
+    },
+    {
+      "id": "mentor",
+      "inverse": "students"
+    },
+    {
+      "id": "rules",
+      "inverse": "ruled by"
+    },
+    {
+      "id": "led by",
+      "inverse": "leads"
+    },
+    {
+      "id": "born in",
+      "inverse": "birthplace of"
+    }
+  ]
+}
