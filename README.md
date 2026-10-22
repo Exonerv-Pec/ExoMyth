@@ -22,6 +22,11 @@ Markdown files on your own device. No account, no server, no tracking.
 
 ## Try it
 
+**Open the app: https://exonerv-pec.github.io/Exomyth/** — nothing to install. The site only delivers
+the app to your browser; your worlds stay on your device.
+
+### Run it yourself
+
 Requires Node.js 20+.
 
 ```bash
