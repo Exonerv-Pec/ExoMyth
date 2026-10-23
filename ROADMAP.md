@@ -3,76 +3,115 @@
 A living list of what Exomyth could do next. Nothing here is a promise; it is where we pick the next
 piece of work from. Ideas from testers and contributors are welcome: open an issue.
 
-**Size:** S = an evening, M = a few days, L = a big project. **Fit** says how well an idea matches
-what Exomyth is: a private, offline-first wiki for worlds, kept as plain Markdown files.
+| Mark | Meaning |
+| --- | --- |
+| ⬜ / 🚧 / ✅ | Not started / in progress / done |
+| **S** / **M** / **L** | An evening / a few days / a big project |
+| 💬 | Suggested by a tester |
 
-Rules that every feature keeps:
+Every feature keeps three rules: **private by design** (nothing leaves the device, no accounts or
+servers), **plain files** (everything is readable Markdown, YAML or normal media files) and **clean
+room** (our own code and words, nothing copied from other apps; see [CONTRIBUTING.md](CONTRIBUTING.md)).
 
-- **Private by design.** Nothing leaves the device. No accounts, no servers, no tracking.
-- **Plain files.** Everything a feature stores is readable Markdown, YAML or a normal media file.
-- **Clean room.** Our own code and our own words; nothing copied from other apps (see CONTRIBUTING.md).
+Click a section to open it.
 
-## ✅ Done
+<details>
+<summary><b>✅ Done</b> · 9 releases, latest 0.7.0 (2026-10-23)</summary>
 
-- Wiki pages, `[[links]]`, typed relations in a stable panel, tags, search, safe rename
-- Relations graph with a stable layout; page previews on hover
-- Cards view with folder tabs and page dossiers
-- Images, video and audio in pages, also shown in Text mode
-- Interactive maps with pins
-- Timeline; years of pages; one "Show by year" for the graph, cards, maps and timeline
-- Several worlds per browser or folder (each story can be its own world)
+<br>
 
-## 🔜 Next: small and useful
-
-| Idea | Size | Notes |
+| Version | Date | What came |
 | --- | --- | --- |
-| Download a world as a .zip (and open one) | S | Backups, moving to another computer, sharing a world |
-| Ask the browser to keep the world's storage | S | So the browser does not clear worlds when space runs low |
-| Move a page to another folder | S | Today only renaming is possible |
-| Page templates | M | "New page from template": Character, Place, Organization, Event, Scene. Templates are just pages in a `Templates/` folder that people can edit. *(tester)* |
-| Quick ideas inbox | S | A button that adds a dated note to an `Inbox` page, to sort out later. *(tester: inspiration capture)* |
-| Word count | S | For the page and the world, in the status bar. First step towards writing stats. *(tester)* |
-| Spell check in the editor | S | Uses the browser's own offline spell checker; the language follows the page or the app. *(tester)* |
-| Focus mode | S | Hide panels, centre the text, for writing without distractions |
-| Quick look-up from anywhere | S | Search opens as an overlay in any view and shows the preview card, so lore can be checked without leaving the page. Search exists; this makes it reachable everywhere. *(tester)* |
+| **0.7.0** | 2026-10-23 | 🕰️ Timeline; years of pages; one "Show by year" for the graph, cards, maps and timeline |
+| **0.6.1** | 2026-10-23 | 🔒 Shared worlds can't imitate the app; safer publishing workflow |
+| **0.6.0** | 2026-10-23 | 🗺️ Interactive maps with pins and years |
+| **0.5.0** | 2026-10-23 | 🗂️ Cards view with folder tabs and page dossiers; page pictures |
+| **0.4.0** | 2026-10-23 | 🖼️ Images, video and audio in pages |
+| **0.3.0** | 2026-10-22 | ✨ The project is named Exomyth; the demo world lives in the repository |
+| **0.2.1** | 2026-10-22 | 🌍 English demo world; deleting worlds stored in the browser |
+| **0.2.0** | 2026-10-22 | 🕸️ Relations graph with a stable layout; page previews on hover |
+| **0.1.0** | 2026-10-22 | 📝 Pages, `[[links]]`, typed relations in a stable panel, search, tags, safe rename |
 
-## 📝 Writing tools
+Every change in detail: [CHANGELOG.md](CHANGELOG.md).
+
+</details>
+
+<details open>
+<summary><b>🔜 Next: small and useful</b> · 9 ideas</summary>
+
+<br>
+
+| | Idea | Size | Notes |
+| --- | --- | :---: | --- |
+| ⬜ | Download a world as a .zip (and open one) | S | Backups, moving to another computer, sharing a world |
+| ⬜ | Ask the browser to keep the world's storage | S | So the browser does not clear worlds when space runs low |
+| ⬜ | Move a page to another folder | S | Today only renaming is possible |
+| ⬜ | Quick ideas inbox 💬 | S | A button that adds a dated note to an `Inbox` page, to sort out later |
+| ⬜ | Word count 💬 | S | For the page and the world, in the status bar; a first step towards writing stats |
+| ⬜ | Spell check in the editor 💬 | S | The browser's own offline spell checker; the language follows the app |
+| ⬜ | Focus mode | S | Hide the panels and centre the text, for writing without distractions |
+| ⬜ | Quick look-up from anywhere 💬 | S | Search as an overlay in any view, with the preview card, to check lore without leaving the page |
+| ⬜ | Page templates 💬 | M | "New page from template": Character, Place, Organization, Event, Scene. Templates are pages in a `Templates/` folder that anyone can edit |
+
+</details>
+
+<details>
+<summary><b>📝 Writing tools</b> · 7 ideas</summary>
+
+<br>
 
 Exomyth started as a world wiki. These would make it a place to write the story too.
 
-| Idea | Size | Fit | Notes |
-| --- | --- | --- | --- |
-| Manuscript: chapters and scenes in order | L | Good | A `Manuscript/` folder with an order; read and export it as one text |
-| Scene list / outline board | M | Good | Scenes as cards with status, POV, place and year; links to the timeline |
-| Story structure templates | M | Good | Three-act, the hero's journey and other well-known shapes, described in our own words, to plan a story or check a draft against. *(tester)* |
-| Writing stats | M | Good | Words per day, time spent writing, streaks; stored in the world, never sent anywhere. *(tester: project analytics)* |
-| Dangerous drafting mode | M | Fair | An optional sprint: text written during it fades if you stop typing, until a goal is reached, then it is saved to the draft. Never touches existing text. *(tester)* |
-| Editing workspace | L | Fair | Comments, revision notes, compare versions. *(tester)* |
-| Dictionary / thesaurus | L | Fair | Must work offline, so the data has to ship with the app under a suitable licence. *(tester)* |
+| | Idea | Size | Notes |
+| --- | --- | :---: | --- |
+| ⬜ | Manuscript: chapters and scenes in order | L | A `Manuscript/` folder with an order; read and export it as one text |
+| ⬜ | Scene list / outline board | M | Scenes as cards with status, point of view, place and year; linked to the timeline |
+| ⬜ | Story structure templates 💬 | M | Three acts, the hero's journey and other well-known shapes, in our own words, to plan a story or check a draft |
+| ⬜ | Writing stats 💬 | M | Words per day, time spent writing, streaks; stored in the world, never sent anywhere |
+| ⬜ | Dangerous drafting mode 💬 | M | An optional sprint: new text fades if you stop typing, until a goal is reached, then it goes to the draft. Never touches existing text |
+| ⬜ | Editing workspace 💬 | L | Comments, revision notes, comparing versions |
+| ⬜ | Dictionary / thesaurus 💬 | L | Must work offline, so the data has to ship with the app under a suitable licence |
 
-## 🗺️ Worldbuilding
+</details>
 
-| Idea | Size | Notes |
-| --- | --- | --- |
-| Months, days, custom calendars and eras | M–L | Beyond whole years: "3rd of Frostmonth, Year 412 of the Second Age" |
-| Map regions and layers | M | Shapes for countries and areas; layers for political, terrain, routes |
-| Family trees | M | Drawn from relations such as `father`, `mother`, `spouse` |
-| Infinite whiteboard / canvas | L | Cards, images and notes placed freely, linked to pages. *(tester)* |
-| Playlists for a world or a scene | S | Audio already works in pages; a page of tracks that plays in order. *(tester)* |
-| Export a world as a static site | M | To share with players or readers, without the editor |
+<details>
+<summary><b>🗺️ Worldbuilding</b> · 6 ideas</summary>
 
-## 💻 Platforms
+<br>
 
-| Idea | Size | Notes |
-| --- | --- | --- |
-| Install as an app (PWA), fully offline | M | Works without a connection after the first visit; can be installed on phones |
-| Desktop app (Tauri) | L | Windows, macOS, Linux; no browser limits on folders. *(tester)* |
-| Sync between devices | L | Without our own server: through a folder the user already syncs (Syncthing, iCloud Drive, Dropbox, Git). *(tester: mobile sync)* |
-| Voice notes to text | L | Needs an offline speech engine: the browser's built-in one sends audio to a server, which Exomyth must not do. *(tester)* |
+| | Idea | Size | Notes |
+| --- | --- | :---: | --- |
+| ⬜ | Playlists for a world or a scene 💬 | S | Audio already works in pages; a page of tracks that plays in order |
+| ⬜ | Months, days, custom calendars and eras | M–L | Beyond whole years: "3rd of Frostmonth, Year 412 of the Second Age" |
+| ⬜ | Map regions and layers | M | Shapes for countries and areas; layers for politics, terrain, routes |
+| ⬜ | Family trees | M | Drawn from relations such as `father`, `mother`, `spouse` |
+| ⬜ | Export a world as a static site | M | To share with players or readers, without the editor |
+| ⬜ | Infinite whiteboard / canvas 💬 | L | Cards, images and notes placed freely, linked to pages |
 
-## 🤔 To think about
+</details>
 
-- **Actions for AI agents and other tools.** Worlds are plain files, so any tool can already read and
-  write them. A documented format and a small command-line tool may be enough. *(tester)*
-- **Projects and worlds.** Today each world is a folder. Do writers want one project with several
-  stories sharing a world, or one world per story? *(tester: project manager)*
+<details>
+<summary><b>💻 Platforms</b> · 4 ideas</summary>
+
+<br>
+
+| | Idea | Size | Notes |
+| --- | --- | :---: | --- |
+| ⬜ | Install as an app (PWA), fully offline | M | Works without a connection after the first visit; can be installed on phones |
+| ⬜ | Desktop app (Tauri) 💬 | L | Windows, macOS, Linux; no browser limits on folders |
+| ⬜ | Sync between devices 💬 | L | Without a server of our own: through a folder the user already syncs (Syncthing, iCloud Drive, Dropbox, Git) |
+| ⬜ | Voice notes to text 💬 | L | Needs an offline speech engine: the browser's built-in one sends audio to a server, which Exomyth must not do |
+
+</details>
+
+<details>
+<summary><b>🤔 To think about</b> · 2 questions</summary>
+
+<br>
+
+- **Actions for AI agents and other tools** 💬. Worlds are plain files, so any tool can already read
+  and write them. A documented format and a small command-line tool may be enough.
+- **Projects and worlds** 💬. Today each world is a folder. Do writers want one project with several
+  stories sharing a world, or one world per story?
+
+</details>
