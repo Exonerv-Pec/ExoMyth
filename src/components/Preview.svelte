@@ -3,6 +3,7 @@
   import { renderMarkdown, headingSlug } from '../core/render';
   import { pageFacts } from '../core/preview';
   import { previewLinks } from '../actions';
+  import { embeds } from '../embeds';
   import type { Page } from '../core/types';
 
   let { path }: { path: string } = $props();
@@ -76,7 +77,7 @@
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
-<article class="reading" bind:this={container} {onclick} {onkeydown} use:previewLinks>
+<article class="reading" bind:this={container} {onclick} {onkeydown} use:previewLinks use:embeds={[html, facts]}>
   {#if page}
     <div class="reading-inner">
       <h1 class="page-title">{page.title}</h1>

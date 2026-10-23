@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 300" font-family="Georgia, serif">
+  <rect width="480" height="300" fill="#efe9da"/>
+  <path d="M0 210 C90 190 140 240 220 215 S360 150 480 175 L480 230 C380 210 330 265 230 262 S90 245 0 262 Z" fill="#9fc3c9"/>
+  <path d="M0 236 C90 218 150 252 225 238 S370 186 480 202" fill="none" stroke="#7aa6ad" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <g fill="#c9b99a" stroke="#6d5c42" stroke-width="1.2">
+    <rect x="150" y="120" width="34" height="26"/>
+    <rect x="192" y="112" width="40" height="32"/>
+    <rect x="240" y="124" width="30" height="24"/>
+    <rect x="166" y="154" width="38" height="28"/>
+    <rect x="214" y="152" width="44" height="30"/>
+    <rect x="266" y="156" width="28" height="24"/>
+  </g>
+  <g fill="#a39478" stroke="#4f4130" stroke-width="1.5">
+    <rect x="318" y="70" width="70" height="54"/>
+    <rect x="312" y="62" width="16" height="16"/>
+    <rect x="378" y="62" width="16" height="16"/>
+    <rect x="345" y="52" width="16" height="22"/>
+  </g>
+  <path d="M232 182 L232 205" stroke="#6d5c42" stroke-width="5"/>
+  <g fill="#3a3226" font-size="15">
+    <text x="196" y="102">Rivertown</text>
+    <text x="300" y="44" font-size="12">Fortress of the Order</text>
+    <text x="40" y="240" font-size="12" font-style="italic" fill="#3f6b72">Silver River</text>
+    <text x="196" y="226" font-size="11">harbour</text>
+  </g>
+  <g transform="translate(436 46)" fill="#3a3226" font-size="11" text-anchor="middle">
+    <path d="M0 -18 L5 0 L0 -4 L-5 0 Z"/>
+    <text y="14">N</text>
+  </g>
+</svg>

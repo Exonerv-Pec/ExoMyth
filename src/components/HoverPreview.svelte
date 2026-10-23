@@ -2,6 +2,7 @@
   import { app } from '../app.svelte';
   import { pagePreview } from '../core/preview';
   import { renderMarkdown } from '../core/render';
+  import { embeds } from '../embeds';
 
   const t = app.t;
   let card = $state<HTMLElement>();
@@ -41,6 +42,15 @@
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     const margin = 8;
+    if (h.placement === 'corner') {
+      // Pinned inside the top-right corner of the given area (the graph), clear of what is hovered.
+      pos = {
+        left: Math.max(h.rect.left + margin, h.rect.right - w - 12),
+        top: Math.max(margin, h.rect.top + 12),
+        below: true,
+      };
+      return;
+    }
     const spaceBelow = vh - h.rect.bottom;
     const below = spaceBelow >= ht + margin * 2 || spaceBelow >= h.rect.top;
     const top = below ? h.rect.bottom + 6 : Math.max(margin, h.rect.top - ht - 6);
@@ -84,6 +94,7 @@
     class="hovercard"
     class:placed={!!pos}
     class:above={pos && !pos.below}
+    class:corner={app.hover.placement === 'corner'}
     bind:this={card}
     style:left="{pos?.left ?? -9999}px"
     style:top="{pos?.top ?? -9999}px"
@@ -104,7 +115,7 @@
         {/if}
       </header>
       {#if facts.length > 0}
-        <dl class="facts">
+        <dl class="facts" use:embeds={facts}>
           {#each facts as f (f.key)}
             <dt>{f.key}</dt>
             <dd>{@html f.html}</dd>
@@ -112,7 +123,7 @@
         </dl>
       {/if}
       {#if body}
-        <div class="prose excerpt" class:faded={preview.truncated}>{@html body}</div>
+        <div class="prose excerpt" class:faded={preview.truncated} use:embeds={body}>{@html body}</div>
       {/if}
       <footer>
         <span>{t('preview.relations', preview.relations)}</span>

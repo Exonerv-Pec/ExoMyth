@@ -157,6 +157,20 @@ describe('graph view', () => {
     expect(target.querySelector('svg.graph .node[aria-label="Kira Vale"]')!.getAttribute('transform')).toBe(before);
   });
 
+  it('shows a hovered page in the corner of the graph, not on top of its connections', async () => {
+    const { target } = await boot();
+    await openGraph(target);
+    const node = target.querySelector<SVGGElement>('svg.graph .node[aria-label="Arn Vale"]')!;
+    node.dispatchEvent(new window.PointerEvent('pointerenter', { bubbles: false }));
+    await wait(500);
+    flushSync();
+    expect(app.hover?.placement).toBe('corner');
+    const card = document.querySelector('.hovercard')!;
+    expect(card.classList.contains('corner')).toBe(true);
+    expect(card.querySelector('h3')!.textContent).toBe('Arn Vale');
+    app.hoverClose();
+  });
+
   it('opens on the graph from the relations panel', async () => {
     const { target } = await boot();
     target.querySelector<HTMLButtonElement>('.relpanel .panel-head .icon-btn')!.click();

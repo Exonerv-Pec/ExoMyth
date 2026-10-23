@@ -2,6 +2,7 @@ import { Vault } from './core/vault';
 import { baseName, dirName, joinPath, sanitizePageName, stripMd } from './core/names';
 import { parseLinkText } from './core/parse';
 import { emptyLayout, type StoredLayout } from './core/layout';
+import { mediaKind } from './core/media';
 import { detectLang, translate, type Key, type Lang } from './i18n';
 
 export type ViewMode = 'edit' | 'split' | 'preview' | 'graph';
@@ -18,7 +19,10 @@ export interface HoverRect {
 export interface HoverState {
   target: string;
   heading?: string;
+  /** Next to a link: the link's box. In the corner: the box of the area whose corner holds the card. */
   rect: HoverRect;
+  /** `corner` pins the card to the top-right of `rect` instead of placing it beside it. */
+  placement?: 'anchor' | 'corner';
 }
 export type Theme = 'auto' | 'light' | 'dark';
 
@@ -56,6 +60,17 @@ function loadNumber(key: string, fallback: number): number {
   } catch {
     return fallback;
   }
+}
+
+/** File contents as bytes (FileReader fallback for environments without Blob.arrayBuffer). */
+function readBytes(file: Blob): Promise<Uint8Array> {
+  if (typeof file.arrayBuffer === 'function') return file.arrayBuffer().then((b) => new Uint8Array(b));
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(new Uint8Array(reader.result as ArrayBuffer));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsArrayBuffer(file);
+  });
 }
 
 function read(key: string): string | null {
@@ -102,6 +117,8 @@ class App {
 
   private unsubscribe: (() => void) | null = null;
   private flushers = new Set<() => Promise<void>>();
+  /** Inserts text at the cursor of the open editor (set while an editor is shown). */
+  private inserter: ((text: string) => void) | null = null;
   private backStack: string[] = [];
   private toastTimer: ReturnType<typeof setTimeout> | undefined;
   private showTimer: ReturnType<typeof setTimeout> | undefined;
@@ -224,7 +241,12 @@ class App {
   /* ------------------------------------------------------------ hover cards */
 
   /** Shows a preview for `target` after a short pause. `anchor` gives the link's position at that moment. */
-  hoverStart(target: string, heading: string | undefined, anchor: () => HoverRect | undefined): void {
+  hoverStart(
+    target: string,
+    heading: string | undefined,
+    anchor: () => HoverRect | undefined,
+    placement: 'anchor' | 'corner' = 'anchor',
+  ): void {
     clearTimeout(this.hideTimer);
     clearTimeout(this.showTimer);
     const delay = this.hover ? 140 : 420;
@@ -233,6 +255,7 @@ class App {
       if (!rect) return;
       const next: HoverState = { target, rect };
       if (heading) next.heading = heading;
+      if (placement === 'corner') next.placement = 'corner';
       this.hover = next;
     }, delay);
   }
@@ -241,7 +264,8 @@ class App {
   hoverEnd(): void {
     clearTimeout(this.showTimer);
     clearTimeout(this.hideTimer);
-    this.hideTimer = setTimeout(() => (this.hover = null), 260);
+    // A card in the corner is further from the pointer, so it waits a little longer.
+    this.hideTimer = setTimeout(() => (this.hover = null), this.hover?.placement === 'corner' ? 700 : 260);
   }
 
   hoverKeep(): void {
@@ -260,6 +284,63 @@ class App {
   }
 
   /* --------------------------------------------------------- unsaved edit flush */
+
+  registerInserter(fn: (text: string) => void): () => void {
+    this.inserter = fn;
+    return () => {
+      if (this.inserter === fn) this.inserter = null;
+    };
+  }
+
+  get canInsert(): boolean {
+    return this.mode === 'edit' || this.mode === 'split';
+  }
+
+  /* -------------------------------------------------------------- media files */
+
+  /**
+   * Saves image, video and audio files into the world's `attachments/` folder and returns the
+   * Markdown that embeds them (one `![[file]]` per line). Unsupported files are skipped with a note.
+   */
+  async addMedia(files: File[]): Promise<string> {
+    const vault = this.vault;
+    if (!vault) return '';
+    const lines: string[] = [];
+    const skipped: string[] = [];
+    for (const file of files) {
+      let name = file.name || 'file';
+      // Screenshots pasted from the clipboard all arrive as "image.png": give them a readable, unique name.
+      if (/^image\.(png|jpe?g|gif|webp)$/i.test(name)) {
+        const d = new Date();
+        const pad = (n: number) => String(n).padStart(2, '0');
+        name = `screenshot ${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}-${pad(d.getMinutes())}-${pad(d.getSeconds())}.${name.split('.').pop()}`;
+      }
+      if (!mediaKind(name)) {
+        const fromType = /^(image|video|audio)\/([a-z0-9]+)/i.exec(file.type);
+        if (fromType && mediaKind(`x.${fromType[2]}`)) name = `${name}.${fromType[2]}`;
+      }
+      if (!mediaKind(name)) {
+        skipped.push(file.name);
+        continue;
+      }
+      try {
+        const bytes = await readBytes(file);
+        const path = await vault.saveAttachment(name, bytes);
+        lines.push(`![[${path.slice(path.lastIndexOf('/') + 1)}]]`);
+      } catch (e) {
+        this.fail(e);
+      }
+    }
+    if (skipped.length) this.notify(this.t('media.unsupported', skipped.join(', ')), true);
+    else if (lines.length) this.notify(this.t('media.saved', lines.length));
+    return lines.join('\n');
+  }
+
+  /** Adds media files and inserts their embeds at the editor's cursor. */
+  async insertMedia(files: File[]): Promise<void> {
+    const text = await this.addMedia(files);
+    if (text) this.inserter?.(text);
+  }
 
   registerFlusher(fn: () => Promise<void>): () => void {
     this.flushers.add(fn);

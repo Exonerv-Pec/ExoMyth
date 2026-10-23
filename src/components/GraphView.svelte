@@ -383,11 +383,8 @@
   function nodeEnter(e: Event, id: string) {
     if (gesture || pinch) return;
     hovered = id;
-    const el = e.currentTarget as SVGGElement;
-    app.hoverStart(stripMd(id), undefined, () => {
-      const c = el.querySelector('circle');
-      return c && c.isConnected ? rectOf(c) : undefined;
-    });
+    // The card goes to the top-right corner of the graph, so it never covers the page's connections.
+    app.hoverStart(stripMd(id), undefined, () => (wrap && wrap.isConnected ? rectOf(wrap) : undefined), 'corner');
   }
 
   function nodeLeave(id: string) {

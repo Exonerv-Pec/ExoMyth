@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.4.0 — 2026-10-23
+
+### Added
+
+- **Images, video and audio in pages.** Drag files into the editor, paste a screenshot, or use the new
+  image button in the top bar. Files are saved into `attachments/` inside the world (names are kept
+  unique) and embedded with `![[file]]`; `![[file|400]]` sets a width and `![[file|text]]` adds a
+  caption. Standard Markdown images of the world (`![alt](attachments/x.png)`) work too. Everything
+  plays from the world's own storage; images from web addresses become links and are never loaded.
+- The demo world has a map of Rivertown.
+- `BUILDING.md` and `BUILDING.ru.md`: how to run, test, build and publish Exomyth.
+
+### Changed
+
+- On the graph, the preview card of a hovered page appears in the top-right corner of the graph
+  instead of next to the page, so it no longer covers the page's connections.
+
 ## 0.3.0 — 2026-10-22
 
 ### Changed

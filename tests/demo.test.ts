@@ -22,6 +22,7 @@ describe('demo world', () => {
   it('is in English and has no broken links or header errors', async () => {
     const vault = await Vault.open(new MemoryStorage('demo', DEMO_FILES));
     expect(vault.pages.length).toBe(9);
+    expect(vault.resolveFile("rivertown map.svg")?.path).toBe("attachments/rivertown map.svg");
     expect(vault.index.brokenLinks()).toEqual([]);
     expect(vault.pages.filter((p) => p.parseError)).toEqual([]);
     expect(Object.values(DEMO_FILES).join('\n')).not.toMatch(/[А-Яа-яЁё]/);

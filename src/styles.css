@@ -1587,3 +1587,85 @@ svg.graph:focus-visible {
   font-weight: 400;
   color: var(--ink-faint);
 }
+
+/* ---------------------------------------------------------- media embeds */
+
+.embed {
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: middle;
+}
+.embed img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--r-s);
+}
+.embed-video,
+.embed-audio {
+  display: block;
+  margin: 1em 0;
+}
+.embed video {
+  display: block;
+  max-width: 100%;
+  border-radius: var(--r-s);
+  background: #000;
+}
+.embed audio {
+  display: block;
+  width: min(100%, 30rem);
+}
+.embed-name {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin-bottom: 0.25rem;
+}
+.embed-caption {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--ink-faint);
+  text-align: center;
+  margin-top: 0.3rem;
+}
+.embed[data-state='loading'] {
+  min-width: 6rem;
+  min-height: 2.5rem;
+  background: var(--paper);
+  border-radius: var(--r-s);
+}
+.embed.missing {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--broken);
+  border: 1px dashed var(--broken);
+  border-radius: var(--r-s);
+  padding: 0.25rem 0.6rem;
+}
+.infobox .embed img {
+  width: 100%;
+}
+.hovercard .embed img,
+.hovercard .embed video {
+  max-height: 9rem;
+  width: auto;
+}
+.prose a.external-media::before {
+  content: '';
+  display: inline-block;
+  width: 0.7em;
+  height: 0.55em;
+  margin-right: 0.3em;
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+  vertical-align: baseline;
+}
+
+/* ------------------------------------------- graph: preview card in the corner */
+
+.hovercard.corner {
+  max-height: min(30rem, calc(100% - 24px));
+}

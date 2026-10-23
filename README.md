@@ -27,7 +27,7 @@ the app to your browser; your worlds stay on your device.
 
 ### Run it yourself
 
-Requires Node.js 20+.
+Step-by-step guide: [BUILDING.md](BUILDING.md). In short, with Node.js 20+:
 
 ```bash
 npm install
@@ -73,6 +73,7 @@ The secret: ||Eva Crow is her half-sister||.
 | `tags:` and `#tag` | Tags (header or inline) |
 | `pinned:` | Links shown first in their group in the relations panel |
 | `\|\|secret\|\|` | Spoiler, hidden in reading view until clicked |
+| `![[map.png]]`, `![[map.png\|400]]`, `![[intro.mp4]]`, `![[theme.mp3]]` | Image, video or audio file of the world (optional width, or a caption after `\|`) |
 | other header fields | Shown as facts in the page's infobox |
 
 Per-world settings live in `.exomyth/settings.json`:
@@ -105,11 +106,19 @@ Switch to **Graph** in the top bar (or press the graph button in the relations p
 - "Neighbours" and "Two steps away" show only the area around the selected page; positions stay
   the same, so the map does not change under you.
 
+## Images, video and audio
+
+Drag files into the editor, paste a screenshot, or use the image button in the top bar. Files are saved
+into the world's `attachments/` folder and embedded with `![[file name]]`. Supported: PNG, JPEG, GIF,
+WebP, AVIF, SVG, BMP; MP4, WebM, OGV, MOV; MP3, WAV, OGG, Opus, M4A, AAC, FLAC. Media play from your
+own storage; images from web addresses are shown as links and never loaded automatically.
+
 ## Page previews
 
-Hover or focus a link (in the reading view, the editor, the relations panel or the graph) to see a
+Hover or focus a link (in the reading view, the editor or the relations panel) to see a
 card with the page's title, folder, aliases, a few facts, the opening of its text and its link counts.
-`[[Page#Section]]` shows that section.
+`[[Page#Section]]` shows that section. On the graph the card appears in the top-right corner, so it
+never covers the connections of the page you point at.
 
 ## Project layout
 

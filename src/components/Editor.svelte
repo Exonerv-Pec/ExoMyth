@@ -208,7 +208,37 @@
       hoverKey = '';
       return false;
     },
+    /** Dropping image, video or audio files saves them into the world and embeds them where dropped. */
+    drop(e, v) {
+      const files = [...(e.dataTransfer?.files ?? [])];
+      if (files.length === 0) return false;
+      e.preventDefault();
+      const pos = v.posAtCoords({ x: e.clientX, y: e.clientY }) ?? v.state.selection.main.head;
+      void app.addMedia(files).then((text) => text && insertAt(text, pos));
+      return true;
+    },
+    /** Pasting a screenshot or a copied file does the same at the cursor. */
+    paste(e) {
+      const files = [...(e.clipboardData?.files ?? [])];
+      if (files.length === 0) return false;
+      e.preventDefault();
+      void app.addMedia(files).then((text) => text && insertAt(text));
+      return true;
+    },
   });
+
+  /** Inserts text at `pos` (default: replacing the selection), on a line of its own. */
+  function insertAt(text: string, pos?: number) {
+    if (!view) return;
+    const sel = view.state.selection.main;
+    const from = pos ?? sel.from;
+    const to = pos ?? sel.to;
+    const before = from > 0 ? view.state.sliceDoc(from - 1, from) : '\n';
+    const after = view.state.sliceDoc(to, to + 1);
+    const insert = (before === '\n' ? '' : '\n') + text + (after === '\n' || after === '' ? '' : '\n');
+    view.dispatch({ changes: { from, to, insert }, selection: { anchor: from + insert.length } });
+    view.focus();
+  }
 
   const theme = EditorView.theme({
     '&': { height: '100%', backgroundColor: 'transparent', color: 'var(--ink)' },
@@ -283,6 +313,7 @@
     });
 
     const unregister = app.registerFlusher(save);
+    const unregisterInserter = app.registerInserter((text) => insertAt(text));
     if (app.pendingHeading) {
       jumpToHeading(app.pendingHeading);
       app.pendingHeading = null;
@@ -290,6 +321,7 @@
 
     return () => {
       unregister();
+      unregisterInserter();
       clearTimeout(saveTimer);
       // The caller flushes before navigating, so nothing unsaved is dropped here.
       view?.destroy();

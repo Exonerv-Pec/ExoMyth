@@ -12,6 +12,7 @@ import {
 } from './parse';
 import { baseName, dirName, joinPath, normalizeName, sanitizePageName, stripMd } from './names';
 import { emptyLayout, parseLayout, serializeLayout, type StoredLayout } from './layout';
+import { ATTACHMENTS_DIR, extensionOf } from './media';
 
 export const META_DIR = '.exomyth';
 const SETTINGS_PATH = `${META_DIR}/settings.json`;
@@ -226,6 +227,48 @@ export class Vault {
     let candidate = joinPath(dir, `${clean}.md`);
     for (let n = 2; taken.has(candidate.toLowerCase()); n++) candidate = joinPath(dir, `${clean} ${n}.md`);
     return candidate;
+  }
+
+  /* ------------------------------------------------------------- attachments */
+
+  /**
+   * Finds a non-page file of the world (an image, a video...) from how a page refers to it:
+   * a full path, a path ending, or just the file name. Ties go to the shallowest path.
+   */
+  resolveFile(target: string): FileEntry | undefined {
+    const want = target.trim().replace(/^\.?\//, '').normalize('NFC').toLowerCase();
+    if (!want) return undefined;
+    const matches = this.files.filter((f) => {
+      const p = f.path.normalize('NFC').toLowerCase();
+      return p === want || p.endsWith('/' + want);
+    });
+    matches.sort((a, b) => a.path.split('/').length - b.path.split('/').length || (a.path < b.path ? -1 : 1));
+    return matches[0];
+  }
+
+  readFile(path: string): Promise<Uint8Array> {
+    return this.storage.readBytes(path);
+  }
+
+  /**
+   * Saves a media file into `attachments/` and returns its path. The file name is made unique
+   * across the whole world, so `![[name.png]]` always points at this file.
+   */
+  saveAttachment(fileName: string, data: Uint8Array): Promise<string> {
+    return this.exclusive(async () => {
+      const ext = extensionOf(fileName);
+      const stem = sanitizePageName(ext ? fileName.slice(0, -(ext.length + 1)) : fileName) || 'file';
+      const taken = new Set(this.files.map((f) => f.path.slice(f.path.lastIndexOf('/') + 1).toLowerCase()));
+      const nameFor = (n: number) => `${stem}${n > 1 ? ' ' + n : ''}${ext ? '.' + ext : ''}`;
+      let n = 1;
+      while (taken.has(nameFor(n).toLowerCase())) n++;
+      const path = joinPath(ATTACHMENTS_DIR, nameFor(n));
+      await this.storage.writeBytes(path, data);
+      const entry = (await this.storage.stat(path)) ?? { path, mtime: Date.now(), size: data.byteLength };
+      this.files = [...this.files, entry].sort((a, b) => (a.path < b.path ? -1 : 1));
+      this.emit();
+      return path;
+    });
   }
 
   createPage(name: string, dir = '', content?: string): Promise<Page> {

@@ -6,6 +6,7 @@
   import RelationsPanel from './RelationsPanel.svelte';
   import GraphView from './GraphView.svelte';
   import Icon from './Icon.svelte';
+  import { MEDIA_ACCEPT } from '../core/media';
 
   const t = app.t;
 
@@ -18,6 +19,7 @@
   const statusText = $derived(t(`save.${app.saveStatus}` as 'save.saved'));
   const modes = ['edit', 'split', 'preview', 'graph'] as const;
   const inGraph = $derived(app.mode === 'graph');
+  let mediaInput = $state<HTMLInputElement>();
 </script>
 
 <div class="workspace" style:--sidebar-w="{app.sidebarW}px" style:--panel-w="{app.panelW}px">
@@ -40,6 +42,24 @@
           <span class="where">{page.path}</span>
         {/if}
       </div>
+      {#if page && app.canInsert}
+        <button class="icon-btn" title={t('media.insert')} aria-label={t('media.insert')} onclick={() => mediaInput?.click()}>
+          <Icon name="image" />
+        </button>
+        <input
+          bind:this={mediaInput}
+          type="file"
+          multiple
+          accept={MEDIA_ACCEPT}
+          hidden
+          onchange={(e) => {
+            const input = e.currentTarget;
+            const files = [...(input.files ?? [])];
+            input.value = '';
+            if (files.length) void app.insertMedia(files);
+          }}
+        />
+      {/if}
       {#if page && !inGraph}
         <span class="status" class:error={app.saveStatus === 'error'} role="status">{statusText}</span>
       {/if}

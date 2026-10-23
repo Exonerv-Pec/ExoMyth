@@ -13,6 +13,8 @@ const PREFIX = '../examples/demo-world/';
 const files = {
   ...import.meta.glob('../examples/demo-world/**/*.md', { query: '?raw', import: 'default', eager: true }),
   ...import.meta.glob('../examples/demo-world/.exomyth/settings.json', { query: '?raw', import: 'default', eager: true }),
+  // Media of the demo are text formats (SVG), so they can be bundled the same way as pages.
+  ...import.meta.glob('../examples/demo-world/attachments/*.svg', { query: '?raw', import: 'default', eager: true }),
 } as Record<string, string>;
 
 /** Path inside the world → file text. */
