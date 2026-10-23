@@ -228,6 +228,6 @@ describe('hover previews', () => {
     expect(card.textContent).toContain('This page does not exist yet');
     card.querySelector<HTMLButtonElement>('footer .btn')!.click();
     flushSync();
-    expect(app.dialog?.kind).toBe('confirm');
+    expect(app.dialog?.kind).toBe('newPage');
   });
 });

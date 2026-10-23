@@ -33,7 +33,7 @@
   const pageWords = $derived(page ? wordsOf(page) : 0);
   const worldWords = $derived.by(() => {
     app.version;
-    return page ? (app.vault?.pages ?? []).reduce((n, p) => n + wordsOf(p), 0) : 0;
+    return page ? (app.vault?.index.worldPages ?? []).reduce((n, p) => n + wordsOf(p), 0) : 0;
   });
 </script>
 

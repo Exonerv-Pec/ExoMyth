@@ -190,6 +190,26 @@ without years of its own follows the years of its page. Pages without years are 
   down an idea without leaving the page. It is added with the date and time to an **Inbox** page,
   which is created the first time.
 
+## Page templates
+
+**+ New page** lets you start from a template: Character, Place, Organization, Event or Scene. Each
+fills in the usual header fields (years, relations to fill) and section headings, and suggests the
+folder the page goes to.
+
+Templates are ordinary pages in the world's `Templates/` folder, so you can change them or write your
+own. Until a world has its own, the built-in set is offered; "Add them to the world" in the dialog
+copies it into `Templates/`. In a template, `{{title}}` becomes the new page's name, `{{date}}` today's
+date, and a `template:` block in the header is not copied:
+
+```yaml
+template:
+  folder: Ships        # where new pages of this kind go
+tags: [ship]
+```
+
+Template pages are not part of the world itself: they stay out of the graph, cards, timeline, tags and
+word counts, and links never lead to them.
+
 ## Folders
 
 Pages live in folders (Characters, Places…). To move a page, drag it onto a folder in the sidebar (or

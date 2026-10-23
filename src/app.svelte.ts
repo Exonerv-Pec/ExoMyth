@@ -7,6 +7,7 @@ import { addPin, changePin, removePin, type PinData } from './core/maps';
 import { existsIn, pageYears, setYearsInText, worldYearSpan } from './core/years';
 import { worldToZip, zipFolderName } from './core/archive';
 import { appendIdea } from './core/writing';
+import { applyTemplate, builtInTemplateFiles, type TemplateChoice } from './core/templates';
 import { detectLang, translate, type Key, type Lang } from './i18n';
 
 export type ViewMode = 'edit' | 'split' | 'preview' | 'graph' | 'cards' | 'timeline';
@@ -48,6 +49,16 @@ export type DialogState =
       /** An empty value is a valid answer (for example "the top of the world"). */
       allowEmpty?: boolean;
       onSubmit: (value: string) => void | Promise<void>;
+    }
+  | {
+      kind: 'newPage';
+      title: string;
+      /** A line above the fields, e.g. that a linked page does not exist yet. */
+      message?: string;
+      name: string;
+      folder: string;
+      /** The folder was chosen on purpose (a folder's "+"), so templates do not change it. */
+      lockFolder: boolean;
     }
   | {
       kind: 'confirm';
@@ -144,7 +155,7 @@ class App {
   /** Earliest and latest year of the open world (pages and map pins), if any. */
   yearSpan = $derived.by(() => {
     this.version;
-    return this.vault ? worldYearSpan(this.vault.pages) : undefined;
+    return this.vault ? worldYearSpan(this.vault.index.worldPages) : undefined;
   });
 
   /** Pages that do not exist in the chosen year (null when not showing by year). */
@@ -582,35 +593,41 @@ class App {
     this.confirmCreate(target);
   }
 
+  /** Offers to create a page a link points to, with the usual choice of template and folder. */
   confirmCreate(target: string, dir = ''): void {
     this.dialog = {
-      kind: 'confirm',
+      kind: 'newPage',
       title: this.t('dialog.create'),
       message: this.t('dialog.createMissing', target),
-      confirmLabel: this.t('dialog.create'),
-      onConfirm: async () => {
-        await this.createPage(target, dir);
-      },
+      name: target,
+      folder: dir,
+      lockFolder: false,
     };
   }
 
   /* ---------------------------------------------------------------- mutations */
 
-  /** Creates a page. `name` may include folders: `Places/Rivertown`. */
-  async createPage(name: string, dir = ''): Promise<string | undefined> {
+  /**
+   * Creates a page. `name` may include folders: `Places/Rivertown`. With a template, the page
+   * starts as a copy of it, with `{{title}}` and `{{date}}` filled in.
+   */
+  async createPage(name: string, dir = '', template?: TemplateChoice): Promise<string | undefined> {
     const vault = this.vault;
     if (!vault) return undefined;
     try {
       await this.flush();
-      let folder = dir;
+      const clean = (path: string) => path.replace(/\\/g, '/').split('/').map(sanitizePageName).filter(Boolean).join('/');
+      let folder = clean(dir);
       let pageName = name.trim();
       const slash = pageName.lastIndexOf('/');
       if (slash !== -1) {
-        folder = joinPath(dir, pageName.slice(0, slash).split('/').map(sanitizePageName).filter(Boolean).join('/'));
+        folder = joinPath(folder, clean(pageName.slice(0, slash)));
         pageName = pageName.slice(slash + 1);
       }
-      if (!sanitizePageName(pageName)) return undefined;
-      const page = await vault.createPage(pageName, folder);
+      const title = sanitizePageName(pageName);
+      if (!title) return undefined;
+      const content = template ? applyTemplate(template.text, { title }) : undefined;
+      const page = await vault.createPage(pageName, folder, content);
       this.notify(this.t('toast.created', page.title));
       await this.open(page.path);
       return page.path;
@@ -742,14 +759,29 @@ class App {
   /* ------------------------------------------------------------------ dialogs */
 
   askNewPage(dir = ''): void {
-    this.dialog = {
-      kind: 'prompt',
-      title: this.t('dialog.newPage'),
-      label: this.t('dialog.newPage.label'),
-      value: '',
-      confirmLabel: this.t('dialog.create'),
-      onSubmit: (v) => void this.createPage(v, dir),
-    };
+    this.dialog = { kind: 'newPage', title: this.t('dialog.newPage'), name: '', folder: dir, lockFolder: dir !== '' };
+  }
+
+  /**
+   * Copies the built-in templates into the world's own templates folder, so they can be changed
+   * like any page (and new ones added next to them). Opens the first one.
+   */
+  async addTemplatesToWorld(): Promise<void> {
+    const vault = this.vault;
+    if (!vault) return;
+    try {
+      await this.flush();
+      let first: string | undefined;
+      for (const f of builtInTemplateFiles(this.lang)) {
+        if (vault.getPage(f.path)) continue;
+        const page = await vault.createPage(baseName(f.path), dirName(f.path), f.text);
+        first ??= page.path;
+      }
+      this.notify(this.t('templates.added', dirName(builtInTemplateFiles(this.lang)[0]!.path)));
+      if (first) await this.openText(first);
+    } catch (e) {
+      this.fail(e);
+    }
   }
 
   askRename(path: string): void {

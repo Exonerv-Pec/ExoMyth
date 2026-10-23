@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 12 releases, latest 0.10.0 (2026-10-23)</summary>
+<summary><b>✅ Done</b> · 13 releases, latest 0.11.0 (2026-10-23)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.11.0** | 2026-10-23 | 🧩 Page templates: Character, Place, Organization, Event, Scene, and your own 💬 |
 | **0.10.0** | 2026-10-23 | 🎯 Focus mode; 📁 move pages between folders (drag and drop); 🔤 spell check switch 💬 |
 | **0.9.0** | 2026-10-23 | ⌨️ A list of all keyboard shortcuts (Ctrl+/) |
 | **0.8.0** | 2026-10-23 | 📦 Download and open worlds as .zip; 💡 quick notes inbox (Alt+I) 💬; 🔢 word count 💬 |
@@ -37,21 +38,21 @@ Click a section to open it.
 
 💬 Tester ideas that are already in: a web version, a story bible / wiki, fast search across the
 world, a timeline, art and music in pages, separate worlds for separate stories, an ideas inbox,
-a word count and a spell checker.
+a word count, a spell checker and
+story planning templates.
 
 Every change in detail: [CHANGELOG.md](CHANGELOG.md).
 
 </details>
 
 <details open>
-<summary><b>🔜 Next: small and useful</b> · 2 ideas</summary>
+<summary><b>🔜 Next: small and useful</b> · 1 idea</summary>
 
 <br>
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
 | ⬜ | Quick look-up from anywhere 💬 | S | Search as an overlay in any view, with the preview card, to check lore without leaving the page |
-| ⬜ | Page templates 💬 | M | "New page from template": Character, Place, Organization, Event, Scene. Templates are pages in a `Templates/` folder that anyone can edit |
 
 </details>
 

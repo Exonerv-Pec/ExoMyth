@@ -60,7 +60,7 @@
     const m = ctx.matchBefore(/\[\[[^\[\]\n|#]*/);
     if (!m || !app.vault) return null;
     const start = m.from + 2;
-    const pages = app.vault.index.pages;
+    const pages = app.vault.index.worldPages;
     const options = [];
     for (const p of pages) {
       options.push({ label: p.name, detail: dirName(p.path) || undefined, type: 'text', boost: 1 });

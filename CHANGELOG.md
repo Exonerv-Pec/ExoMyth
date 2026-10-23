@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.11.0 — 2026-10-23
+
+### Added
+
+- **Page templates.** The new page dialog offers a template (Character, Place, Organization, Event,
+  Scene; in Russian in the Russian interface) with header fields to fill and section headings, and
+  suggests the folder for the page. Creating a page a link points to offers the same choice.
+- Templates are pages in the world's `Templates/` (or `Шаблоны/`) folder, so they can be changed and new
+  ones added; "Add them to the world" copies the built-in set there. `{{title}}` and `{{date}}` are
+  filled in, and a `template:` header block (with `folder:`) is not copied into new pages.
+- Template pages stay out of the graph, cards, timeline, tags, word counts and link resolution.
+
 ## 0.10.0 — 2026-10-23
 
 ### Added

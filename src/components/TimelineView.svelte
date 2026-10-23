@@ -12,7 +12,7 @@
 
   const model = $derived.by(() => {
     app.version;
-    return timelineModel(app.vault?.pages ?? []);
+    return timelineModel(app.vault?.index.worldPages ?? []);
   });
   const slots = $derived.by(() => {
     app.version;

@@ -21,7 +21,7 @@
   });
   const pageNames = $derived.by(() => {
     app.version;
-    return (app.vault?.pages ?? []).slice(0, 1000).map((p) => p.name);
+    return (app.vault?.index.worldPages ?? []).slice(0, 1000).map((p) => p.name);
   });
   const pageTitle = $derived.by(() => {
     app.version;

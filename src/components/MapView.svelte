@@ -142,7 +142,7 @@
 
   const pageNames = $derived.by(() => {
     app.version;
-    return (app.vault?.pages ?? []).map((p) => p.name);
+    return (app.vault?.index.worldPages ?? []).map((p) => p.name);
   });
 
   function yearValue(s: string): number | undefined {

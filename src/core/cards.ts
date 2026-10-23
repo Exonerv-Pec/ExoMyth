@@ -111,7 +111,7 @@ function missingCard(target: string): CardModel {
 /** Top-level folders with their page counts, alphabetically; pages in the root come last as ''. */
 export function folderTabs(index: VaultIndex): { folder: string; count: number }[] {
   const counts = new Map<string, number>();
-  for (const p of index.pages) counts.set(topFolderOf(p.path), (counts.get(topFolderOf(p.path)) ?? 0) + 1);
+  for (const p of index.worldPages) counts.set(topFolderOf(p.path), (counts.get(topFolderOf(p.path)) ?? 0) + 1);
   return [...counts.entries()]
     .map(([folder, count]) => ({ folder, count }))
     .sort((a, b) => (a.folder === '' ? 1 : b.folder === '' ? -1 : compareText(a.folder, b.folder)));
@@ -119,7 +119,7 @@ export function folderTabs(index: VaultIndex): { folder: string; count: number }
 
 /** Cards for every page under a top-level folder ('' = pages in the root), by title. */
 export function folderCards(index: VaultIndex, folder: string): CardModel[] {
-  return index.pages
+  return index.worldPages
     .filter((p) => topFolderOf(p.path) === folder)
     .map((p) => cardOf(p))
     .sort((a, b) => compareText(a.title, b.title) || compareText(a.path ?? '', b.path ?? ''));

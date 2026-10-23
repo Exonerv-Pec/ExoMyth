@@ -2721,3 +2721,60 @@ svg.graph:focus-visible {
   border-radius: var(--r-s);
   background: var(--accent-soft);
 }
+
+/* ============================================================ new page + templates (v0.11) */
+
+.dialog.wide {
+  width: min(34rem, 100%);
+}
+.new-page {
+  display: grid;
+  gap: 0.8rem;
+}
+.new-page input[type='text'] {
+  width: 100%;
+}
+.template-pick {
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+.template-pick legend {
+  padding: 0;
+  margin-bottom: 0.3rem;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+.template-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.template-chips button {
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  padding: 0.25rem 0.75rem;
+  font-size: 0.88rem;
+  color: var(--ink);
+}
+.template-chips button:hover {
+  background: var(--accent-soft);
+}
+.template-chips button[aria-checked='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+.link-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--accent);
+  text-decoration: underline;
+  font: inherit;
+  cursor: pointer;
+}

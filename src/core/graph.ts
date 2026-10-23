@@ -54,7 +54,7 @@ export function buildGraph(index: VaultIndex): WorldGraph {
     return e;
   };
 
-  for (const page of index.pages) {
+  for (const page of index.worldPages) {
     for (const r of page.relations) {
       const target = index.resolve(r.link.target);
       if (!target || target.path === page.path) continue;
@@ -76,7 +76,7 @@ export function buildGraph(index: VaultIndex): WorldGraph {
     degree.set(e.b, (degree.get(e.b) ?? 0) + 1);
   }
 
-  const nodes: GraphNode[] = index.pages.map((p) => ({
+  const nodes: GraphNode[] = index.worldPages.map((p) => ({
     id: p.path,
     title: p.title,
     group: topFolder(p.path),

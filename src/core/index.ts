@@ -1,6 +1,7 @@
 import type { Page, RelationTypeDef, VaultSettings, WikiLink } from './types';
 import { DEFAULT_SETTINGS } from './types';
 import { compareText, normalizeName, stripMd } from './names';
+import { isTemplatePath } from './templates';
 
 /* ------------------------------------------------------------------ panel model */
 
@@ -55,7 +56,10 @@ interface Incoming {
  * same page twice always shows the same groups in the same order.
  */
 export class VaultIndex {
+  /** Every page, templates included (for the file list and opening pages). */
   readonly pages: readonly Page[];
+  /** The world itself: every page except templates. Graph, cards, timeline and counts use these. */
+  readonly worldPages: readonly Page[];
   readonly settings: VaultSettings;
 
   private readonly byPath = new Map<string, Page>();
@@ -68,11 +72,13 @@ export class VaultIndex {
   constructor(pages: Iterable<Page>, settings: VaultSettings = DEFAULT_SETTINGS) {
     this.settings = settings;
     this.pages = [...pages].sort((a, b) => compareText(a.path, b.path));
+    // Templates are only patterns for new pages: links never lead to them and they link nowhere.
+    this.worldPages = this.pages.filter((p) => !isTemplatePath(p.path));
 
     settings.relationTypes.forEach((def, i) => this.typeOrder.set(normalizeName(def.id), i));
 
-    for (const p of this.pages) {
-      this.byPath.set(p.path, p);
+    for (const p of this.pages) this.byPath.set(p.path, p);
+    for (const p of this.worldPages) {
       push(this.byName, normalizeName(p.name), p);
       for (const a of p.aliases) push(this.byAlias, normalizeName(a), p);
     }
@@ -81,7 +87,7 @@ export class VaultIndex {
     for (const list of this.byName.values()) list.sort(byShallowPath);
     for (const list of this.byAlias.values()) list.sort(byShallowPath);
 
-    for (const p of this.pages) {
+    for (const p of this.worldPages) {
       for (const r of p.relations) {
         const target = this.resolve(r.link.target);
         if (target) push(this.incomingRelations, target.path, { from: p, type: r.type, link: r.link });
@@ -126,7 +132,7 @@ export class VaultIndex {
   relationTypes(): string[] {
     const set = new Map<string, string>();
     for (const def of this.settings.relationTypes) set.set(normalizeName(def.id), def.id);
-    for (const p of this.pages) {
+    for (const p of this.worldPages) {
       for (const r of p.relations) if (!set.has(normalizeName(r.type))) set.set(normalizeName(r.type), r.type);
     }
     return this.sortTypes([...set.values()]);
@@ -134,7 +140,7 @@ export class VaultIndex {
 
   allTags(): { tag: string; count: number }[] {
     const counts = new Map<string, number>();
-    for (const p of this.pages) for (const t of p.tags) counts.set(t, (counts.get(t) ?? 0) + 1);
+    for (const p of this.worldPages) for (const t of p.tags) counts.set(t, (counts.get(t) ?? 0) + 1);
     return [...counts.entries()]
       .map(([tag, count]) => ({ tag, count }))
       .sort((a, b) => compareText(a.tag, b.tag));
@@ -142,7 +148,7 @@ export class VaultIndex {
 
   brokenLinks(): { page: Page; link: WikiLink }[] {
     const out: { page: Page; link: WikiLink }[] = [];
-    for (const p of this.pages) {
+    for (const p of this.worldPages) {
       for (const r of p.relations) if (!this.resolve(r.link.target)) out.push({ page: p, link: r.link });
       for (const l of p.mentions) if (!this.resolve(l.target)) out.push({ page: p, link: l });
     }
@@ -150,7 +156,7 @@ export class VaultIndex {
   }
 
   orphans(): Page[] {
-    return this.pages.filter((p) => this.backlinkPaths(p.path).length === 0 && !hasOutgoing(this, p));
+    return this.worldPages.filter((p) => this.backlinkPaths(p.path).length === 0 && !hasOutgoing(this, p));
   }
 
   /* ------------------------------------------------------------- panel building */
