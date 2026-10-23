@@ -136,11 +136,46 @@ export function renderMarkdown(markdown: string, index: VaultIndex): string {
   });
 
   const html = marked.parse(markdown, { async: false });
-  return DOMPurify.sanitize(html, {
+  return purifier().sanitize(html, {
     ADD_ATTR: ['data-target', 'data-path', 'data-heading', 'data-embed', 'data-kind', 'data-alt', 'data-width', 'data-height'],
     // Only inert content: no scripts, forms, frames or media that would load from elsewhere.
     // Video and audio are added with ![[file]], which plays the world's own files.
-    FORBID_TAGS: ['style', 'form', 'iframe', 'object', 'embed', 'script', 'video', 'audio', 'source', 'track'],
+    FORBID_TAGS: [
+      'style', 'form', 'iframe', 'object', 'embed', 'script', 'video', 'audio', 'source', 'track',
+      'button', 'textarea', 'select', 'option', 'dialog', 'meta', 'link', 'base',
+    ],
+    // Inline styles could cover the app with look-alike windows (a fake "enter your password" box).
+    FORBID_ATTR: ['style'],
     ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|#|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/i,
   });
+}
+
+/**
+ * Class names a page may carry: the ones this renderer adds and code-block languages. Anything
+ * else is dropped, so text from a world someone shared cannot borrow the app's own styles
+ * (for example to imitate one of its dialogs).
+ */
+const SAFE_CLASS = /^(wikilink|broken|spoiler|embed|embed-(image|video|audio)|external-media|language-[\w-]+)$/;
+
+let instance: ReturnType<typeof DOMPurify> | undefined;
+
+/** A sanitizer of our own (not the shared global one), with the rules above as hooks. */
+function purifier(): ReturnType<typeof DOMPurify> {
+  if (instance) return instance;
+  const p = DOMPurify(window);
+  p.addHook('uponSanitizeAttribute', (_node, data) => {
+    if (data.attrName !== 'class') return;
+    const kept = data.attrValue.split(/\s+/).filter((c) => SAFE_CLASS.test(c));
+    if (kept.length) data.attrValue = kept.join(' ');
+    else data.keepAttr = false;
+  });
+  // Text inputs could imitate a sign-in form. Only the read-only checkboxes of task lists stay.
+  p.addHook('uponSanitizeElement', (node, data) => {
+    if (data.tagName !== 'input') return;
+    const el = node as Element;
+    if (el.getAttribute('type') === 'checkbox') el.setAttribute('disabled', '');
+    else el.parentNode?.removeChild(el);
+  });
+  instance = p;
+  return p;
 }

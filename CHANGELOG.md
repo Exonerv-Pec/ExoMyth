@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.1 — 2026-10-23
+
+### Security
+
+- Pages from a world someone else shared can no longer imitate the app: inline styles, the app's own
+  style classes, buttons, text fields and other form controls are removed when a page is shown (task
+  list checkboxes stay, read-only). Scripts, frames and web images were already blocked.
+- The publishing workflow now gives each job only the permissions it needs: the build job can only
+  read; only the deploy job can publish.
+- `.gitignore` also ignores `.env`, `*.pem` and `*.key` files, so secrets are not committed by mistake.
+
 ## 0.6.0 — 2026-10-23
 
 ### Added
