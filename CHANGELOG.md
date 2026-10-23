@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.3 — 2026-10-23
+
+### Fixed
+
+- A demo world saved by an earlier version now updates itself when opened: new demo files (the Order's
+  emblem, its new members, the Rivertown map) are added, and demo pages you never edited are replaced
+  by their current version. Pages you changed or added are left exactly as they are.
+
 ## 0.5.2 — 2026-10-23
 
 ### Fixed

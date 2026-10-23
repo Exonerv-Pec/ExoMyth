@@ -59,6 +59,9 @@ npm test        # unit and interface tests
   that blocks them, so a change that needs the network will not work.
 - Interface text lives in `src/i18n.ts`; add every new string in Russian and English.
 - The demo world is `examples/demo-world/`. Edit those files directly; the app picks them up.
+  When you change an existing demo file, add the fingerprint of its old text (`contentHash` in
+  `src/core/hash.ts`) to `DEMO_HISTORY` in `src/demo.ts`, so demos saved by earlier versions are
+  updated when untouched.
 
 ## Sign-off
 

@@ -12,7 +12,7 @@
   } from '../core/storage';
   import { sanitizePageName } from '../core/names';
   import { ensureReadWrite, forgetFolder, listFolders, rememberFolder, type SavedFolder } from '../handles';
-  import { DEMO_FILES, DEMO_WORLD_NAME } from '../demo';
+  import { DEMO_FILES, DEMO_WORLD_NAME, updateDemoWorld } from '../demo';
 
   const t = app.t;
   // Browsers refuse the folder picker inside an embedded frame, so say so instead of failing on click.
@@ -109,10 +109,18 @@
     }
   }
 
+  /** A demo saved by an earlier version gets the new demo files; the owner's edits are kept. */
+  async function refreshDemo(storage: VaultStorage) {
+    const n = await updateDemoWorld(storage);
+    if (n > 0) app.notify(app.t('welcome.demoUpdated', n));
+  }
+
   async function openBrowserWorld(name: string) {
     try {
       busy = true;
-      app.setVault(await Vault.open(await browserStorage(name)));
+      const storage = await browserStorage(name);
+      if (name === DEMO_WORLD_NAME) await refreshDemo(storage);
+      app.setVault(await Vault.open(storage));
     } catch (e) {
       fail(e);
     }
@@ -131,6 +139,8 @@
       const storage = await browserStorage(DEMO_WORLD_NAME);
       if ((await storage.list()).length === 0) {
         for (const [path, text] of Object.entries(DEMO_FILES)) await storage.writeText(path, text);
+      } else {
+        await refreshDemo(storage);
       }
       app.setVault(await Vault.open(storage));
     } catch (e) {

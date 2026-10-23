@@ -145,3 +145,25 @@ describe('cards view', () => {
     expect(target.querySelector('.hero-title')).toBeNull();
   });
 });
+
+describe('pictures on cards', () => {
+  it('shows the Order emblem in its dossier instead of initials', async () => {
+    URL.createObjectURL = () => 'blob:emblem';
+    app.lang = 'en';
+    app.setVault(await Vault.open(new MemoryStorage('cards-img', DEMO_FILES)));
+    app.current = 'Organizations/Order of the Silver River.md';
+    app.setMode('cards');
+    const target = document.createElement('div');
+    document.body.append(target);
+    const m = mount(Workspace, { target });
+    flushSync();
+    await new Promise((r) => setTimeout(r, 60));
+    flushSync();
+    expect(target.querySelector('.hero-media img')?.getAttribute('src')).toBe('blob:emblem');
+    expect(target.querySelector('.hero-initials')).toBeNull();
+    unmount(m);
+    target.remove();
+    app.closeVault();
+    app.setMode('split');
+  });
+});
