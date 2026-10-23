@@ -1,6 +1,7 @@
 <script lang="ts">
   import { app, type Feature } from '../app.svelte';
-  import type { Key } from '../i18n';
+  import { countPages, type Key } from '../i18n';
+  import { featureUsage, type UsedFeature } from '../core/usage';
 
   const t = app.t;
 
@@ -25,6 +26,18 @@
   const about = (f: Feature) => t(`settings.${f}.about` as Key);
   const close = () => (app.settingsOpen = false);
   const allOn = $derived(Object.values(app.features).every(Boolean) && app.spellcheck);
+
+  /** Pages of the open world that each part shows something on. */
+  const usage = $derived.by(() => {
+    app.version;
+    return app.settingsOpen && app.vault ? featureUsage(app.vault.index) : undefined;
+  });
+  const usedBy = (f: Feature) => usage?.[f as UsedFeature];
+
+  function openPage(path: string) {
+    close();
+    void app.openText(path);
+  }
 </script>
 
 <svelte:window onkeydown={(e) => e.key === 'Escape' && app.settingsOpen && close()} />
@@ -58,6 +71,19 @@
                   <span class="setting-about">{blocked ? t('settings.needs', name(item.needs!)) : about(item.feature)}</span>
                 </span>
               </label>
+              {@const used = usedBy(item.feature)}
+              {#if used?.length}
+                <details class="setting-usage" class:warn={!app.on(item.feature)}>
+                  <summary>
+                    {app.on(item.feature) ? t('settings.usage.on', countPages(app.lang, used.length)) : t('settings.usage.off', countPages(app.lang, used.length))}
+                  </summary>
+                  <ul>
+                    {#each used as p (p.path)}
+                      <li><button type="button" class="link-btn" onclick={() => openPage(p.path)}>{p.title}</button></li>
+                    {/each}
+                  </ul>
+                </details>
+              {/if}
             {/each}
             {#if g.title === 'settings.group.writing'}
               <label class="setting">

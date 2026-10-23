@@ -3152,3 +3152,22 @@ svg.graph:focus-visible {
   font-size: 0.75rem;
   color: var(--ink-soft);
 }
+.setting-usage {
+  margin: -0.2rem 0 0.4rem 3.05rem;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+.setting-usage summary {
+  cursor: pointer;
+}
+.setting-usage.warn summary {
+  color: var(--broken);
+}
+.setting-usage ul {
+  margin: 0.3rem 0 0;
+  padding-left: 1rem;
+  columns: 2 10rem;
+}
+.setting-usage li {
+  margin: 0.1rem 0;
+}

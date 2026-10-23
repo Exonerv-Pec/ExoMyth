@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.15.0 — 2026-10-24
+
+### Added
+
+- **What switching off affects.** In Settings, maps, years, the timeline and family trees say how many
+  pages of the open world use them, with a list of those pages to open. When a part is off and pages
+  still use it, the note turns red. Pages never change; only what is shown does.
+
 ## 0.14.0 — 2026-10-24
 
 ### Added

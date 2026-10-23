@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 16 releases, latest 0.14.0 (2026-10-24)</summary>
+<summary><b>✅ Done</b> · 17 releases, latest 0.15.0 (2026-10-24)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.15.0** | 2026-10-24 | 🔎 Settings show how many pages use a part before you switch it off |
 | **0.14.0** | 2026-10-24 | 🗾 Areas on maps and map layers |
 | **0.13.0** | 2026-10-23 | ⚙️ Settings: switch off views and tools you don't use; theme and language 💬 |
 | **0.12.0** | 2026-10-23 | 🌳 Family trees from relations (father, mother, spouse…), three generations up and two down |
@@ -110,14 +111,13 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 </details>
 
 <details>
-<summary><b>🧩 Workspace</b> · 3 ideas</summary>
+<summary><b>🧩 Workspace</b> · 2 ideas</summary>
 
 <br>
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
 | 🚧 | Customizable workspace 💬 | M | ✅ Settings to turn off views and tools (0.13.0). Next: arranging panels, your own shortcuts, text size and fonts |
-| ⬜ | What switching off affects | S | Next to each switch in Settings, how many pages of the open world use that part (for example "Interactive maps: 3 pages", "Years: 14 pages"), with a list of those pages to open. Pages themselves never change; this only shows what will no longer be visible |
 | ⬜ | Project folders 💬 | M | A ready set of folders for a new story: brainstorming, outline, drafts, story bible, art, research, notes, playlist |
 
 </details>

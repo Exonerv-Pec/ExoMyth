@@ -131,3 +131,48 @@ describe('settings', () => {
     void target;
   });
 });
+
+import { featureUsage } from '../src/core/usage';
+import { countPages } from '../src/i18n';
+
+describe('what switching off affects', () => {
+  it('finds the pages each part shows something on', async () => {
+    const vault = await Vault.open(new MemoryStorage('usage', DEMO_FILES));
+    const u = featureUsage(vault.index);
+    expect(u.maps.map((p) => p.title)).toEqual(['Silver Coast']);
+    expect(u.family.map((p) => p.title)).toEqual(['Arn Vale', 'Eva Crow', 'Kira Vale', 'Liara Vale', 'Oren Vale', 'Ysolde Vale']);
+    expect(u.timeline.length).toBe(14);
+    expect(u.years.length).toBe(15); // the map's pins have years too
+    expect(u.years.map((p) => p.title)).toContain('Silver Coast');
+  });
+
+  it('says it in both languages', () => {
+    expect(countPages('en', 1)).toBe('1 page');
+    expect(countPages('en', 3)).toBe('3 pages');
+    expect(countPages('ru', 1)).toBe('1 странице');
+    expect(countPages('ru', 21)).toBe('21 странице');
+    expect(countPages('ru', 11)).toBe('11 страницах');
+    expect(countPages('ru', 5)).toBe('5 страницах');
+  });
+
+  it('shows the count under each switch, with a list of pages to open', async () => {
+    await boot();
+    app.settingsOpen = true;
+    flushSync();
+    const usage = (label: string) =>
+      [...document.querySelectorAll<HTMLLabelElement>('.settings .setting')]
+        .find((l) => l.querySelector('.setting-name')!.textContent === label)!
+        .nextElementSibling as HTMLDetailsElement | null;
+    expect(usage('Interactive maps')!.querySelector('summary')!.textContent).toContain('Used on 1 page');
+    expect(usage('Family trees')!.textContent).toContain('6 pages');
+    expect(usage('Word count')?.classList.contains('setting-usage')).toBeFalsy();
+    toggle('Interactive maps');
+    expect(usage('Interactive maps')!.classList.contains('warn')).toBe(true);
+    expect(usage('Interactive maps')!.querySelector('summary')!.textContent).toContain('Off, while 1 page');
+    usage('Interactive maps')!.querySelector<HTMLButtonElement>('li button')!.click();
+    await wait();
+    flushSync();
+    expect(app.settingsOpen).toBe(false);
+    expect(app.current).toBe('Maps/Silver Coast.md');
+  });
+});

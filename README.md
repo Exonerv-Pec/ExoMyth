@@ -233,7 +233,8 @@ keep working; links written with a folder path are updated.
 The gear at the bottom of the sidebar (or **Ctrl+,**) opens the settings. Turn off what you do not
 use and the app gets simpler: the Graph, Cards and Timeline views, family trees, interactive maps,
 years, the relations panel, previews on hover, the word count, quick notes, focus mode and spell
-check. Theme and language are there too. Everything is on to begin with; settings are kept in the
+check. Theme and language are there too. Under a switch, Settings say how many pages of the open
+world use that part (maps, years, family trees) and list them, so you know what would be hidden. Everything is on to begin with; settings are kept in the
 browser, never in your worlds, and "Turn everything back on" restores them in one click.
 
 ## Keyboard shortcuts

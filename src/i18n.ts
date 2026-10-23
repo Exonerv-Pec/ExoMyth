@@ -47,6 +47,8 @@ const ru = {
   'mode.graph': 'Граф',
   'mode.cards': 'Карточки',
   'mode.timeline': 'Хроника',
+  'settings.usage.on': 'Используется на {0} этого мира. Если выключить, там это пропадёт из вида (сами страницы не изменятся).',
+  'settings.usage.off': 'Выключено, а в этом мире это есть на {0}: там это сейчас не видно.',
   'map.layers': 'Слои',
   'map.layer': 'Слой',
   'map.layer.none': 'без слоя — видно всегда',
@@ -373,6 +375,8 @@ const en: Record<Key, string> = {
   'mode.graph': 'Graph',
   'mode.cards': 'Cards',
   'mode.timeline': 'Timeline',
+  'settings.usage.on': 'Used on {0} of this world. Switching it off hides it there (the pages themselves do not change).',
+  'settings.usage.off': 'Off, while {0} of this world use it: it is hidden there now.',
   'map.layers': 'Layers',
   'map.layer': 'Layer',
   'map.layer.none': 'no layer — always shown',
@@ -656,6 +660,12 @@ export function translate(lang: Lang, key: Key, ...args: (string | number)[]): s
   let s = dictionaries[lang][key] ?? key;
   args.forEach((a, i) => (s = s.replaceAll(`{${i}}`, String(a))));
   return s;
+}
+
+/** "1 page", "3 pages"; for Russian the form after «на»: "1 странице", "3 страницах". */
+export function countPages(lang: Lang, n: number): string {
+  if (lang === 'en') return `${n} ${n === 1 ? 'page' : 'pages'}`;
+  return `${n} ${n % 10 === 1 && n % 100 !== 11 ? 'странице' : 'страницах'}`;
 }
 
 /** "1 word", "312 words"; "1 слово", "2 слова", "5 слов". */
