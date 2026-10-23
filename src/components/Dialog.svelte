@@ -3,7 +3,7 @@
 
   const t = app.t;
   let value = $state('');
-  let input = $state<HTMLInputElement>();
+  let input = $state<HTMLInputElement | HTMLTextAreaElement>();
   let confirmBtn = $state<HTMLButtonElement>();
   let lastDialog: unknown = null;
 
@@ -42,6 +42,11 @@
   function keydown(e: KeyboardEvent) {
     if (e.key === 'Escape') close();
   }
+
+  /** In a text area Enter starts a new line; Ctrl+Enter (or Cmd+Enter) confirms. */
+  function areaKey(e: KeyboardEvent) {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) void submit(e);
+  }
 </script>
 
 {#if app.dialog}
@@ -54,8 +59,13 @@
       {#if d.kind === 'prompt'}
         <label>
           {d.label}
-          <input type="text" bind:this={input} bind:value />
+          {#if d.multiline}
+            <textarea rows="5" bind:this={input} bind:value onkeydown={areaKey}></textarea>
+          {:else}
+            <input type="text" bind:this={input} bind:value />
+          {/if}
         </label>
+        {#if d.hint}<p class="dialog-hint">{d.hint}</p>{/if}
       {:else}
         <p>{d.message}</p>
       {/if}

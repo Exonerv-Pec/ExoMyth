@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 9 releases, latest 0.7.0 (2026-10-23)</summary>
+<summary><b>✅ Done</b> · 10 releases, latest 0.8.0 (2026-10-23)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.8.0** | 2026-10-23 | 📦 Download and open worlds as .zip; 💡 quick notes inbox (Alt+I) 💬; 🔢 word count 💬 |
 | **0.7.0** | 2026-10-23 | 🕰️ Timeline; years of pages; one "Show by year" for the graph, cards, maps and timeline |
 | **0.6.1** | 2026-10-23 | 🔒 Shared worlds can't imitate the app; safer publishing workflow |
 | **0.6.0** | 2026-10-23 | 🗺️ Interactive maps with pins and years |
@@ -33,24 +34,21 @@ Click a section to open it.
 | **0.1.0** | 2026-10-22 | 📝 Pages, `[[links]]`, typed relations in a stable panel, search, tags, safe rename |
 
 💬 Tester ideas that are already in: a web version, a story bible / wiki, fast search across the
-world, a timeline, art and music in pages, and separate worlds for separate stories.
+world, a timeline, art and music in pages, separate worlds for separate stories, an ideas inbox and
+a word count.
 
 Every change in detail: [CHANGELOG.md](CHANGELOG.md).
 
 </details>
 
 <details open>
-<summary><b>🔜 Next: small and useful</b> · 9 ideas</summary>
+<summary><b>🔜 Next: small and useful</b> · 5 ideas</summary>
 
 <br>
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
-| ⬜ | Download a world as a .zip (and open one) | S | Backups, moving to another computer, sharing a world |
-| ⬜ | Ask the browser to keep the world's storage | S | So the browser does not clear worlds when space runs low |
 | ⬜ | Move a page to another folder | S | Today only renaming is possible |
-| ⬜ | Quick ideas inbox 💬 | S | A button that adds a dated note to an `Inbox` page, to sort out later |
-| ⬜ | Word count 💬 | S | For the page and the world, in the status bar; a first step towards writing stats |
 | ⬜ | Spell check in the editor 💬 | S | The browser's own offline spell checker; the language follows the app |
 | ⬜ | Focus mode | S | Hide the panels and centre the text, for writing without distractions |
 | ⬜ | Quick look-up from anywhere 💬 | S | Search as an overlay in any view, with the preview card, to check lore without leaving the page |

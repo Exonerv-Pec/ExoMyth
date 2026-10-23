@@ -22,6 +22,10 @@
       e.preventDefault();
       app.sidebarOpen = true;
       queueMicrotask(() => searchInput?.focus());
+    } else if (e.altKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyI' && app.vault && !app.dialog) {
+      // Alt+I: catch an idea from anywhere, without leaving the page.
+      e.preventDefault();
+      app.askIdea();
     }
   }
 

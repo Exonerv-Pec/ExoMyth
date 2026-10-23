@@ -72,6 +72,12 @@
   <Resizer edge="sidebar-edge" value={app.sidebarW} onresize={(w) => app.setSidebarW(w)} label={t('side.files')} />
   <div class="side-head">
     <span class="world" title={app.vault?.storage.label}>{app.vault?.storage.label}</span>
+    <button class="icon-btn" title="{t('inbox.title')} (Alt+I)" aria-label={t('inbox.title')} onclick={() => app.askIdea()}>
+      <Icon name="bulb" />
+    </button>
+    <button class="icon-btn" title={t('zip.download')} aria-label={t('zip.download')} onclick={() => app.downloadWorld()}>
+      <Icon name="download" />
+    </button>
     <button class="icon-btn" title={t('side.newPage')} aria-label={t('side.newPage')} onclick={() => app.askNewPage()}>
       <Icon name="plus" />
     </button>

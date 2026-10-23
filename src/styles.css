@@ -99,7 +99,8 @@ body.resizing {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
   color: inherit;
 }
@@ -184,7 +185,8 @@ button {
 }
 
 input[type='text'],
-input[type='search'] {
+input[type='search'],
+textarea {
   width: 100%;
   background: var(--surface);
   border: 1px solid var(--line-strong);
@@ -192,7 +194,8 @@ input[type='search'] {
   padding: 0.45rem 0.6rem;
 }
 input[type='text']:focus,
-input[type='search']:focus {
+input[type='search']:focus,
+textarea:focus {
   outline: 2px solid var(--accent);
   outline-offset: 0;
   border-color: var(--accent);
@@ -358,7 +361,7 @@ input[type='search']:focus {
 }
 .topbar .crumb {
   flex: 1;
-  min-width: 0;
+  min-width: 6rem;
   display: flex;
   flex-direction: column;
   line-height: 1.2;
@@ -2542,6 +2545,44 @@ svg.graph:focus-visible {
 @media (max-width: 640px) {
   .tl-years,
   .tl-help {
+    display: none;
+  }
+}
+
+/* ======================================================= writing tools (v0.8) */
+
+.dialog textarea {
+  resize: vertical;
+  min-height: 7rem;
+  line-height: 1.5;
+}
+.dialog-hint {
+  margin: -0.4rem 0 0;
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+}
+/* Save state and word count, stacked so the page name keeps its room. */
+.page-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.25;
+}
+.page-meta .status {
+  min-width: 0;
+  font-size: 0.78rem;
+}
+.words {
+  color: var(--ink-faint);
+  font-size: 0.78rem;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.welcome .file-btn {
+  position: relative;
+}
+@media (max-width: 640px) {
+  .words {
     display: none;
   }
 }

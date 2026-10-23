@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { app } from '../app.svelte';
+  import { app, readBytes } from '../app.svelte';
+  import { readWorldZip, uniqueName, worldNameFromZip, ZipTooLargeError } from '../core/archive';
   import { Vault } from '../core/vault';
   import {
     BrowserStorage,
@@ -148,6 +149,40 @@
     }
   }
 
+  let zipInput = $state<HTMLInputElement>();
+
+  /** Opens a world saved as a .zip: it becomes a new world in this browser. */
+  async function openZip(file: File) {
+    error = '';
+    busy = true;
+    let parsed: ReturnType<typeof readWorldZip>;
+    try {
+      parsed = readWorldZip(await readBytes(file));
+    } catch (e) {
+      error = e instanceof ZipTooLargeError ? t('zip.tooLarge') : t('zip.bad', e instanceof Error ? e.message : String(e));
+      busy = false;
+      return;
+    }
+    if (![...parsed.files.keys()].some((p) => p.toLowerCase().endsWith('.md'))) {
+      error = t('zip.empty');
+      busy = false;
+      return;
+    }
+    try {
+      const taken = await listBrowserVaults().catch(() => browserWorlds);
+      const name = uniqueName(sanitizePageName(worldNameFromZip(file.name)) || 'World', taken);
+      const storage = await browserStorage(name);
+      for (const [path, data] of parsed.files) await storage.writeBytes(path, data);
+      app.setVault(await Vault.open(storage));
+      app.notify(
+        t('zip.opened', name, parsed.files.size) + (parsed.skipped ? `. ${t('zip.skipped', parsed.skipped)}` : ''),
+        parsed.skipped > 0,
+      );
+    } catch (e) {
+      fail(e);
+    }
+  }
+
   async function forget(f: SavedFolder) {
     await forgetFolder(f.id);
     await loadLists();
@@ -205,6 +240,23 @@
           {/each}
         </ul>
       {/if}
+    </section>
+
+    <section>
+      <button class="btn" onclick={() => zipInput?.click()} disabled={busy}>{t('zip.open')}</button>
+      <input
+        bind:this={zipInput}
+        type="file"
+        accept=".zip,application/zip"
+        hidden
+        onchange={(e) => {
+          const input = e.currentTarget;
+          const file = input.files?.[0];
+          input.value = '';
+          if (file) void openZip(file);
+        }}
+      />
+      <p class="hint">{t('zip.open.hint')}</p>
     </section>
 
     <section>

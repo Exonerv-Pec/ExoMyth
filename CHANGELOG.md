@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.8.0 — 2026-10-23
+
+### Added
+
+- **Download a world as a .zip**: the arrow button at the top of the sidebar saves every file of the
+  world (pages, settings, pictures, sounds) in one .zip, inside a folder named after the world.
+- **Open a world from a .zip** on the start screen: the world is added to the browser as a new one.
+  Unsafe paths in an archive (absolute paths, `..`, system leftovers) are skipped, and archives over
+  20,000 files or 1 GB are refused.
+- **Quick notes**: Alt+I (or the light bulb in the sidebar) opens a note box from anywhere; the note is
+  added with the date and time to an Inbox page, created the first time.
+- **Word count** of the open page in the top bar, and of the whole world on hover. Links count as their
+  shown text; the header, files and web addresses do not count. Works for any language.
+- Exomyth asks the browser to keep the worlds it stores, so they are not cleared when space runs low
+  (the browser decides).
+
+### Changed
+
+- The reading view no longer repeats a page's title when its text starts with the same heading.
+
 ## 0.7.0 — 2026-10-23
 
 ### Added

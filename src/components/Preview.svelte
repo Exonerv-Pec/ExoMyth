@@ -20,9 +20,15 @@
     return app.vault?.getPage(path);
   });
 
+  /** The page's own first heading is not repeated when it only says the page title again. */
+  function withoutTitleHeading(body: string, title: string): string {
+    const m = /^\s*#[ \t]+(.+?)[ \t]*#*[ \t]*(\r?\n|$)/.exec(body);
+    return m && m[1]!.trim().toLocaleLowerCase() === title.trim().toLocaleLowerCase() ? body.slice(m[0].length) : body;
+  }
+
   const html = $derived.by(() => {
     app.version;
-    return page && app.vault ? renderMarkdown(page.body, app.vault.index) : '';
+    return page && app.vault ? renderMarkdown(withoutTitleHeading(page.body, page.title), app.vault.index) : '';
   });
 
   /** Facts for the infobox: every non-structural field with a simple value. */

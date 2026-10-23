@@ -3,9 +3,10 @@
 A private, offline-first wiki for writers and world builders. Your world is a folder of plain
 Markdown files on your own device. No account, no server, no tracking.
 
-> **Status: early alpha (v0.7).** Pages, typed relations, a stable relations panel, a relations
+> **Status: early alpha (v0.8).** Pages, typed relations, a stable relations panel, a relations
 > graph with a stable layout, cards, a timeline, interactive maps with pins, moving through the
-> years, images, video and audio, page previews on hover, search, tags, rename with link updates.
+> years, images, video and audio, word count, quick notes, .zip backups, page previews on hover,
+> search, tags, rename with link updates.
 > [Русская версия](README.ru.md)
 
 ## Principles
@@ -175,6 +176,24 @@ Only whole years count (`412`, `412 AE`, `-50`). Click a row to select the page,
 the slider. The chosen year is shared by the whole world: the timeline draws a line at it, the graph
 and cards fade the pages that did not exist yet (or any more), and maps hide their pins. A map pin
 without years of its own follows the years of its page. Pages without years are always shown.
+
+## Writing helpers
+
+- **Word count.** The top bar shows how many words the open page has; hover it for the whole world.
+  Only the text a reader sees counts: links count as their shown text, the header and files do not.
+- **Quick notes.** Press **Alt+I** anywhere (or the light bulb at the top of the sidebar) to write
+  down an idea without leaving the page. It is added with the date and time to an **Inbox** page,
+  which is created the first time.
+
+## Backups: a world as a .zip
+
+The arrow button at the top of the sidebar downloads the whole world (pages, settings, pictures,
+sounds) as one .zip file. Inside is a normal world folder, so it can be unpacked and opened as a
+folder, or opened again with **Open a world from a .zip** on the start screen, which adds it as a
+new world in the browser. Nothing is uploaded anywhere; the file is made on your device.
+
+Worlds kept in the browser can be cleared by the browser when the disk is nearly full. Exomyth asks
+the browser to keep them, but a .zip now and then is the safe way to back up.
 
 ## Images, video and audio
 

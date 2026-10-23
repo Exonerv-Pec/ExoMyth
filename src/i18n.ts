@@ -47,6 +47,23 @@ const ru = {
   'mode.graph': 'Граф',
   'mode.cards': 'Карточки',
   'mode.timeline': 'Хроника',
+  'words.world': 'Во всём мире: {0}',
+  'zip.download': 'Скачать мир (.zip)',
+  'zip.saved': 'Мир сохранён в .zip (файлов: {0})',
+  'zip.open': 'Открыть мир из .zip',
+  'zip.open.hint': 'Например, копию, скачанную кнопкой «Скачать мир». Мир откроется в этом браузере как новый; сам файл не меняется.',
+  'zip.opened': 'Мир «{0}» открыт из .zip (файлов: {1})',
+  'zip.skipped': 'Пропущено небезопасных путей в архиве: {0}',
+  'zip.empty': 'В этом .zip нет страниц (.md-файлов).',
+  'zip.tooLarge': 'Этот .zip слишком большой: больше 20 000 файлов или 1 ГБ.',
+  'zip.bad': 'Не удалось прочитать .zip: {0}',
+  'inbox.title': 'Быстрая заметка',
+  'inbox.label': 'Идея, мысль, кусочек диалога…',
+  'inbox.hint': 'Сохранится с датой на странице «{0}». Ctrl+Enter — сохранить.',
+  'inbox.save': 'Сохранить',
+  'inbox.page': 'Идеи',
+  'inbox.intro': 'Быстрые заметки: кнопка с лампочкой или Alt+I. Разберите их, когда будет время.',
+  'inbox.saved': 'Записано на страницу «{0}»',
   'timeline.title': 'Хроника мира',
   'timeline.fit': 'Все годы',
   'timeline.pages': 'Страницы',
@@ -231,6 +248,23 @@ const en: Record<Key, string> = {
   'mode.graph': 'Graph',
   'mode.cards': 'Cards',
   'mode.timeline': 'Timeline',
+  'words.world': 'In the whole world: {0}',
+  'zip.download': 'Download the world (.zip)',
+  'zip.saved': 'World saved as a .zip ({0} files)',
+  'zip.open': 'Open a world from a .zip',
+  'zip.open.hint': 'For example a copy saved with "Download the world". It opens in this browser as a new world; the file itself is not changed.',
+  'zip.opened': 'World “{0}” opened from the .zip ({1} files)',
+  'zip.skipped': 'Unsafe paths skipped in the archive: {0}',
+  'zip.empty': 'This .zip has no pages (.md files) in it.',
+  'zip.tooLarge': 'This .zip is too large: more than 20,000 files or 1 GB.',
+  'zip.bad': 'Could not read the .zip: {0}',
+  'inbox.title': 'Quick note',
+  'inbox.label': 'An idea, a thought, a line of dialogue…',
+  'inbox.hint': 'Saved with the date on the “{0}” page. Ctrl+Enter saves.',
+  'inbox.save': 'Save',
+  'inbox.page': 'Inbox',
+  'inbox.intro': 'Quick notes: the light bulb button or Alt+I. Sort them out when you have time.',
+  'inbox.saved': 'Added to “{0}”',
   'timeline.title': 'Timeline of the world',
   'timeline.fit': 'All years',
   'timeline.pages': 'Pages',
@@ -372,6 +406,16 @@ export function translate(lang: Lang, key: Key, ...args: (string | number)[]): s
   let s = dictionaries[lang][key] ?? key;
   args.forEach((a, i) => (s = s.replaceAll(`{${i}}`, String(a))));
   return s;
+}
+
+/** "1 word", "312 words"; "1 слово", "2 слова", "5 слов". */
+export function countWords(lang: Lang, n: number): string {
+  const num = n.toLocaleString(lang === 'ru' ? 'ru-RU' : 'en-US');
+  if (lang === 'en') return `${num} ${n === 1 ? 'word' : 'words'}`;
+  const d10 = n % 10;
+  const d100 = n % 100;
+  const form = d10 === 1 && d100 !== 11 ? 'слово' : d10 >= 2 && d10 <= 4 && (d100 < 12 || d100 > 14) ? 'слова' : 'слов';
+  return `${num} ${form}`;
 }
 
 export function detectLang(): Lang {

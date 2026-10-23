@@ -11,7 +11,9 @@
     | 'theme'
     | 'relations'
     | 'swap'
-    | 'image';
+    | 'image'
+    | 'download'
+    | 'bulb';
 
   let { name }: { name: Name } = $props();
 </script>
@@ -55,6 +57,10 @@
     <path d="M8 6.4l8 2M7 8l1.6 8M17 11l-6.5 6" />
   {:else if name === 'swap'}
     <path d="M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7" />
+  {:else if name === 'download'}
+    <path d="M12 4v11M7 10.5l5 5 5-5M5 19.5h14" />
+  {:else if name === 'bulb'}
+    <path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3z" />
   {:else if name === 'image'}
     <rect x="3.5" y="5" width="17" height="14" rx="2" />
     <circle cx="9" cy="10" r="1.6" />

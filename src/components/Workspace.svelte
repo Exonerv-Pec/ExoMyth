@@ -9,6 +9,9 @@
   import TimelineView from './TimelineView.svelte';
   import Icon from './Icon.svelte';
   import { MEDIA_ACCEPT } from '../core/media';
+  import { wordCount } from '../core/writing';
+  import { countWords } from '../i18n';
+  import type { Page } from '../core/types';
 
   const t = app.t;
 
@@ -24,6 +27,14 @@
   const inGraph = $derived(WORLD_MODES.includes(app.mode));
   const worldTitle = $derived(app.mode === 'cards' ? t('mode.cards') : app.mode === 'timeline' ? t('timeline.title') : t('graph.title'));
   let mediaInput = $state<HTMLInputElement>();
+  // A page object is replaced whenever the page changes, so its count can be remembered until then.
+  const counted = new WeakMap<Page, number>();
+  const wordsOf = (p: Page) => counted.get(p) ?? counted.set(p, wordCount(p.body)).get(p)!;
+  const pageWords = $derived(page ? wordsOf(page) : 0);
+  const worldWords = $derived.by(() => {
+    app.version;
+    return page ? (app.vault?.pages ?? []).reduce((n, p) => n + wordsOf(p), 0) : 0;
+  });
 </script>
 
 <div class="workspace" style:--sidebar-w="{app.sidebarW}px" style:--panel-w="{app.panelW}px">
@@ -65,7 +76,10 @@
         />
       {/if}
       {#if page && !inGraph}
-        <span class="status" class:error={app.saveStatus === 'error'} role="status">{statusText}</span>
+        <span class="page-meta">
+          <span class="status" class:error={app.saveStatus === 'error'} role="status">{statusText}</span>
+          <span class="words" title={t('words.world', countWords(app.lang, worldWords))}>{countWords(app.lang, pageWords)}</span>
+        </span>
       {/if}
       {#if page || inGraph}
         <div class="seg" role="group" aria-label="{t('mode.edit')} / {t('mode.preview')} / {t('mode.graph')}">

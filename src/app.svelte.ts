@@ -5,6 +5,8 @@ import { emptyLayout, type StoredLayout } from './core/layout';
 import { mediaKind } from './core/media';
 import { addPin, changePin, removePin, type PinData } from './core/maps';
 import { existsIn, pageYears, setYearsInText, worldYearSpan } from './core/years';
+import { worldToZip, zipFolderName } from './core/archive';
+import { appendIdea } from './core/writing';
 import { detectLang, translate, type Key, type Lang } from './i18n';
 
 export type ViewMode = 'edit' | 'split' | 'preview' | 'graph' | 'cards' | 'timeline';
@@ -37,6 +39,10 @@ export type DialogState =
       label: string;
       value: string;
       confirmLabel: string;
+      /** A text area (Ctrl+Enter confirms) instead of a one-line field. */
+      multiline?: boolean;
+      /** A short note under the field. */
+      hint?: string;
       onSubmit: (value: string) => void | Promise<void>;
     }
   | {
@@ -67,7 +73,7 @@ function loadNumber(key: string, fallback: number): number {
 }
 
 /** File contents as bytes (FileReader fallback for environments without Blob.arrayBuffer). */
-function readBytes(file: Blob): Promise<Uint8Array> {
+export function readBytes(file: Blob): Promise<Uint8Array> {
   if (typeof file.arrayBuffer === 'function') return file.arrayBuffer().then((b) => new Uint8Array(b));
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -222,6 +228,7 @@ class App {
       this.collapsed = {};
     }
     this.layout = null;
+    if (vault.storage.kind === 'browser') void this.keepStorage();
     this.byYear = read(this.prefKey('byYear')) === '1';
     const y = Number(read(this.prefKey('year')));
     this.year = Number.isFinite(y) ? Math.trunc(y) : 0;
@@ -254,6 +261,75 @@ class App {
   }
   setWorldPref(name: string, value: string): void {
     save(this.prefKey(name), value);
+  }
+
+  /* ------------------------------------------------------- the world as a file */
+
+  /**
+   * Asks the browser not to clear its stored worlds when the disk runs low. Browsers decide
+   * themselves (some grant it at once, some only for installed or often-used sites).
+   */
+  private async keepStorage(): Promise<void> {
+    try {
+      if (navigator.storage?.persist && !(await navigator.storage.persisted?.())) await navigator.storage.persist();
+    } catch {
+      /* Not supported: nothing to do. */
+    }
+  }
+
+  /** Saves the whole open world as a .zip file to the device's downloads. */
+  async downloadWorld(): Promise<void> {
+    const vault = this.vault;
+    if (!vault) return;
+    try {
+      await this.flush();
+      const { data, files } = await worldToZip(vault.storage);
+      const url = URL.createObjectURL(new Blob([data as BlobPart], { type: 'application/zip' }));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${zipFolderName(vault.storage.label)}.zip`;
+      document.body.append(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 10_000);
+      this.notify(this.t('zip.saved', files));
+    } catch (e) {
+      this.fail(e);
+    }
+  }
+
+  /* ------------------------------------------------------------- ideas inbox */
+
+  askIdea(): void {
+    if (!this.vault) return;
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('inbox.title'),
+      label: this.t('inbox.label'),
+      value: '',
+      multiline: true,
+      hint: this.t('inbox.hint', this.t('inbox.page')),
+      confirmLabel: this.t('inbox.save'),
+      onSubmit: (v) => void this.addIdea(v),
+    };
+  }
+
+  /** Adds a dated idea to the world's inbox page, creating the page the first time. */
+  async addIdea(text: string): Promise<string | undefined> {
+    const vault = this.vault;
+    if (!vault || !text.trim()) return undefined;
+    try {
+      await this.flush();
+      const name = this.t('inbox.page');
+      let page = vault.index.resolve(name) ?? vault.index.resolve('Inbox') ?? vault.index.resolve('Идеи');
+      page ??= await vault.createPage(name, '', `# ${name}\n\n${this.t('inbox.intro')}\n`);
+      await vault.editText(page.path, (t) => appendIdea(t, text, new Date()));
+      this.notify(this.t('inbox.saved', page.title));
+      return page.path;
+    } catch (e) {
+      this.fail(e);
+      return undefined;
+    }
   }
 
   /* ------------------------------------------------------------------- years */
