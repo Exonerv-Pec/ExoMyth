@@ -103,7 +103,7 @@
         <p class="notice" role="alert">{t('page.parseError', page.parseError)}</p>
       {/if}
       {#if mapOf(page)}
-        <MapView {path} />
+        {#if app.on('maps')}<MapView {path} />{/if}
       {/if}
       {#if facts.length > 0 || pageImage(page)}
         <aside class="infobox">

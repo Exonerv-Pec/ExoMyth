@@ -15,6 +15,36 @@ export type TextMode = Exclude<ViewMode, 'graph' | 'cards' | 'timeline'>;
 /** Views of the whole world rather than of one page's text. */
 export const WORLD_MODES: readonly ViewMode[] = ['graph', 'cards', 'timeline'];
 
+/**
+ * Parts of the app that can be turned off in the settings, for people who do not use them.
+ * Everything is on unless switched off; the choice is kept in this browser.
+ */
+export const FEATURES = [
+  'graph',
+  'cards',
+  'timeline',
+  'family',
+  'maps',
+  'years',
+  'relationsPanel',
+  'hoverPreviews',
+  'wordCount',
+  'quickNotes',
+  'focusMode',
+] as const;
+export type Feature = (typeof FEATURES)[number];
+
+function loadFeatures(): Record<Feature, boolean> {
+  const out = Object.fromEntries(FEATURES.map((f) => [f, true])) as Record<Feature, boolean>;
+  try {
+    const saved = JSON.parse(localStorage.getItem('exomyth:features') ?? '{}') as Record<string, unknown>;
+    for (const f of FEATURES) if (saved[f] === false) out[f] = false;
+  } catch {
+    /* Nothing saved, or storage is blocked: everything stays on. */
+  }
+  return out;
+}
+
 export interface HoverRect {
   left: number;
   top: number;
@@ -120,7 +150,11 @@ class App {
   version = $state(0);
   current = $state<string | null>(null);
   pendingHeading = $state<string | null>(null);
-  mode = $state<ViewMode>(load('exomyth:mode', ['edit', 'split', 'preview', 'graph', 'cards', 'timeline'], 'split'));
+  mode = $state<ViewMode>(
+    ((m: ViewMode): ViewMode => (loadFeatures()[m as Feature] === false ? 'split' : m))(
+      load<ViewMode>('exomyth:mode', ['edit', 'split', 'preview', 'graph', 'cards', 'timeline'], 'split'),
+    ),
+  );
   /** The text mode to return to from the graph. */
   textMode = $state<TextMode>(load('exomyth:textMode', ['edit', 'split', 'preview'], 'split'));
   theme = $state<Theme>(load('exomyth:theme', ['auto', 'light', 'dark'], 'auto'));
@@ -137,6 +171,10 @@ class App {
   hover = $state<HoverState | null>(null);
   /** The list of keyboard shortcuts is open. */
   shortcutsOpen = $state(false);
+  /** The settings window is open. */
+  settingsOpen = $state(false);
+  /** Which parts of the app are switched on. */
+  features = $state<Record<Feature, boolean>>(loadFeatures());
   /** Focus mode: only the text being written is shown. */
   focus = $state(false);
   /** The browser's spell checker underlines words in the editor. */
@@ -163,7 +201,7 @@ class App {
   /** Pages that do not exist in the chosen year (null when not showing by year). */
   outOfTime = $derived.by(() => {
     this.version;
-    if (!this.byYear || !this.vault) return null;
+    if (!this.byYear || !this.vault || !this.on('years')) return null;
     const out = new Set<string>();
     for (const p of this.vault.pages) if (!existsIn(pageYears(p), this.year)) out.add(p.path);
     return out;
@@ -190,6 +228,10 @@ class App {
   toggleLang(): void {
     this.setLang(this.lang === 'ru' ? 'en' : 'ru');
   }
+  setTheme(theme: Theme): void {
+    this.theme = theme;
+    save('exomyth:theme', theme);
+  }
   cycleTheme(): void {
     this.theme = this.theme === 'auto' ? 'light' : this.theme === 'light' ? 'dark' : 'auto';
     save('exomyth:theme', this.theme);
@@ -202,6 +244,39 @@ class App {
       this.textMode = mode as TextMode;
       save('exomyth:textMode', mode);
     }
+  }
+
+  /** Whether a part of the app is switched on. */
+  on(feature: Feature): boolean {
+    return this.features[feature] !== false;
+  }
+
+  /** Whether a view can be chosen (the world views can be switched off). */
+  modeOn(mode: ViewMode): boolean {
+    return mode === 'graph' ? this.on('graph') : mode === 'cards' ? this.on('cards') : mode === 'timeline' ? this.on('timeline') : true;
+  }
+
+  setFeature(feature: Feature, on: boolean): void {
+    this.features = { ...this.features, [feature]: on };
+    const off = Object.fromEntries(FEATURES.filter((f) => !this.features[f]).map((f) => [f, false]));
+    save('exomyth:features', JSON.stringify(off));
+    this.applyFeatures();
+  }
+
+  /** Back to everything switched on. */
+  resetFeatures(): void {
+    this.features = Object.fromEntries(FEATURES.map((f) => [f, true])) as Record<Feature, boolean>;
+    save('exomyth:features', '{}');
+  }
+
+  /** Leaves whatever was just switched off. */
+  private applyFeatures(): void {
+    if (!this.modeOn(this.mode)) this.setMode(this.textMode);
+    if (!this.on('years') && this.byYear) this.byYear = false;
+    if (!this.on('focusMode') && this.focus) this.setFocus(false);
+    if (!this.on('relationsPanel')) this.panelOpen = false;
+    if (!this.on('family')) this.cardsTab = 'dossier';
+    if (!this.on('hoverPreviews')) this.hoverClose();
   }
 
   /** Turns focus mode on or off. It shows the editor alone; leaving it restores the view from before. */
@@ -449,6 +524,7 @@ class App {
     anchor: () => HoverRect | undefined,
     placement: 'anchor' | 'corner' = 'anchor',
   ): void {
+    if (!this.on('hoverPreviews')) return;
     clearTimeout(this.hideTimer);
     clearTimeout(this.showTimer);
     const delay = this.hover ? 140 : 420;

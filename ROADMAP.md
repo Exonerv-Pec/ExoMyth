@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 14 releases, latest 0.12.0 (2026-10-23)</summary>
+<summary><b>✅ Done</b> · 15 releases, latest 0.13.0 (2026-10-23)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.13.0** | 2026-10-23 | ⚙️ Settings: switch off views and tools you don't use; theme and language 💬 |
 | **0.12.0** | 2026-10-23 | 🌳 Family trees from relations (father, mother, spouse…), three generations up and two down |
 | **0.11.0** | 2026-10-23 | 🧩 Page templates: Character, Place, Organization, Event, Scene, and your own 💬 |
 | **0.10.0** | 2026-10-23 | 🎯 Focus mode; 📁 move pages between folders (drag and drop); 🔤 spell check switch 💬 |
@@ -100,7 +101,7 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
-| ⬜ | Install as an app (PWA), fully offline | M | Works without a connection after the first visit; can be installed on phones |
+| ⬜ | Install as an app (PWA), fully offline | M | Works without a connection after the first visit; can be installed on phones. Planned together with the first stable release |
 | ⬜ | Mobile version 💬 | M–L | A layout made for phones first, installable from the browser; later perhaps a store app |
 | ⬜ | Desktop app (Tauri) 💬 | L | Windows, macOS, Linux; no browser limits on folders |
 | ⬜ | Sync between devices 💬 | L | Without a server of our own: through a folder the user already syncs (Syncthing, iCloud Drive, Dropbox, Git) |
@@ -115,7 +116,7 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
-| ⬜ | Customizable workspace 💬 | M | A settings page to turn off what you don't use: views (Graph, Cards, Timeline), maps, years, word count, the relations panel, quick notes. Then arranging panels and your own shortcuts. Easy to change, never required; everything stays on by default |
+| 🚧 | Customizable workspace 💬 | M | ✅ Settings to turn off views and tools (0.13.0). Next: arranging panels, your own shortcuts, text size and fonts |
 | ⬜ | Project folders 💬 | M | A ready set of folders for a new story: brainstorming, outline, drafts, story bible, art, research, notes, playlist |
 
 </details>

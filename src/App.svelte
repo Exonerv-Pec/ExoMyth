@@ -6,6 +6,7 @@
   import Dialog from './components/Dialog.svelte';
   import HoverPreview from './components/HoverPreview.svelte';
   import Shortcuts from './components/Shortcuts.svelte';
+  import Settings from './components/Settings.svelte';
 
   let searchInput = $state<HTMLInputElement>();
 
@@ -31,7 +32,14 @@
       e.preventDefault();
       e.stopPropagation();
       app.shortcutsOpen = !app.shortcutsOpen;
-    } else if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.code === 'Period' || e.key === '.') && app.vault && !app.dialog) {
+    } else if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.code === 'Comma' || e.key === ',')) {
+      // Ctrl+, : settings.
+      if (app.dialog) return;
+      e.preventDefault();
+      e.stopPropagation();
+      app.shortcutsOpen = false;
+      app.settingsOpen = !app.settingsOpen;
+    } else if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.code === 'Period' || e.key === '.') && app.vault && !app.dialog && app.on('focusMode')) {
       // Ctrl+. : focus mode on and off.
       e.preventDefault();
       e.stopPropagation();
@@ -43,7 +51,7 @@
       app.setFocus(false);
       app.sidebarOpen = true;
       queueMicrotask(() => searchInput?.focus());
-    } else if (e.altKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyI' && app.vault && !app.dialog) {
+    } else if (e.altKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyI' && app.vault && !app.dialog && app.on('quickNotes')) {
       // Alt+I: catch an idea from anywhere, without leaving the page.
       e.preventDefault();
       app.askIdea();
@@ -94,6 +102,7 @@
 <Dialog />
 <HoverPreview />
 <Shortcuts />
+<Settings />
 
 {#if app.toast}
   <div class="toast" class:error={app.toast.error} role="status">{app.toast.text}</div>

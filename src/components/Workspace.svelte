@@ -37,7 +37,7 @@
   });
 </script>
 
-<div class="workspace" class:focus={app.focus} style:--sidebar-w="{app.sidebarW}px" style:--panel-w="{app.panelW}px">
+<div class="workspace" class:focus={app.focus} class:no-panel={!app.on('relationsPanel')} style:--sidebar-w="{app.sidebarW}px" style:--panel-w="{app.panelW}px">
   <Sidebar bind:searchInput />
 
   <main class="center">
@@ -68,9 +68,11 @@
         >
           <Icon name="spell" />
         </button>
-        <button class="icon-btn" title="{t('focus.enter')} (Ctrl+.)" aria-label={t('focus.enter')} onclick={() => app.setFocus(true)}>
-          <Icon name="focus" />
-        </button>
+        {#if app.on('focusMode')}
+          <button class="icon-btn" title="{t('focus.enter')} (Ctrl+.)" aria-label={t('focus.enter')} onclick={() => app.setFocus(true)}>
+            <Icon name="focus" />
+          </button>
+        {/if}
         <button class="icon-btn" title={t('media.insert')} aria-label={t('media.insert')} onclick={() => mediaInput?.click()}>
           <Icon name="image" />
         </button>
@@ -91,28 +93,32 @@
       {#if page && !inGraph}
         <span class="page-meta">
           <span class="status" class:error={app.saveStatus === 'error'} role="status">{statusText}</span>
-          <span class="words" title={t('words.world', countWords(app.lang, worldWords))}>{countWords(app.lang, pageWords)}</span>
+          {#if app.on('wordCount')}
+            <span class="words" title={t('words.world', countWords(app.lang, worldWords))}>{countWords(app.lang, pageWords)}</span>
+          {/if}
         </span>
       {/if}
       {#if page || inGraph}
         <div class="seg" role="group" aria-label="{t('mode.edit')} / {t('mode.preview')} / {t('mode.graph')}">
-          {#each modes as m (m)}
+          {#each modes.filter((m) => app.modeOn(m)) as m (m)}
             <button aria-pressed={app.mode === m} onclick={() => app.setMode(m)} disabled={!WORLD_MODES.includes(m) && !page}>
               {t(`mode.${m}` as 'mode.edit')}
             </button>
           {/each}
         </div>
       {/if}
-      <button class="icon-btn mobile-only" aria-label={t('nav.panel')} title={t('nav.panel')} onclick={() => (app.panelOpen = !app.panelOpen)}>
-        <Icon name="relations" />
-      </button>
+      {#if app.on('relationsPanel')}
+        <button class="icon-btn mobile-only" aria-label={t('nav.panel')} title={t('nav.panel')} onclick={() => (app.panelOpen = !app.panelOpen)}>
+          <Icon name="relations" />
+        </button>
+      {/if}
     </div>
 
-    {#if app.mode === 'graph'}
+    {#if app.mode === 'graph' && app.modeOn('graph')}
       <GraphView />
-    {:else if app.mode === 'cards'}
+    {:else if app.mode === 'cards' && app.modeOn('cards')}
       <CardsView />
-    {:else if app.mode === 'timeline'}
+    {:else if app.mode === 'timeline' && app.modeOn('timeline')}
       <TimelineView />
     {:else if page && app.current}
       <div class="stage" class:split={app.mode === 'split'}>
@@ -136,12 +142,12 @@
     {/if}
   </main>
 
-  <RelationsPanel path={app.current} />
+  {#if app.on('relationsPanel')}<RelationsPanel path={app.current} />{/if}
 
   {#if app.focus}
     <button class="focus-exit btn ghost" onclick={() => app.setFocus(false)} title="{t('focus.exit')} (Esc)">
       <Icon name="focus" /> {t('focus.exit')}
     </button>
-    {#if page}<span class="focus-words" aria-live="polite">{countWords(app.lang, pageWords)}</span>{/if}
+    {#if page && app.on('wordCount')}<span class="focus-words" aria-live="polite">{countWords(app.lang, pageWords)}</span>{/if}
   {/if}
 </div>

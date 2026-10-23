@@ -80,12 +80,12 @@
   <header class="panel-head">
     <div class="panel-title-row">
       <h2 class="panel-title">{t('panel.title')}{#if pageTitle}<span class="panel-page"> · {pageTitle}</span>{/if}</h2>
-      {#if path && inFamily}
+      {#if path && inFamily && app.on('family') && app.on('cards')}
         <button class="icon-btn" title={t('family.show')} aria-label={t('family.show')} onclick={() => path && app.showFamily(path)}>
           <Icon name="tree" />
         </button>
       {/if}
-      {#if path}
+      {#if path && app.on('graph')}
         <button class="icon-btn" title={t('panel.onGraph')} aria-label={t('panel.onGraph')} onclick={() => app.showOnGraph(path)}>
           <Icon name="relations" />
         </button>
@@ -96,7 +96,7 @@
 
   <div class="panel-scroll">
     {#if path}
-      {#key path}<YearsEditor {path} />{/key}
+      {#if app.on('years')}{#key path}<YearsEditor {path} />{/key}{/if}
       {#if !hasAny}
         <p class="rel-empty">{t('panel.empty')}</p>
       {/if}

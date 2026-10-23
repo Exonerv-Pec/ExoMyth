@@ -108,9 +108,11 @@
       ondragleave={() => dropOn === '' && (dropOn = null)}
       ondrop={(e) => drop(e, '')}
     >{app.vault?.storage.label}</span>
-    <button class="icon-btn" title="{t('inbox.title')} (Alt+I)" aria-label={t('inbox.title')} onclick={() => app.askIdea()}>
-      <Icon name="bulb" />
-    </button>
+    {#if app.on('quickNotes')}
+      <button class="icon-btn" title="{t('inbox.title')} (Alt+I)" aria-label={t('inbox.title')} onclick={() => app.askIdea()}>
+        <Icon name="bulb" />
+      </button>
+    {/if}
     <button class="icon-btn" title={t('zip.download')} aria-label={t('zip.download')} onclick={() => app.downloadWorld()}>
       <Icon name="download" />
     </button>
@@ -178,6 +180,9 @@
   <div class="side-foot">
     <button class="btn ghost grow" onclick={() => { void app.flush().then(() => app.closeVault()); }}>
       <Icon name="swap" /> {t('side.changeWorld')}
+    </button>
+    <button class="icon-btn" title="{t('settings.title')} (Ctrl+,)" aria-label={t('settings.title')} onclick={() => (app.settingsOpen = true)}>
+      <Icon name="gear" />
     </button>
     <button class="icon-btn" title="{t('keys.title')} (Ctrl+/)" aria-label={t('keys.title')} onclick={() => (app.shortcutsOpen = true)}>
       <Icon name="keyboard" />

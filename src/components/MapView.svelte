@@ -358,7 +358,7 @@
 {#if model}
   <section class="map-wrap" class:full class:editing aria-label={t('map.label', page?.title ?? '')}>
     <div class="map-tools">
-      {#if app.yearSpan}
+      {#if app.yearSpan && app.on('years')}
         <label class="tool-check"><input type="checkbox" checked={app.byYear} onchange={(e) => app.setByYear(e.currentTarget.checked)} /> {t('map.byYear')}</label>
       {/if}
       <span class="grow"></span>

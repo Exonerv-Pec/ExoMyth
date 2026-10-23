@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.13.0 — 2026-10-23
+
+### Added
+
+- **Settings** (the gear at the bottom of the sidebar, or Ctrl+,): switch off the parts of the app you do
+  not use — the Graph, Cards and Timeline views, family trees, interactive maps, years and "Show by
+  year", the relations panel, previews on hover, word count, quick notes, focus mode, spell check — and
+  choose the theme and language. Everything is on by default, so the demo shows it all; settings stay in
+  this browser and "Turn everything back on" restores them.
+
 ## 0.12.0 — 2026-10-23
 
 ### Added

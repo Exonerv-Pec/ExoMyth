@@ -69,7 +69,7 @@
     <span>{toName}</span>
     <input type="text" inputmode="numeric" bind:value={fTo} onfocus={() => (focused = true)} onblur={blur} aria-invalid={error} placeholder="—" />
   </label>
-  {#if years}
+  {#if years && app.on('timeline')}
     <button type="button" class="btn ghost years-go" onclick={() => app.showOnTimeline(path)}>{t('years.onTimeline')}</button>
   {/if}
   <button type="submit" hidden>{t('dialog.confirm')}</button>

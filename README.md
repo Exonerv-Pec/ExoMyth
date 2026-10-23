@@ -216,6 +216,14 @@ Pages live in folders (Characters, Places…). To move a page, drag it onto a fo
 onto the world's name for the top level), or use the folder button next to the page. Links by name
 keep working; links written with a folder path are updated.
 
+## Settings
+
+The gear at the bottom of the sidebar (or **Ctrl+,**) opens the settings. Turn off what you do not
+use and the app gets simpler: the Graph, Cards and Timeline views, family trees, interactive maps,
+years, the relations panel, previews on hover, the word count, quick notes, focus mode and spell
+check. Theme and language are there too. Everything is on to begin with; settings are kept in the
+browser, never in your worlds, and "Turn everything back on" restores them in one click.
+
 ## Keyboard shortcuts
 
 Press **Ctrl+/** (or **?** outside a text field), or the keyboard button at the bottom of the sidebar,

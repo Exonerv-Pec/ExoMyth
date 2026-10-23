@@ -446,7 +446,7 @@
     </div>
     <label class="tool-check"><input type="checkbox" bind:checked={showMentions} /> {t('graph.mentions')}</label>
     <label class="tool-check"><input type="checkbox" bind:checked={showShelf} /> {t('graph.showShelf')}</label>
-    {#if app.yearSpan}
+    {#if app.yearSpan && app.on('years')}
       <label class="tool-check"><input type="checkbox" checked={app.byYear} onchange={(e) => app.setByYear(e.currentTarget.checked)} /> {t('map.byYear')}</label>
     {/if}
     {#if allTags.length > 0}

@@ -197,7 +197,7 @@
 
 <div class="timeline-view">
   <div class="graph-tools">
-    {#if app.yearSpan}
+    {#if app.yearSpan && app.on('years')}
       <label class="tool-check"><input type="checkbox" checked={app.byYear} onchange={(e) => app.setByYear(e.currentTarget.checked)} /> {t('map.byYear')}</label>
     {/if}
     <span class="grow"></span>

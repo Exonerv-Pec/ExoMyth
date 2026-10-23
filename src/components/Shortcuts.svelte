@@ -27,6 +27,7 @@
         { keys: [['Alt', 'I']], what: 'keys.idea' },
         { keys: [['Ctrl', '.']], what: 'keys.focus' },
         { keys: [['Ctrl', '/'], ['?']], what: 'keys.help' },
+        { keys: [['Ctrl', ',']], what: 'keys.settings' },
         { keys: [['Esc']], what: 'keys.close' },
       ],
     },

@@ -19,7 +19,7 @@
   const step = (d: number) => span && app.setYear(Math.min(span.max, Math.max(span.min, app.year + d)));
 </script>
 
-{#if span && (app.byYear || toggle)}
+{#if span && app.on('years') && (app.byYear || toggle)}
   <div class="year-bar">
     {#if toggle}
       <label class="tool-check"><input type="checkbox" checked={app.byYear} onchange={(e) => app.setByYear(e.currentTarget.checked)} /> {t('map.byYear')}</label>
