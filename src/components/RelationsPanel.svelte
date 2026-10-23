@@ -4,6 +4,7 @@
   import type { PanelGroup, PanelItem, PanelSectionId } from '../core/index';
   import Icon from './Icon.svelte';
   import Resizer from './Resizer.svelte';
+  import YearsEditor from './YearsEditor.svelte';
   import { previewOn } from '../actions';
 
   let { path }: { path: string | null } = $props();
@@ -84,6 +85,7 @@
 
   <div class="panel-scroll">
     {#if path}
+      {#key path}<YearsEditor {path} />{/key}
       {#if !hasAny}
         <p class="rel-empty">{t('panel.empty')}</p>
       {/if}

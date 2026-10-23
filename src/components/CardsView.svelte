@@ -7,6 +7,7 @@
   import { previewLinks } from '../actions';
   import MediaThumb from './MediaThumb.svelte';
   import PageCard from './PageCard.svelte';
+  import YearSlider from './YearSlider.svelte';
 
   const t = app.t;
 
@@ -50,6 +51,14 @@
     }
   }
 
+  const faded = (path: string | undefined) => !!path && !!app.outOfTime?.has(path);
+  /** Cards on screen that the chosen year hides. */
+  const hiddenCount = $derived.by(() => {
+    if (!app.outOfTime) return 0;
+    const paths = folder !== null ? collection.map((c) => c.path) : (doc?.groups.flatMap((g) => g.items.map((i) => i.path)) ?? []);
+    return new Set(paths.filter(faded)).size;
+  });
+
   function openText(path: string | undefined) {
     if (path) void app.openText(path);
   }
@@ -76,6 +85,7 @@
               {card}
               color={colorOf(card.group)}
               selected={card.path === app.current}
+              faded={faded(card.path)}
               onselect={() => select(card.path, card.target)}
               onopen={() => openText(card.path)}
             />
@@ -83,7 +93,7 @@
         </div>
       </section>
     {:else if doc}
-      <article class="dossier-hero" style:--c={colorOf(doc.page.group)}>
+      <article class="dossier-hero" class:faded={faded(doc.page.path)} style:--c={colorOf(doc.page.group)}>
         <div class="hero-media" aria-hidden="true">
           <MediaThumb target={doc.page.image} alt="">
             {#snippet fallback()}
@@ -143,6 +153,7 @@
                 card={item}
                 color={colorOf(item.group)}
                 count={item.count}
+                faded={faded(item.path)}
                 onselect={() => select(item.path, item.target)}
                 onopen={() => openText(item.path)}
               />
@@ -154,4 +165,5 @@
       <p class="cards-note">{t('cards.select')}</p>
     {/if}
   </div>
+  <YearSlider id="cards" toggle hidden={hiddenCount} />
 </div>

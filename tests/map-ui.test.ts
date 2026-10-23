@@ -75,8 +75,8 @@ describe('maps in the reading view', () => {
     const { target } = await boot();
     target.querySelector<HTMLInputElement>('.map-tools input[type="checkbox"]')!.click();
     flushSync();
-    const slider = target.querySelector<HTMLInputElement>('.map-years input[type="range"]')!;
-    expect([slider.min, slider.max]).toEqual(['210', '405']);
+    const slider = target.querySelector<HTMLInputElement>('.year-bar input[type="range"]')!;
+    expect([slider.min, slider.max]).toEqual(['210', '430']);
     const setYear = (y: number) => {
       slider.value = String(y);
       slider.dispatchEvent(new Event('input', { bubbles: true }));
@@ -87,7 +87,7 @@ describe('maps in the reading view', () => {
     setYear(400);
     expect(labels(target)).toEqual(['Rivertown', 'Fortress of the Order', 'Old Watchtower', "Smugglers' Cove"]);
     setYear(405);
-    expect(target.querySelector('.map-year')!.textContent).toBe('405');
+    expect(target.querySelector('.year-value')!.textContent).toBe('405');
     // Switching the year view off shows everything again.
     target.querySelector<HTMLInputElement>('.map-tools input[type="checkbox"]')!.click();
     flushSync();

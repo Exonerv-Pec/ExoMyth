@@ -3,9 +3,10 @@
 A private, offline-first wiki for writers and world builders. Your world is a folder of plain
 Markdown files on your own device. No account, no server, no tracking.
 
-> **Status: early alpha (v0.2).** Pages, typed relations, a stable relations panel, a relations
-> graph with a stable layout, page previews on hover, search, tags, rename with link updates.
-> Timeline and interactive maps are next (see the roadmap). [Русская версия](README.ru.md)
+> **Status: early alpha (v0.7).** Pages, typed relations, a stable relations panel, a relations
+> graph with a stable layout, cards, a timeline, interactive maps with pins, moving through the
+> years, images, video and audio, page previews on hover, search, tags, rename with link updates.
+> [Русская версия](README.ru.md)
 
 ## Principles
 
@@ -72,6 +73,7 @@ The secret: ||Eva Crow is her half-sister||.
 | `aliases:` | Other names that links can use |
 | `image:` | Picture of the page (portrait, emblem, map), shown in its infobox and on its card |
 | `map:`, `pins:` | Turns the page into an interactive map with pins (see Maps below) |
+| `from:`/`to:`, `born:`/`died:`, `founded:`, `year:` | Years of the page, for the timeline and "Show by year" (see Timeline below) |
 | `tags:` and `#tag` | Tags (header or inline) |
 | `pinned:` | Links shown first in their group in the relations panel |
 | `\|\|secret\|\|` | Spoiler, hidden in reading view until clicked |
@@ -150,6 +152,30 @@ Switch to **Cards** in the top bar to browse the world as cards.
   mention it. Groups and cards come in the same fixed order as the relations panel.
 - Click a card to open its dossier, double-click to open the page itself.
 
+## Timeline
+
+Switch to **Timeline** in the top bar to see who lived when and what happened. Every page with years
+gets a row, grouped by folder: a bar from its first to its last year, a diamond for a one-year event,
+and a bar that fades out for what is still going (a character who is alive, a city that still stands).
+
+Give a page its years in the **Years** fields at the top of the relations panel, or write them in its
+header with the words that fit the page:
+
+```yaml
+born: 412          # or from:, founded:, built:, established:
+died: 455          # or to:, destroyed:, dissolved:, fell:
+year: 430          # an event on one year
+years: 429-430     # an event over several years
+```
+
+Only whole years count (`412`, `412 AE`, `-50`). Click a row to select the page, double-click to open it;
+`Ctrl` + wheel zooms.
+
+**Moving through the years.** Press on the years scale and drag, or switch on **Show by year** and use
+the slider. The chosen year is shared by the whole world: the timeline draws a line at it, the graph
+and cards fade the pages that did not exist yet (or any more), and maps hide their pins. A map pin
+without years of its own follows the years of its page. Pages without years are always shown.
+
 ## Images, video and audio
 
 Drag files into the editor, paste a screenshot, or use the image button in the top bar. Files are saved
@@ -183,10 +209,12 @@ guarantees stable ordering; `tests/core.test.ts` checks that shuffling load orde
 
 1. ✅ Core: wiki, typed relations, stable panel, search, tags, safe rename
 2. ✅ Relations graph with a stable layout; page previews on hover
-3. Timeline with custom calendars (months, eras, non-Gregorian), swim lanes, linked to pages
-4. Interactive maps: your own image, pins and regions that link to pages, layers; canvas; family trees
-5. Export a world as a static site to share with players or readers
-6. Desktop build (Tauri) for all browsers' limits
+3. ✅ Cards, interactive maps with pins, images, video and audio
+4. ✅ Timeline of pages and moving through the years on the graph, cards and maps
+5. Next: download a world as a .zip, months and custom calendars and eras, map regions and layers,
+   family trees
+6. Export a world as a static site to share with players or readers
+7. Desktop build (Tauri) for all browsers' limits
 
 ## Contributing
 

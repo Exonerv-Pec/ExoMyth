@@ -1,5 +1,6 @@
 ---
 tags: [character, scholar]
+born: 366
 rank: Archivist of the Order
 relations:
   member of: "[[Order of the Silver River]]"

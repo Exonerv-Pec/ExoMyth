@@ -1,5 +1,6 @@
 ---
 tags: [character]
+born: 405
 relations:
   ally: "[[Kira Vale]]"
 ---

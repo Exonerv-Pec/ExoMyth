@@ -1,5 +1,6 @@
 ---
 tags: [character, warrior]
+born: 384
 relations:
   ally: "[[Order of the Silver River]]"
 ---

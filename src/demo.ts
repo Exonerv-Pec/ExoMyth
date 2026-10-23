@@ -33,10 +33,16 @@ export const DEMO_FILES: Record<string, string> = Object.fromEntries(
  * Add the old fingerprint here whenever a demo file changes.
  */
 const DEMO_HISTORY: Record<string, string[]> = {
-  '.exomyth/settings.json': ['g6-f2c86461'],
+  '.exomyth/settings.json': ['g6-f2c86461', 'hz-23f968d2'],
+  'Characters/Arn Vale.md': ['6a-cebe2b76'],
+  'Characters/Bo Tarn.md': ['41-eb3e58b6'],
+  'Characters/Brother Tomas.md': ['6t-8fec7ebc'],
+  'Characters/Dax Morn.md': ['4p-4a0d94de'],
+  'Characters/Eva Crow.md': ['4m-e2efbe11'],
+  'Characters/Liara Vale.md': ['4c-dbc7cf0c'],
   'Organizations/Order of the Silver River.md': ['50-fc67a0b8'],
-  'Places/Rivertown.md': ['5k-99396e61', '6c-d6c4526e'],
-  'Welcome.md': ['iq-8864ffcc', 'ir-a0430db9', 'lm-e11e2110', 'ln-31dd7d01', 'q0-bf260e99', 'q1-6bd26b98'],
+  'Places/Rivertown.md': ['5k-99396e61', '6c-d6c4526e', '71-7d01481b'],
+  'Welcome.md': ['iq-8864ffcc', 'ir-a0430db9', 'lm-e11e2110', 'ln-31dd7d01', 'q0-bf260e99', 'q1-6bd26b98', 'tc-52e44f6f'],
 };
 
 /**

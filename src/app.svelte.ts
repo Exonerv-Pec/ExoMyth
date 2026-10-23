@@ -4,10 +4,13 @@ import { parseLinkText } from './core/parse';
 import { emptyLayout, type StoredLayout } from './core/layout';
 import { mediaKind } from './core/media';
 import { addPin, changePin, removePin, type PinData } from './core/maps';
+import { existsIn, pageYears, setYearsInText, worldYearSpan } from './core/years';
 import { detectLang, translate, type Key, type Lang } from './i18n';
 
-export type ViewMode = 'edit' | 'split' | 'preview' | 'graph' | 'cards';
-export type TextMode = Exclude<ViewMode, 'graph' | 'cards'>;
+export type ViewMode = 'edit' | 'split' | 'preview' | 'graph' | 'cards' | 'timeline';
+export type TextMode = Exclude<ViewMode, 'graph' | 'cards' | 'timeline'>;
+/** Views of the whole world rather than of one page's text. */
+export const WORLD_MODES: readonly ViewMode[] = ['graph', 'cards', 'timeline'];
 
 export interface HoverRect {
   left: number;
@@ -96,7 +99,7 @@ class App {
   version = $state(0);
   current = $state<string | null>(null);
   pendingHeading = $state<string | null>(null);
-  mode = $state<ViewMode>(load('exomyth:mode', ['edit', 'split', 'preview', 'graph', 'cards'], 'split'));
+  mode = $state<ViewMode>(load('exomyth:mode', ['edit', 'split', 'preview', 'graph', 'cards', 'timeline'], 'split'));
   /** The text mode to return to from the graph. */
   textMode = $state<TextMode>(load('exomyth:textMode', ['edit', 'split', 'preview'], 'split'));
   theme = $state<Theme>(load('exomyth:theme', ['auto', 'light', 'dark'], 'auto'));
@@ -115,6 +118,26 @@ class App {
   layout = $state.raw<StoredLayout | null>(null);
   /** Asks the graph to bring a page into view; `seq` makes repeated requests distinct. */
   graphFocus = $state<{ path: string; seq: number } | null>(null);
+  /** Asks the timeline to bring a page into view. */
+  timelineFocus = $state<{ path: string; seq: number } | null>(null);
+  /** "Show by year": the graph, cards, maps and timeline show the world as it was in `year`. */
+  byYear = $state(false);
+  year = $state(0);
+
+  /** Earliest and latest year of the open world (pages and map pins), if any. */
+  yearSpan = $derived.by(() => {
+    this.version;
+    return this.vault ? worldYearSpan(this.vault.pages) : undefined;
+  });
+
+  /** Pages that do not exist in the chosen year (null when not showing by year). */
+  outOfTime = $derived.by(() => {
+    this.version;
+    if (!this.byYear || !this.vault) return null;
+    const out = new Set<string>();
+    for (const p of this.vault.pages) if (!existsIn(pageYears(p), this.year)) out.add(p.path);
+    return out;
+  });
 
   private unsubscribe: (() => void) | null = null;
   private flushers = new Set<() => Promise<void>>();
@@ -145,8 +168,8 @@ class App {
     this.hoverClose();
     this.mode = mode;
     save('exomyth:mode', mode);
-    if (mode !== 'graph' && mode !== 'cards') {
-      this.textMode = mode;
+    if (!WORLD_MODES.includes(mode)) {
+      this.textMode = mode as TextMode;
       save('exomyth:textMode', mode);
     }
   }
@@ -156,6 +179,13 @@ class App {
     void this.flush().then(() => {
       this.setMode('graph');
       if (path) this.graphFocus = { path, seq: (this.graphFocus?.seq ?? 0) + 1 };
+    });
+  }
+  /** Switches to the timeline and brings `path` into view. */
+  showOnTimeline(path: string | null): void {
+    void this.flush().then(() => {
+      this.setMode('timeline');
+      if (path) this.timelineFocus = { path, seq: (this.timelineFocus?.seq ?? 0) + 1 };
     });
   }
   setSidebarW(w: number): void {
@@ -192,6 +222,10 @@ class App {
       this.collapsed = {};
     }
     this.layout = null;
+    this.byYear = read(this.prefKey('byYear')) === '1';
+    const y = Number(read(this.prefKey('year')));
+    this.year = Number.isFinite(y) ? Math.trunc(y) : 0;
+    if (this.byYear) this.clampYear();
     void vault.loadLayout().then((l) => {
       if (this.vault === vault) this.layout = l;
     });
@@ -220,6 +254,40 @@ class App {
   }
   setWorldPref(name: string, value: string): void {
     save(this.prefKey(name), value);
+  }
+
+  /* ------------------------------------------------------------------- years */
+
+  setByYear(on: boolean): void {
+    this.byYear = on;
+    if (on) this.clampYear();
+    save(this.prefKey('byYear'), on ? '1' : '0');
+  }
+
+  setYear(year: number): void {
+    if (!Number.isFinite(year)) return;
+    this.year = Math.trunc(year);
+    save(this.prefKey('year'), String(this.year));
+  }
+
+  /** Keeps the chosen year inside the world's years (starting at the earliest). */
+  private clampYear(): void {
+    const span = this.yearSpan;
+    if (span && (this.year < span.min || this.year > span.max)) this.setYear(span.min);
+  }
+
+  /** Writes the years of a page into its header (undefined ends are removed). */
+  async setPageYears(path: string, span: { from?: number; to?: number }): Promise<boolean> {
+    const vault = this.vault;
+    if (!vault) return false;
+    try {
+      await this.flush();
+      await vault.editText(path, (t) => setYearsInText(t, span));
+      return true;
+    } catch (e) {
+      this.fail(e);
+      return false;
+    }
   }
 
   /* ------------------------------------------------------------ graph layout */
@@ -368,12 +436,13 @@ class App {
     this.sidebarOpen = false;
     this.panelOpen = false;
     if (this.mode === 'graph') this.graphFocus = { path, seq: (this.graphFocus?.seq ?? 0) + 1 };
+    if (this.mode === 'timeline') this.timelineFocus = { path, seq: (this.timelineFocus?.seq ?? 0) + 1 };
     if (this.vault) save(this.prefKey('last'), path);
   }
 
   /** Opens `path` for reading or editing, leaving the graph if needed. */
   async openText(path: string, heading?: string): Promise<void> {
-    if (this.mode === 'graph' || this.mode === 'cards') this.setMode(this.textMode);
+    if (WORLD_MODES.includes(this.mode)) this.setMode(this.textMode);
     await this.open(path, heading);
   }
 

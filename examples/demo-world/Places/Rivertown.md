@@ -1,6 +1,7 @@
 ---
 image: rivertown map.svg
 tags: [place, city]
+founded: 300
 population: 12000
 ---
 # Rivertown

@@ -4,12 +4,12 @@ import { MemoryStorage } from '../src/core/storage';
 import { DEMO_FILES, updateDemoWorld } from '../src/demo';
 import { Vault } from '../src/core/vault';
 
-/** The demo as version 0.3.0 shipped it, read from git when available. */
-function oldDemo(): Record<string, string> | undefined {
+/** The demo as an earlier version shipped it (0.3.0 by default), read from git when available. */
+function oldDemo(rev = 'a038397'): Record<string, string> | undefined {
   try {
-    const files = execSync('git ls-tree -r --name-only a038397 -- examples/demo-world').toString().trim().split('\n');
+    const files = execSync(`git ls-tree -r --name-only ${rev} -- examples/demo-world`).toString().trim().split('\n');
     return Object.fromEntries(
-      files.map((f) => [f.slice('examples/demo-world/'.length), execSync(`git show "a038397:${f}"`).toString()]),
+      files.map((f) => [f.slice('examples/demo-world/'.length), execSync(`git show "${rev}:${f}"`).toString()]),
     );
   } catch {
     return undefined;
@@ -40,6 +40,15 @@ describe('updating a demo world saved by an earlier version', () => {
     expect(vault.index.resolve('Mara Holt')).toBeTruthy();
     // Running it again changes nothing.
     expect(await updateDemoWorld(storage)).toBe(0);
+  });
+
+  const v061 = oldDemo('e2ceb37');
+  it.skipIf(!v061)('brings a 0.6 demo to the current one, with years and events', async () => {
+    const storage = new MemoryStorage('demo-061', { ...v061! });
+    await updateDemoWorld(storage);
+    for (const [path, text] of Object.entries(DEMO_FILES)) expect(await storage.readText(path)).toBe(text);
+    const vault = await Vault.open(storage);
+    expect(vault.index.resolve('Siege of Rivertown')?.path).toBe('Events/Siege of Rivertown.md');
   });
 
   it('does nothing to a demo that is already current', async () => {

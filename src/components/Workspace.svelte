@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { app } from '../app.svelte';
+  import { app, WORLD_MODES } from '../app.svelte';
   import Sidebar from './Sidebar.svelte';
   import Editor from './Editor.svelte';
   import Preview from './Preview.svelte';
   import RelationsPanel from './RelationsPanel.svelte';
   import GraphView from './GraphView.svelte';
   import CardsView from './CardsView.svelte';
+  import TimelineView from './TimelineView.svelte';
   import Icon from './Icon.svelte';
   import { MEDIA_ACCEPT } from '../core/media';
 
@@ -18,9 +19,10 @@
     return app.current ? app.vault?.getPage(app.current) : undefined;
   });
   const statusText = $derived(t(`save.${app.saveStatus}` as 'save.saved'));
-  const modes = ['edit', 'split', 'preview', 'graph', 'cards'] as const;
-  /** Graph and cards show the whole world, not one page's text. */
-  const inGraph = $derived(app.mode === 'graph' || app.mode === 'cards');
+  const modes = ['edit', 'split', 'preview', 'graph', 'cards', 'timeline'] as const;
+  /** Graph, cards and the timeline show the whole world, not one page's text. */
+  const inGraph = $derived(WORLD_MODES.includes(app.mode));
+  const worldTitle = $derived(app.mode === 'cards' ? t('mode.cards') : app.mode === 'timeline' ? t('timeline.title') : t('graph.title'));
   let mediaInput = $state<HTMLInputElement>();
 </script>
 
@@ -37,7 +39,7 @@
       </button>
       <div class="crumb">
         {#if inGraph}
-          <span class="name">{app.mode === 'cards' ? t('mode.cards') : t('graph.title')}</span>
+          <span class="name">{worldTitle}</span>
           {#if page}<span class="where">{page.title}</span>{/if}
         {:else if page}
           <span class="name">{page.title}</span>
@@ -68,7 +70,7 @@
       {#if page || inGraph}
         <div class="seg" role="group" aria-label="{t('mode.edit')} / {t('mode.preview')} / {t('mode.graph')}">
           {#each modes as m (m)}
-            <button aria-pressed={app.mode === m} onclick={() => app.setMode(m)} disabled={m !== 'graph' && m !== 'cards' && !page}>
+            <button aria-pressed={app.mode === m} onclick={() => app.setMode(m)} disabled={!WORLD_MODES.includes(m) && !page}>
               {t(`mode.${m}` as 'mode.edit')}
             </button>
           {/each}
@@ -83,6 +85,8 @@
       <GraphView />
     {:else if app.mode === 'cards'}
       <CardsView />
+    {:else if app.mode === 'timeline'}
+      <TimelineView />
     {:else if page && app.current}
       <div class="stage" class:split={app.mode === 'split'}>
         {#if app.mode !== 'preview'}

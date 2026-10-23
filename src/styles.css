@@ -1890,6 +1890,15 @@ svg.graph:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
+/* Not there in the year being shown. */
+.page-card.faded,
+.dossier-hero.faded {
+  opacity: 0.4;
+  filter: grayscale(0.7);
+}
+.page-card.faded:hover {
+  opacity: 0.75;
+}
 .pc-media {
   width: 3.25rem;
   height: 3.25rem;
@@ -2158,7 +2167,7 @@ svg.graph:focus-visible {
   cursor: move;
 }
 
-.map-years {
+.year-bar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -2167,12 +2176,12 @@ svg.graph:focus-visible {
   border-top: 1px solid var(--line);
   font-size: 0.88rem;
 }
-.map-years input[type='range'] {
+.year-bar input[type="range"] {
   flex: 1;
   min-width: 8rem;
   accent-color: var(--accent);
 }
-.map-year {
+.year-value {
   font-family: var(--font-text);
   font-size: 1.35rem;
   font-weight: 600;
@@ -2180,7 +2189,7 @@ svg.graph:focus-visible {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-.map-hidden {
+.year-hidden {
   color: var(--ink-faint);
   font-size: 0.8rem;
 }
@@ -2212,4 +2221,327 @@ svg.graph:focus-visible {
   flex-wrap: wrap;
   gap: 0.5rem;
   justify-content: flex-end;
+}
+
+/* ============================================================ timeline (v0.7) */
+
+.timeline-view {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.tl-note {
+  color: var(--ink-faint);
+  font-size: 0.82rem;
+}
+.tl-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  position: relative;
+  overscroll-behavior: contain;
+}
+.tl-inner {
+  position: relative;
+  min-height: 100%;
+  padding-bottom: 1.5rem;
+}
+.tl-grid {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--label-w);
+  right: 0;
+  pointer-events: none;
+}
+.tl-grid span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--line);
+  opacity: 0.6;
+}
+.tl-cursor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--accent);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.tl-axis {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  height: 2.1rem;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line-strong);
+}
+.tl-corner {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  flex: none;
+  width: var(--label-w);
+  display: flex;
+  align-items: center;
+  padding: 0 0.9rem;
+  background: var(--paper);
+  border-right: 1px solid var(--line);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.tl-ticks {
+  position: relative;
+  flex: none;
+  cursor: ew-resize;
+  touch-action: none;
+}
+.tl-ticks:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.tl-tick {
+  position: absolute;
+  bottom: 0.35rem;
+  transform: translateX(-50%);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.tl-group {
+  position: relative;
+  z-index: 2;
+  height: 2rem;
+  display: flex;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--line);
+}
+.tl-group-name {
+  position: sticky;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0 0.9rem 0.3rem;
+  font-weight: 600;
+  font-size: 0.86rem;
+  color: var(--ink);
+}
+.tl-group-name .count {
+  color: var(--ink-faint);
+  font-weight: 400;
+  font-size: 0.78rem;
+}
+
+.tl-row {
+  display: flex;
+  height: 2.1rem;
+  align-items: stretch;
+}
+.tl-row:hover .tl-label,
+.tl-row.selected .tl-label {
+  background: color-mix(in srgb, var(--c) 10%, var(--paper));
+}
+.tl-label {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  flex: none;
+  width: var(--label-w);
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0 0.9rem 0 1.9rem;
+  border: none;
+  border-right: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--paper);
+  text-align: left;
+  line-height: 2.1rem;
+  min-width: 0;
+}
+.tl-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tl-years {
+  flex: none;
+  font-size: 0.76rem;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+.tl-row.selected .tl-title {
+  font-weight: 600;
+}
+.tl-track {
+  position: relative;
+  flex: none;
+}
+.tl-bar {
+  position: absolute;
+  top: 0.45rem;
+  height: 1.2rem;
+  padding: 0 0.45rem;
+  border: 1px solid var(--c);
+  border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--c) 30%, var(--surface));
+  overflow: hidden;
+  text-align: left;
+  font-size: 0.74rem;
+  line-height: 1.1rem;
+  color: var(--ink);
+}
+.tl-bar.short {
+  border-radius: 3px;
+  padding: 0;
+}
+/* Still going (or begun before anything is known): the bar fades out at that end. */
+.tl-bar.open-end {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 4rem), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 4rem), transparent);
+}
+.tl-bar.open-start {
+  -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 4rem), transparent);
+  mask-image: linear-gradient(to left, #000 calc(100% - 4rem), transparent);
+}
+.tl-bar-text {
+  white-space: nowrap;
+}
+.tl-point {
+  position: absolute;
+  top: 50%;
+  width: 0.85rem;
+  height: 0.85rem;
+  padding: 0;
+  margin: -0.425rem 0 0 -0.425rem;
+  border: 2px solid var(--surface);
+  border-radius: 2px;
+  background: var(--c);
+  transform: rotate(45deg);
+  box-shadow: 0 0 0 1px var(--c);
+}
+.tl-bar:hover,
+.tl-point:hover,
+.tl-row.selected .tl-bar,
+.tl-row.selected .tl-point {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.tl-row.faded .tl-bar,
+.tl-row.faded .tl-point,
+.tl-row.faded .tl-label {
+  opacity: 0.38;
+}
+.tl-help {
+  margin: 0;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  border-top: 1px solid var(--line);
+}
+.tl-empty {
+  flex: 1;
+  display: grid;
+  place-content: center;
+  padding: 2rem;
+  max-width: 34rem;
+  margin: 0 auto;
+  color: var(--ink-soft);
+}
+.tl-empty h2 {
+  font-family: var(--font-text);
+  margin: 0 0 0.4rem;
+  color: var(--ink);
+}
+.tl-example {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-s);
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+/* Years of a page, at the top of the relations panel. */
+.years-edit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.35rem 0.5rem;
+  padding: 0.2rem 0 0.8rem;
+  margin-bottom: 0.6rem;
+  border-bottom: 1px solid var(--line);
+}
+.years-title {
+  width: 100%;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.years-field {
+  display: grid;
+  gap: 0.15rem;
+  font-size: 0.74rem;
+  color: var(--ink-faint);
+}
+.years-field input {
+  width: 5.5rem;
+  padding: 0.28rem 0.45rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-s);
+  background: var(--surface);
+  font-variant-numeric: tabular-nums;
+}
+.years-field input[aria-invalid='true'] {
+  border-color: var(--broken);
+}
+.years-dash {
+  padding-bottom: 0.35rem;
+  color: var(--ink-faint);
+}
+.years-go {
+  margin-left: auto;
+  font-size: 0.82rem;
+}
+.years-edit .form-error {
+  width: 100%;
+  margin: 0;
+  color: var(--broken);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    flex-wrap: wrap;
+  }
+  .topbar .seg {
+    order: 10;
+    width: 100%;
+    overflow-x: auto;
+  }
+  .topbar .seg button {
+    flex: 1 0 auto;
+  }
+}
+@media (max-width: 640px) {
+  .tl-years,
+  .tl-help {
+    display: none;
+  }
 }

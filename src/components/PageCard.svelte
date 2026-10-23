@@ -8,6 +8,7 @@
     color,
     count = 1,
     selected = false,
+    faded = false,
     onselect,
     onopen,
   }: {
@@ -16,6 +17,8 @@
     color: string;
     count?: number;
     selected?: boolean;
+    /** The page does not exist in the year being shown. */
+    faded?: boolean;
     onselect: () => void;
     onopen: () => void;
   } = $props();
@@ -27,6 +30,7 @@
   class="page-card"
   class:missing={!card.exists}
   class:selected
+  class:faded
   style:--c={color}
   onclick={onselect}
   ondblclick={onopen}

@@ -10,7 +10,9 @@ Open [[Kira Vale]] and look at the **Relations** panel on the right: it always s
 - Pin ⭐ important relations so they always come first in their group
 - Switch to **Graph** at the top to see how the whole world is connected
 - Switch to **Cards** to browse the world by folder, and open the dossier of a page: for example, the members and allies of the [[Order of the Silver River]]
-- Open [[Silver Coast]] for an interactive map with pins; switch on **Show by year** under it to move through the years
+- Open [[Silver Coast]] for an interactive map with pins; switch on **Show by year** to move through the years
+- Switch to **Timeline** to see who lived when and what happened, like the [[Siege of Rivertown]]. Press on the years scale and drag: the graph, cards and maps follow the same year
+- Give a page its years in the **Years** fields of the panel on the right, or write `born:`, `died:`, `founded:` or `year:` at the top of the page
 - Drop an image, video or audio file into the editor to add it to a page (see the map of [[Rivertown]])
 
 Start here: [[Kira Vale]], [[Arn Vale]], [[Rivertown]], [[Order of the Silver River]].

@@ -120,7 +120,7 @@ describe('workspace', () => {
     const labels = texts(target.querySelectorAll('.sidebar .tree .label'));
     expect(labels).toContain('Rivertown');
     const item = [...target.querySelectorAll<HTMLButtonElement>('.sidebar .tree-item')].find((b) =>
-      b.textContent?.includes('Rivertown'),
+      b.textContent?.trim() === 'Rivertown',
     )!;
     item.click();
     await tick();

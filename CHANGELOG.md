@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.7.0 — 2026-10-23
+
+### Added
+
+- **Timeline.** A new view in the top bar shows every page with years as a row, grouped by folder:
+  bars for lifetimes and eras, diamonds for one-year events, and bars that fade out for what is still
+  going. Zoom with the buttons or `Ctrl` + wheel; click selects a page, double-click opens it, and
+  hovering shows its preview.
+- **Years of pages.** Read from the page header in the words that fit the page: `from`/`to`,
+  `born`/`died`, `founded`/`destroyed` and similar, `year: 430` for an event or `years: 429-430`
+  (a few Russian words work too). New **Years** fields in the relations panel edit them and keep the
+  field names the page already uses.
+- **Moving through the years everywhere.** "Show by year" is now one year for the whole world, kept
+  per world: press and drag on the timeline's scale, or use the slider under the graph, cards,
+  timeline and maps. Pages that do not exist in that year are faded on the graph and cards, and map
+  pins are hidden.
+- Map pins without years of their own follow the years of their page.
+- Demo world: years for its characters, places and order, and two events (the Great Flood and the
+  Siege of Rivertown). Demo worlds saved by earlier versions are updated; your own edits are kept.
+
+### Fixed
+
+- Removing the last field from a page header no longer leaves `{}` behind; the empty header is removed.
+- On narrow screens the view switcher wraps onto its own line instead of overflowing.
+
 ## 0.6.1 — 2026-10-23
 
 ### Security

@@ -40,6 +40,7 @@ describe('card models', () => {
     const tabs = folderTabs(demoIndex());
     expect(tabs).toEqual([
       { folder: 'Characters', count: 8 },
+      { folder: 'Events', count: 2 },
       { folder: 'Maps', count: 1 },
       { folder: 'Organizations', count: 1 },
       { folder: 'Places', count: 1 },

@@ -1,5 +1,6 @@
 ---
 tags: [character]
+born: 381
 relations:
   spouse: "[[Arn Vale]]"
   born in: "[[Rivertown]]"

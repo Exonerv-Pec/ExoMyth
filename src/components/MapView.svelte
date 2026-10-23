@@ -1,7 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { app } from '../app.svelte';
-  import { existsIn, mapOf, pinCount, yearSpan, type Pin } from '../core/maps';
+  import { mapOf, pinCount, type Pin } from '../core/maps';
+  import { existsIn, pageYears } from '../core/years';
+  import YearSlider from './YearSlider.svelte';
   import { folderColorSlots } from '../core/layout';
   import { stripMd } from '../core/names';
   import { mediaUrl } from '../embeds';
@@ -61,15 +63,17 @@
 
   /* ------------------------------------------------------------ years */
 
-  const span = $derived(model ? yearSpan(model.pins) : undefined);
-  let byYear = $state(false);
-  let year = $state(0);
-  $effect(() => {
-    // Start the slider at the earliest year once a map with years is shown.
-    if (span && (year < span.min || year > span.max)) year = span.min;
+  /** A pin's own years, or else the years of the page it points to (a city pin follows its city). */
+  function pinYears(pin: Pin): { from?: number; to?: number } | undefined {
+    if (pin.from !== undefined || pin.to !== undefined) return pin;
+    const target = pinTarget(pin);
+    return target ? pageYears(target) : undefined;
+  }
+  const visible = (pin: Pin) => !app.byYear || existsIn(pinYears(pin), app.year);
+  const hiddenCount = $derived.by(() => {
+    app.version;
+    return model && app.byYear ? model.pins.filter((p) => !existsIn(pinYears(p), app.year)).length : 0;
   });
-  const visible = (pin: Pin) => !byYear || existsIn(pin, year);
-  const hiddenCount = $derived(model && byYear ? model.pins.filter((p) => !existsIn(p, year)).length : 0);
 
   /* ------------------------------------------------------- pan and zoom */
 
@@ -278,7 +282,7 @@
       await saveFields();
       const f = fractionAt(e);
       const pin: { x: number; y: number; from?: number } = { x: f.x, y: f.y };
-      if (byYear) pin.from = year;
+      if (app.byYear) pin.from = app.year;
       const index = page ? pinCount(page) : model.pins.length;
       if (await app.addPin(path, pin)) {
         selected = index;
@@ -354,8 +358,8 @@
 {#if model}
   <section class="map-wrap" class:full class:editing aria-label={t('map.label', page?.title ?? '')}>
     <div class="map-tools">
-      {#if span}
-        <label class="tool-check"><input type="checkbox" bind:checked={byYear} /> {t('map.byYear')}</label>
+      {#if app.yearSpan}
+        <label class="tool-check"><input type="checkbox" checked={app.byYear} onchange={(e) => app.setByYear(e.currentTarget.checked)} /> {t('map.byYear')}</label>
       {/if}
       <span class="grow"></span>
       <span class="map-count">{t('map.pins', model.pins.length)}</span>
@@ -426,16 +430,7 @@
       </div>
     </div>
 
-    {#if span && byYear}
-      <div class="map-years">
-        <label for="map-year-{path}">{t('map.year')}</label>
-        <button class="icon-btn" aria-label="−1" onclick={() => (year = Math.max(span.min, year - 1))}>‹</button>
-        <input id="map-year-{path}" type="range" min={span.min} max={span.max} step="1" bind:value={year} />
-        <button class="icon-btn" aria-label="+1" onclick={() => (year = Math.min(span.max, year + 1))}>›</button>
-        <output class="map-year" for="map-year-{path}">{year}</output>
-        {#if hiddenCount > 0}<span class="map-hidden">{t('map.hidden', hiddenCount)}</span>{/if}
-      </div>
-    {/if}
+    <YearSlider id="map-{path}" hidden={hiddenCount} />
 
     {#if editing && selectedPin}
       <form class="pin-editor" onsubmit={(e) => (e.preventDefault(), void saveFields())}>

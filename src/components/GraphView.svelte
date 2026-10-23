@@ -6,6 +6,7 @@
   import { stripMd } from '../core/names';
   import { rectOf } from '../actions';
   import Icon from './Icon.svelte';
+  import YearSlider from './YearSlider.svelte';
 
   const t = app.t;
 
@@ -85,6 +86,8 @@
       ? neighbourhood(graph, app.current, scope)
       : null,
   );
+  /** Pages that do not exist in the chosen year are faded, like pages outside a tag filter. */
+  const asleep = (id: string) => !!app.outOfTime?.has(id);
   const tagged = $derived.by(() => (tag && graph ? new Set(graph.nodes.filter((n) => n.tags.includes(tag)).map((n) => n.id)) : null));
   const allTags = $derived.by(() => {
     app.version;
@@ -443,6 +446,9 @@
     </div>
     <label class="tool-check"><input type="checkbox" bind:checked={showMentions} /> {t('graph.mentions')}</label>
     <label class="tool-check"><input type="checkbox" bind:checked={showShelf} /> {t('graph.showShelf')}</label>
+    {#if app.yearSpan}
+      <label class="tool-check"><input type="checkbox" checked={app.byYear} onchange={(e) => app.setByYear(e.currentTarget.checked)} /> {t('map.byYear')}</label>
+    {/if}
     {#if allTags.length > 0}
       <label class="tool-select">
         <span class="sr-only">{t('graph.tag')}</span>
@@ -521,7 +527,7 @@
                   class:typed={e.types.length > 0}
                   class:hot
                   class:sel
-                  class:muted={!!tagged && !(tagged.has(e.a) && tagged.has(e.b))}
+                  class:muted={(!!tagged && !(tagged.has(e.a) && tagged.has(e.b))) || asleep(e.a) || asleep(e.b)}
                   x1={a.x}
                   y1={a.y}
                   x2={b.x}
@@ -547,7 +553,7 @@
                 class:hub={hubs.has(n.id)}
                 class:selected={app.current === n.id}
                 class:lit={!!focusSet?.has(n.id)}
-                class:muted={!!tagged && !tagged.has(n.id)}
+                class:muted={(!!tagged && !tagged.has(n.id)) || asleep(n.id)}
                 transform="translate({p.x} {p.y})"
                 role="button"
                 tabindex="0"
@@ -581,4 +587,5 @@
   {/if}
   <p class="graph-help">{t('graph.help')}</p>
   </div>
+  <YearSlider id="graph" hidden={app.outOfTime ? (graph?.nodes.filter((n) => app.outOfTime!.has(n.id)).length ?? 0) : 0} />
 </div>

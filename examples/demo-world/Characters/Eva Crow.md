@@ -1,5 +1,6 @@
 ---
 tags: [character, antagonist]
+born: 401
 relations:
   father: "[[Arn Vale]]"
   enemy: "[[Kira Vale]]"
