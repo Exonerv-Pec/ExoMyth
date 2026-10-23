@@ -1973,3 +1973,31 @@ svg.graph:focus-visible {
     font-size: 2rem;
   }
 }
+
+/* ------------------------------------------------- media inside the editor */
+
+.cm-media {
+  padding: 0.35rem 0 0.75rem;
+  font-family: var(--font-ui);
+}
+.cm-media img,
+.cm-media video {
+  display: block;
+  max-width: 100%;
+  max-height: 22rem;
+  width: auto;
+  height: auto;
+  border-radius: var(--r-s);
+  border: 1px solid var(--line);
+}
+.cm-media video {
+  background: #000;
+}
+.cm-media audio {
+  display: block;
+  width: min(100%, 30rem);
+}
+.cm-media.missing {
+  font-size: 0.82rem;
+  color: var(--broken);
+}

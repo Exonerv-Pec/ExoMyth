@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.1 — 2026-10-23
+
+### Added
+
+- In **Text** mode, images, video and audio now appear right in the editor, under the line that embeds
+  them (`![[file]]`, `![alt](path)` and the `image:` field). The text stays as it is and can be edited
+  as before. In **Side by side** mode they stay in the reading pane, so nothing is shown twice.
+
 ## 0.5.0 — 2026-10-23
 
 ### Added

@@ -124,6 +124,8 @@ Drag files into the editor, paste a screenshot, or use the image button in the t
 into the world's `attachments/` folder and embedded with `![[file name]]`. Supported: PNG, JPEG, GIF,
 WebP, AVIF, SVG, BMP; MP4, WebM, OGV, MOV; MP3, WAV, OGG, Opus, M4A, AAC, FLAC. Media play from your
 own storage; images from web addresses are shown as links and never loaded automatically.
+In **Text** mode the pictures and players appear right under the lines that embed them; in **Side by
+side** they are shown in the reading pane.
 
 ## Page previews
 

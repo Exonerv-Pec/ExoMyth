@@ -18,6 +18,7 @@
   import { dirName } from '../core/names';
   import { headingSlug } from '../core/render';
   import { parseLinkText } from '../core/parse';
+  import { inlineMedia, mediaCompartment, refreshMedia } from '../editorMedia';
 
   let { path }: { path: string } = $props();
 
@@ -300,6 +301,8 @@
           matchPlugin,
           frontmatterPlugin,
           linkEvents,
+          // In "Text" mode pictures and players appear under their lines; "Side by side" shows them in the reading pane.
+          mediaCompartment.of(inlineMedia(app.mode === 'edit')),
           theme,
           EditorView.contentAttributes.of({ 'aria-label': path, spellcheck: 'true' }),
           EditorView.updateListener.of((u) => {
@@ -330,6 +333,18 @@
   });
 
   // Pick up changes made elsewhere (relations panel, other programs) unless the user has unsaved edits.
+  // Switching between "Text" and "Side by side" turns the inline media on or off.
+  $effect(() => {
+    const on = app.mode === 'edit';
+    view?.dispatch({ effects: mediaCompartment.reconfigure(inlineMedia(on)) });
+  });
+
+  // A file added or changed in the world: re-check the media under each line.
+  $effect(() => {
+    app.version;
+    view?.dispatch({ effects: refreshMedia.of(null) });
+  });
+
   $effect(() => {
     app.version;
     const page = app.vault?.getPage(path);
