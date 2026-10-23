@@ -5,6 +5,7 @@
   import Workspace from './components/Workspace.svelte';
   import Dialog from './components/Dialog.svelte';
   import HoverPreview from './components/HoverPreview.svelte';
+  import Shortcuts from './components/Shortcuts.svelte';
 
   let searchInput = $state<HTMLInputElement>();
 
@@ -17,8 +18,20 @@
     document.title = app.vault ? `${app.vault.storage.label} — Exomyth` : 'Exomyth';
   });
 
+  /** Typing into a field or the editor, where a plain "?" is just a character. */
+  function typing(target: EventTarget | null): boolean {
+    const el = target as HTMLElement | null;
+    return !!el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName));
+  }
+
   function keydown(e: KeyboardEvent) {
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k' && app.vault) {
+    if (((e.ctrlKey || e.metaKey) && (e.code === 'Slash' || e.key === '/')) || (e.key === '?' && !e.ctrlKey && !e.metaKey && !e.altKey && !typing(e.target))) {
+      // Ctrl+/ (anywhere) or "?" (outside text): the list of shortcuts.
+      if (app.dialog) return;
+      e.preventDefault();
+      e.stopPropagation();
+      app.shortcutsOpen = !app.shortcutsOpen;
+    } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k' && app.vault) {
       e.preventDefault();
       app.sidebarOpen = true;
       queueMicrotask(() => searchInput?.focus());
@@ -61,7 +74,8 @@
   });
 </script>
 
-<svelte:window onkeydown={keydown} />
+<!-- Capture phase: Ctrl+/ must win over the editor, which would toggle a comment. -->
+<svelte:window onkeydowncapture={keydown} />
 
 {#if app.vault}
   <Workspace bind:searchInput />
@@ -71,6 +85,7 @@
 
 <Dialog />
 <HoverPreview />
+<Shortcuts />
 
 {#if app.toast}
   <div class="toast" class:error={app.toast.error} role="status">{app.toast.text}</div>

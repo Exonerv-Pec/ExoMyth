@@ -185,6 +185,13 @@ without years of its own follows the years of its page. Pages without years are 
   down an idea without leaving the page. It is added with the date and time to an **Inbox** page,
   which is created the first time.
 
+## Keyboard shortcuts
+
+Press **Ctrl+/** (or **?** outside a text field), or the keyboard button at the bottom of the sidebar,
+for the list of all shortcuts. The most useful: **Ctrl+K** search, **Alt+I** quick note,
+**Ctrl+click** on a `[[link]]` in the editor to follow it. On a Mac, use ⌘ instead of Ctrl and ⌥
+instead of Alt.
+
 ## Backups: a world as a .zip
 
 The arrow button at the top of the sidebar downloads the whole world (pages, settings, pictures,

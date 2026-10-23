@@ -120,6 +120,8 @@ class App {
   collapsed = $state<Record<string, boolean>>({});
   saveStatus = $state<'saved' | 'saving' | 'dirty' | 'error'>('saved');
   hover = $state<HoverState | null>(null);
+  /** The list of keyboard shortcuts is open. */
+  shortcutsOpen = $state(false);
   /** Saved graph positions of the open world (null while loading). */
   layout = $state.raw<StoredLayout | null>(null);
   /** Asks the graph to bring a page into view; `seq` makes repeated requests distinct. */

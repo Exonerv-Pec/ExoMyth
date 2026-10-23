@@ -2586,3 +2586,84 @@ svg.graph:focus-visible {
     display: none;
   }
 }
+
+/* ===================================================== keyboard shortcuts (v0.8) */
+
+.dialog.shortcuts {
+  width: min(46rem, 100%);
+  max-height: min(44rem, calc(100vh - 2rem));
+  grid-template-rows: auto minmax(0, 1fr);
+  padding: 0;
+  overflow: hidden;
+}
+.shortcuts-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.3rem 0.6rem;
+  border-bottom: 1px solid var(--line);
+}
+.shortcuts-body {
+  overflow: auto;
+  padding: 0.6rem 1.3rem 1.2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  align-items: start;
+  gap: 0 2rem;
+}
+.shortcuts-body section {
+  margin-bottom: 1rem;
+}
+.shortcuts-body h3 {
+  margin: 0.4rem 0 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.shortcuts-body dl {
+  margin: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+.shortcuts-body dl > div {
+  display: grid;
+  grid-template-columns: minmax(7.5rem, auto) 1fr;
+  gap: 0.75rem;
+  align-items: baseline;
+}
+.shortcuts-body dt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+.shortcuts-body dd {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+.shortcuts .combo {
+  white-space: nowrap;
+}
+.shortcuts .plus,
+.shortcuts .or {
+  color: var(--ink-faint);
+  font-size: 0.75rem;
+  margin: 0 0.1rem;
+}
+.shortcuts kbd {
+  display: inline-block;
+  min-width: 1.6em;
+  padding: 0.05rem 0.4rem;
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--paper);
+  font-family: inherit;
+  font-size: 0.8rem;
+  text-align: center;
+  color: var(--ink);
+}

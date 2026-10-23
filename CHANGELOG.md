@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.0 — 2026-10-23
+
+### Added
+
+- **Keyboard shortcuts list.** Ctrl+/ (or "?" outside a text field), or the keyboard button at the
+  bottom of the sidebar, shows every shortcut of the app, grouped by where it works. On a Mac it shows
+  ⌘ and ⌥.
+
 ## 0.8.0 — 2026-10-23
 
 ### Added

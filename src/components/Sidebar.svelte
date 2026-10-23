@@ -143,6 +143,9 @@
     <button class="btn ghost grow" onclick={() => { void app.flush().then(() => app.closeVault()); }}>
       <Icon name="swap" /> {t('side.changeWorld')}
     </button>
+    <button class="icon-btn" title="{t('keys.title')} (Ctrl+/)" aria-label={t('keys.title')} onclick={() => (app.shortcutsOpen = true)}>
+      <Icon name="keyboard" />
+    </button>
     <button class="icon-btn" title={t(`theme.${app.theme}` as 'theme.auto')} aria-label={t(`theme.${app.theme}` as 'theme.auto')} onclick={() => app.cycleTheme()}>
       <Icon name="theme" />
     </button>

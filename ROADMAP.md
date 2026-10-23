@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 10 releases, latest 0.8.0 (2026-10-23)</summary>
+<summary><b>✅ Done</b> · 11 releases, latest 0.9.0 (2026-10-23)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.9.0** | 2026-10-23 | ⌨️ A list of all keyboard shortcuts (Ctrl+/) |
 | **0.8.0** | 2026-10-23 | 📦 Download and open worlds as .zip; 💡 quick notes inbox (Alt+I) 💬; 🔢 word count 💬 |
 | **0.7.0** | 2026-10-23 | 🕰️ Timeline; years of pages; one "Show by year" for the graph, cards, maps and timeline |
 | **0.6.1** | 2026-10-23 | 🔒 Shared worlds can't imitate the app; safer publishing workflow |
