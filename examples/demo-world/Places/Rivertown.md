@@ -1,4 +1,5 @@
 ---
+image: rivertown map.svg
 tags: [place, city]
 population: 12000
 ---

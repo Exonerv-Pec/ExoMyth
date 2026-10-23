@@ -5,6 +5,8 @@
   import { previewLinks } from '../actions';
   import { embeds } from '../embeds';
   import type { Page } from '../core/types';
+  import { pageImage } from '../core/cards';
+  import MediaThumb from './MediaThumb.svelte';
 
   let { path }: { path: string } = $props();
   const t = app.t;
@@ -92,8 +94,11 @@
       {#if page.parseError}
         <p class="notice" role="alert">{t('page.parseError', page.parseError)}</p>
       {/if}
-      {#if facts.length > 0}
+      {#if facts.length > 0 || pageImage(page)}
         <aside class="infobox">
+          {#if pageImage(page)}
+            <div class="infobox-image"><MediaThumb target={pageImage(page)} alt={page.title} /></div>
+          {/if}
           <dl>
             {#each facts as f (f.key)}
               <dt>{f.key}</dt>

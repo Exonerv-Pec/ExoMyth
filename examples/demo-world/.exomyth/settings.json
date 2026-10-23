@@ -25,6 +25,10 @@
       "inverse": "students"
     },
     {
+      "id": "member of",
+      "inverse": "members"
+    },
+    {
       "id": "rules",
       "inverse": "ruled by"
     },

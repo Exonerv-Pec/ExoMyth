@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.5.0 — 2026-10-23
+
+### Added
+
+- **Cards view.** A new mode next to Graph. Folder tabs show every page of a folder as a card
+  (picture or initials, folder colour, key facts). The dossier of a page shows it as a large card
+  with everything related to it below, grouped by relation in the same fixed order as the relations
+  panel: for an organization, its leader, members, allies and mentions. Click a card to walk to its
+  dossier; double-click to open the page.
+- **`image:` field** for a page's picture (portrait, emblem, map). It is shown at the top of the
+  infobox and on cards; without it, the first image in the text is used.
+- Folders have the same colour on the graph and on cards.
+- The demo world has two members of the Order (Mara Holt, Brother Tomas), a "member of" relation type
+  with the reverse label "members", and an emblem for the Order.
+
 ## 0.4.0 — 2026-10-23
 
 ### Added

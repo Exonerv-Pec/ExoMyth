@@ -106,3 +106,16 @@ export function embeds(node: HTMLElement, _dependency?: unknown) {
     },
   };
 }
+
+/** A `blob:` address for an image (or other media) of the open world, or undefined if it is not there. */
+export async function mediaUrl(target: string): Promise<string | undefined> {
+  const vault = app.vault;
+  if (!vault) return undefined;
+  const file = vault.resolveFile(target);
+  if (!file) return undefined;
+  try {
+    return await urlFor(vault, file.path, file.mtime);
+  } catch {
+    return undefined;
+  }
+}

@@ -5,8 +5,8 @@ import { emptyLayout, type StoredLayout } from './core/layout';
 import { mediaKind } from './core/media';
 import { detectLang, translate, type Key, type Lang } from './i18n';
 
-export type ViewMode = 'edit' | 'split' | 'preview' | 'graph';
-export type TextMode = Exclude<ViewMode, 'graph'>;
+export type ViewMode = 'edit' | 'split' | 'preview' | 'graph' | 'cards';
+export type TextMode = Exclude<ViewMode, 'graph' | 'cards'>;
 
 export interface HoverRect {
   left: number;
@@ -95,7 +95,7 @@ class App {
   version = $state(0);
   current = $state<string | null>(null);
   pendingHeading = $state<string | null>(null);
-  mode = $state<ViewMode>(load('exomyth:mode', ['edit', 'split', 'preview', 'graph'], 'split'));
+  mode = $state<ViewMode>(load('exomyth:mode', ['edit', 'split', 'preview', 'graph', 'cards'], 'split'));
   /** The text mode to return to from the graph. */
   textMode = $state<TextMode>(load('exomyth:textMode', ['edit', 'split', 'preview'], 'split'));
   theme = $state<Theme>(load('exomyth:theme', ['auto', 'light', 'dark'], 'auto'));
@@ -144,7 +144,7 @@ class App {
     this.hoverClose();
     this.mode = mode;
     save('exomyth:mode', mode);
-    if (mode !== 'graph') {
+    if (mode !== 'graph' && mode !== 'cards') {
       this.textMode = mode;
       save('exomyth:textMode', mode);
     }
@@ -372,7 +372,7 @@ class App {
 
   /** Opens `path` for reading or editing, leaving the graph if needed. */
   async openText(path: string, heading?: string): Promise<void> {
-    if (this.mode === 'graph') this.setMode(this.textMode);
+    if (this.mode === 'graph' || this.mode === 'cards') this.setMode(this.textMode);
     await this.open(path, heading);
   }
 

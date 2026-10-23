@@ -70,6 +70,7 @@ The secret: ||Eva Crow is her half-sister||.
 | `[[Page]]`, `[[Page\|text]]`, `[[Page#Heading]]` | Link to a page (by name, alias or partial path), with optional text or heading |
 | `relations:` | Typed relations. The key is the relation type; the value is one link or a list |
 | `aliases:` | Other names that links can use |
+| `image:` | Picture of the page (portrait, emblem, map), shown in its infobox and on its card |
 | `tags:` and `#tag` | Tags (header or inline) |
 | `pinned:` | Links shown first in their group in the relations panel |
 | `\|\|secret\|\|` | Spoiler, hidden in reading view until clicked |
@@ -105,6 +106,17 @@ Switch to **Graph** in the top bar (or press the graph button in the relations p
 - Hover a page to highlight its neighbours and see the names of its relations.
 - "Neighbours" and "Two steps away" show only the area around the selected page; positions stay
   the same, so the map does not change under you.
+
+## Cards
+
+Switch to **Cards** in the top bar to browse the world as cards.
+
+- **Folder tabs** (Characters, Places, Organizations...) show every page of a folder as a card with
+  its picture or initials, folder colour and key facts.
+- **Page dossier** shows the selected page as a large card, and below it every related page as a
+  card, grouped by relation: for an organization, its leader, members, allies and the pages that
+  mention it. Groups and cards come in the same fixed order as the relations panel.
+- Click a card to open its dossier, double-click to open the page itself.
 
 ## Images, video and audio
 

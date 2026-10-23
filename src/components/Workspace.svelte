@@ -5,6 +5,7 @@
   import Preview from './Preview.svelte';
   import RelationsPanel from './RelationsPanel.svelte';
   import GraphView from './GraphView.svelte';
+  import CardsView from './CardsView.svelte';
   import Icon from './Icon.svelte';
   import { MEDIA_ACCEPT } from '../core/media';
 
@@ -17,8 +18,9 @@
     return app.current ? app.vault?.getPage(app.current) : undefined;
   });
   const statusText = $derived(t(`save.${app.saveStatus}` as 'save.saved'));
-  const modes = ['edit', 'split', 'preview', 'graph'] as const;
-  const inGraph = $derived(app.mode === 'graph');
+  const modes = ['edit', 'split', 'preview', 'graph', 'cards'] as const;
+  /** Graph and cards show the whole world, not one page's text. */
+  const inGraph = $derived(app.mode === 'graph' || app.mode === 'cards');
   let mediaInput = $state<HTMLInputElement>();
 </script>
 
@@ -35,7 +37,7 @@
       </button>
       <div class="crumb">
         {#if inGraph}
-          <span class="name">{t('graph.title')}</span>
+          <span class="name">{app.mode === 'cards' ? t('mode.cards') : t('graph.title')}</span>
           {#if page}<span class="where">{page.title}</span>{/if}
         {:else if page}
           <span class="name">{page.title}</span>
@@ -66,7 +68,7 @@
       {#if page || inGraph}
         <div class="seg" role="group" aria-label="{t('mode.edit')} / {t('mode.preview')} / {t('mode.graph')}">
           {#each modes as m (m)}
-            <button aria-pressed={app.mode === m} onclick={() => app.setMode(m)} disabled={m !== 'graph' && !page}>
+            <button aria-pressed={app.mode === m} onclick={() => app.setMode(m)} disabled={m !== 'graph' && m !== 'cards' && !page}>
               {t(`mode.${m}` as 'mode.edit')}
             </button>
           {/each}
@@ -77,8 +79,10 @@
       </button>
     </div>
 
-    {#if inGraph}
+    {#if app.mode === 'graph'}
       <GraphView />
+    {:else if app.mode === 'cards'}
+      <CardsView />
     {:else if page && app.current}
       <div class="stage" class:split={app.mode === 'split'}>
         {#if app.mode !== 'preview'}

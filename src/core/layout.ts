@@ -97,6 +97,25 @@ export function serializeLayout(layout: StoredLayout): string {
   return JSON.stringify(out, null, 1) + '\n';
 }
 
+/**
+ * Colour slot for each top-level folder ('' = the world's root, which has no slot).
+ * Folders keep the slot they were saved with; a new folder takes the first free slot.
+ * The graph and the cards use this, so a folder has the same colour everywhere.
+ */
+export function folderColorSlots(folderNames: Iterable<string>, saved: Record<string, number> = {}): Record<string, number> {
+  const groups: Record<string, number> = {};
+  const folders = [...new Set([...folderNames].filter(Boolean))].sort(compareText);
+  for (const f of folders) if (saved[f] !== undefined) groups[f] = saved[f]!;
+  for (const f of folders) {
+    if (groups[f] !== undefined) continue;
+    const used = new Set(Object.values(groups));
+    let slot = 0;
+    while (used.has(slot) && slot < GROUP_COLORS) slot++;
+    groups[f] = slot < GROUP_COLORS ? slot : hash(f) % GROUP_COLORS;
+  }
+  return groups;
+}
+
 /* ------------------------------------------------------------------- helpers */
 
 /** 32-bit FNV-1a: a tiny, well-known string hash used to give each page a fixed "random" angle. */
@@ -466,18 +485,10 @@ export function layoutGraph(graph: WorldGraph, stored: StoredLayout = emptyLayou
   }
 
   // 4. Folder colours: a new folder takes the first free slot; existing folders keep theirs.
-  const groups: Record<string, number> = {};
-  const folders = [...new Set(graph.nodes.map((n) => n.group).filter(Boolean))].sort(compareText);
-  for (const f of folders) if (stored.groups?.[f] !== undefined) groups[f] = stored.groups[f]!;
-  for (const f of folders) {
-    if (groups[f] !== undefined) continue;
-    const used = new Set(Object.values(groups));
-    let slot = 0;
-    while (used.has(slot) && slot < GROUP_COLORS) slot++;
-    groups[f] = slot < GROUP_COLORS ? slot : hash(f) % GROUP_COLORS;
-    changed = true;
-  }
-  if (Object.keys(stored.groups ?? {}).some((f) => groups[f] === undefined)) changed = true;
+  const groups = folderColorSlots(graph.nodes.map((n) => n.group), stored.groups);
+  const sameKeys = (a: Record<string, number>, b: Record<string, number> = {}) =>
+    Object.keys(a).length === Object.keys(b).length && Object.entries(a).every(([k, v]) => b[k] === v);
+  if (!sameKeys(groups, stored.groups)) changed = true;
 
   const result: StoredLayout = { version: 1, shelf, groups, nodes: {} };
   for (const id of ids) {
