@@ -211,10 +211,10 @@ guarantees stable ordering; `tests/core.test.ts` checks that shuffling load orde
 2. ✅ Relations graph with a stable layout; page previews on hover
 3. ✅ Cards, interactive maps with pins, images, video and audio
 4. ✅ Timeline of pages and moving through the years on the graph, cards and maps
-5. Next: download a world as a .zip, months and custom calendars and eras, map regions and layers,
-   family trees
-6. Export a world as a static site to share with players or readers
-7. Desktop build (Tauri) for all browsers' limits
+5. Next: download a world as a .zip, page templates, writing tools, custom calendars, map regions,
+   family trees, a desktop app
+
+The full list, with sizes and notes, is in [ROADMAP.md](ROADMAP.md).
 
 ## Contributing
 
