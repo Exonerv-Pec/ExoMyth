@@ -4,9 +4,40 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Exomyth</title>
+    <style>
+      /* Appears after a few seconds, so a normal start never shows it. */
+      .boot-fallback {
+        font: 16px/1.5 system-ui, sans-serif;
+        max-width: 34rem;
+        margin: 4rem auto;
+        padding: 0 16px;
+        color: #17262f;
+        opacity: 0;
+        animation: boot-show 0.3s ease 5s forwards;
+      }
+      @keyframes boot-show {
+        to {
+          opacity: 1;
+        }
+      }
+      .boot-error {
+        font: 16px/1.5 system-ui, sans-serif;
+        margin: 4rem auto;
+        max-width: 34rem;
+        padding: 0 16px;
+        color: #b0432f;
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <!-- Shown only if the app's script fails to start (it is removed as soon as the app runs). -->
+      <div class="boot-fallback">
+        <p><strong>Exomyth could not start in this browser.</strong></p>
+        <p>Please update your browser, or try a current Chrome, Edge, Firefox or Safari.</p>
+        <p lang="ru"><strong>Exomyth не запустился в этом браузере.</strong> Обновите браузер или попробуйте свежий Chrome, Edge, Firefox или Safari.</p>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

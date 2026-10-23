@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.2 — 2026-10-23
+
+### Fixed
+
+- The app no longer waits for the one-time data carry-over from the old name before starting. Some
+  browsers (older Safari versions in particular) can leave a storage request hanging, which could
+  keep the page blank.
+- If the app cannot start at all, the page now says so after a few seconds instead of staying blank.
+
 ## 0.5.1 — 2026-10-23
 
 ### Added
