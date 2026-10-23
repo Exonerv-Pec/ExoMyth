@@ -54,7 +54,8 @@ const EMBED = /!\[\[([^\[\]\n|]+)(?:\|[^\]\n]*)?\]\]|!\[[^\]\n]*\]\(([^)\s]+)\)/
 
 /** The picture for a page: its `image:` field, or else the first image embedded in its text. */
 export function pageImage(page: Page): string | undefined {
-  const field = page.frontmatter.image;
+  // A map page shows its map.
+  const field = page.frontmatter.image ?? page.frontmatter.map;
   const first = Array.isArray(field) ? field[0] : field;
   if (typeof first === 'string' && first.trim()) {
     const m = /^!?\[\[([^\]|]+)/.exec(first.trim());

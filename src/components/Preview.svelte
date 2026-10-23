@@ -7,6 +7,8 @@
   import type { Page } from '../core/types';
   import { pageImage } from '../core/cards';
   import MediaThumb from './MediaThumb.svelte';
+  import MapView from './MapView.svelte';
+  import { mapOf } from '../core/maps';
 
   let { path }: { path: string } = $props();
   const t = app.t;
@@ -93,6 +95,9 @@
       {/if}
       {#if page.parseError}
         <p class="notice" role="alert">{t('page.parseError', page.parseError)}</p>
+      {/if}
+      {#if mapOf(page)}
+        <MapView {path} />
       {/if}
       {#if facts.length > 0 || pageImage(page)}
         <aside class="infobox">

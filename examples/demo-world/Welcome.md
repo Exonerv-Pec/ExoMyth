@@ -10,6 +10,7 @@ Open [[Kira Vale]] and look at the **Relations** panel on the right: it always s
 - Pin ⭐ important relations so they always come first in their group
 - Switch to **Graph** at the top to see how the whole world is connected
 - Switch to **Cards** to browse the world by folder, and open the dossier of a page: for example, the members and allies of the [[Order of the Silver River]]
+- Open [[Silver Coast]] for an interactive map with pins; switch on **Show by year** under it to move through the years
 - Drop an image, video or audio file into the editor to add it to a page (see the map of [[Rivertown]])
 
 Start here: [[Kira Vale]], [[Arn Vale]], [[Rivertown]], [[Order of the Silver River]].

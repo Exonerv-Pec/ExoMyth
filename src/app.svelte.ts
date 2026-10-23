@@ -3,6 +3,7 @@ import { baseName, dirName, joinPath, sanitizePageName, stripMd } from './core/n
 import { parseLinkText } from './core/parse';
 import { emptyLayout, type StoredLayout } from './core/layout';
 import { mediaKind } from './core/media';
+import { addPin, changePin, removePin, type PinData } from './core/maps';
 import { detectLang, translate, type Key, type Lang } from './i18n';
 
 export type ViewMode = 'edit' | 'split' | 'preview' | 'graph' | 'cards';
@@ -505,6 +506,33 @@ class App {
     } catch (e) {
       this.fail(e);
     }
+  }
+
+  /* ------------------------------------------------------------- map pins */
+
+  private async editMap(path: string, fn: (text: string) => string): Promise<boolean> {
+    const vault = this.vault;
+    if (!vault) return false;
+    try {
+      await this.flush();
+      await vault.editText(path, fn);
+      return true;
+    } catch (e) {
+      this.fail(e);
+      return false;
+    }
+  }
+
+  addPin(path: string, pin: PinData): Promise<boolean> {
+    return this.editMap(path, (t) => addPin(t, pin));
+  }
+
+  changePin(path: string, index: number, patch: Partial<PinData>): Promise<boolean> {
+    return this.editMap(path, (t) => changePin(t, index, patch));
+  }
+
+  removePin(path: string, index: number): Promise<boolean> {
+    return this.editMap(path, (t) => removePin(t, index));
   }
 
   fail(e: unknown): void {

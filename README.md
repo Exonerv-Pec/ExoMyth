@@ -71,6 +71,7 @@ The secret: ||Eva Crow is her half-sister||.
 | `relations:` | Typed relations. The key is the relation type; the value is one link or a list |
 | `aliases:` | Other names that links can use |
 | `image:` | Picture of the page (portrait, emblem, map), shown in its infobox and on its card |
+| `map:`, `pins:` | Turns the page into an interactive map with pins (see Maps below) |
 | `tags:` and `#tag` | Tags (header or inline) |
 | `pinned:` | Links shown first in their group in the relations panel |
 | `\|\|secret\|\|` | Spoiler, hidden in reading view until clicked |
@@ -106,6 +107,37 @@ Switch to **Graph** in the top bar (or press the graph button in the relations p
 - Hover a page to highlight its neighbours and see the names of its relations.
 - "Neighbours" and "Two steps away" show only the area around the selected page; positions stay
   the same, so the map does not change under you.
+
+## Maps
+
+Any page becomes a map when its header names a picture with `map:`. The reading view then shows an
+interactive map: zoom with the wheel or a pinch, drag to move, and use "Full screen" for more room.
+
+- **Pins** point to pages (a city, a fortress, a character) or just carry a label. Hover a pin for a
+  preview of its page, click it to open the page. Pins have the colour of their page's folder.
+- **Edit pins**: click the map to place a pin, drag pins to move them, and set the selected pin's page,
+  label and years. Arrow keys move the selected pin; Delete removes it.
+- **Years**: a pin can have `from` and `to` (both included). Switch on "Show by year" and move the
+  slider to see the map as it was in that year.
+
+Pins are stored in the page header as plain text; positions are fractions of the picture, so they stay
+right if you replace the picture with a larger copy:
+
+```yaml
+map: silver coast.svg
+pins:
+  - page: "[[Rivertown]]"
+    x: 0.52
+    y: 0.62
+    from: 300
+  - label: Old Watchtower
+    x: 0.3
+    y: 0.27
+    from: 210
+    to: 405
+```
+
+Pinned pages count as links: they appear in backlinks and on the graph.
 
 ## Cards
 

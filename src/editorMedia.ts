@@ -112,7 +112,7 @@ function build(state: EditorState): DecorationSet {
         continue;
       }
       // The picture of the page, from its `image:` field.
-      const m = /^image:\s*["']?(?:!?\[\[)?([^"'\]|]+)(?:\|([^\]"']*))?/.exec(text);
+      const m = /^(?:image|map):\s*["']?(?:!?\[\[)?([^"'\]|]+)(?:\|([^\]"']*))?/.exec(text);
       const w = m ? widgetFor(m[1]!, m[2]) : undefined;
       if (w) ranges.push(Decoration.widget({ widget: w, block: true, side: 1 }).range(line.to));
       continue;

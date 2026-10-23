@@ -225,7 +225,7 @@ export function editFrontmatter(text: string, mutate: (doc: Document) => void): 
   mutate(doc);
   // Keep the file's own line endings so Windows users do not get mixed endings.
   const eol = /\r\n/.test(m ? m[0] : text) ? '\r\n' : '\n';
-  const yaml = doc.toString({ lineWidth: 0 }).replace(/\n+$/, '').replace(/\r?\n/g, eol);
+  const yaml = doc.toString({ lineWidth: 0, flowCollectionPadding: false }).replace(/\n+$/, '').replace(/\r?\n/g, eol);
   const block = yaml ? `---${eol}${yaml}${eol}---${eol}` : '';
   const body = m ? text.slice(m[0].length) : text;
   return block + body;

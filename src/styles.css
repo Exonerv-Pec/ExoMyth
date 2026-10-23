@@ -2001,3 +2001,215 @@ svg.graph:focus-visible {
   font-size: 0.82rem;
   color: var(--broken);
 }
+
+/* -------------------------------------------------------------------- maps */
+
+.map-wrap {
+  margin: 0.4rem 0 1.4rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-m);
+  background: var(--surface);
+  overflow: hidden;
+  font-family: var(--font-ui);
+  display: flex;
+  flex-direction: column;
+}
+.map-wrap.full {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  margin: 0;
+  border-radius: 0;
+  border: none;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px)
+    env(safe-area-inset-left, 0px);
+}
+.map-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.6rem;
+  padding: 0.45rem 0.7rem;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.88rem;
+}
+.map-tools .grow {
+  flex: 1;
+}
+.map-tools .btn {
+  padding: 0.25rem 0.6rem;
+}
+.map-count {
+  color: var(--ink-faint);
+  font-size: 0.8rem;
+}
+.map-hint {
+  margin: 0;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  background: var(--accent-soft);
+}
+.pin-editor .map-hint {
+  background: none;
+  padding: 0;
+}
+.map-viewport {
+  position: relative;
+  height: min(62vh, 34rem);
+  overflow: hidden;
+  background: var(--paper);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.map-wrap.full .map-viewport {
+  flex: 1;
+  height: auto;
+}
+.map-wrap.editing .map-viewport {
+  cursor: crosshair;
+}
+.map-viewport:active {
+  cursor: grabbing;
+}
+.map-stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  transform-origin: 0 0;
+}
+.map-stage img {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+.map-missing {
+  position: absolute;
+  inset: 1rem;
+  margin: 0;
+  color: var(--broken);
+  font-size: 0.9rem;
+}
+
+/* A pin's tip sits on its spot; pins and labels keep their size whatever the zoom. */
+.pin {
+  position: absolute;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.15rem;
+  background: none;
+  border: none;
+  padding: 0;
+  transform: translate(-0.75rem, -2rem) scale(var(--inv, 1));
+  transform-origin: 0.75rem 2rem;
+  cursor: pointer;
+}
+.pin-mark {
+  width: 1.5rem;
+  height: 2rem;
+  flex: none;
+  filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.35));
+}
+.pin-mark path {
+  fill: var(--c);
+  stroke: var(--surface);
+  stroke-width: 1.6;
+}
+.pin-mark circle {
+  fill: var(--surface);
+}
+.pin-label {
+  margin-top: 0.15rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+.pin:hover .pin-label,
+.pin:focus-visible .pin-label {
+  background: var(--surface);
+  outline: 1.5px solid var(--c);
+}
+.pin:focus-visible {
+  outline: none;
+}
+.pin.selected .pin-mark path {
+  stroke: var(--ink);
+  stroke-width: 2.4;
+}
+.pin.selected .pin-label {
+  outline: 2px solid var(--accent);
+}
+.pin.ghost {
+  opacity: 0.35;
+}
+.pin.missing .pin-label {
+  color: var(--broken);
+  text-decoration: underline dashed;
+}
+.map-wrap.editing .pin {
+  cursor: move;
+}
+
+.map-years {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.88rem;
+}
+.map-years input[type='range'] {
+  flex: 1;
+  min-width: 8rem;
+  accent-color: var(--accent);
+}
+.map-year {
+  font-family: var(--font-text);
+  font-size: 1.35rem;
+  font-weight: 600;
+  min-width: 3.5ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.map-hidden {
+  color: var(--ink-faint);
+  font-size: 0.8rem;
+}
+
+.pin-editor {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+.pin-editor h3 {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: 1rem;
+}
+.pin-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+  gap: 0.5rem 0.75rem;
+}
+.pin-fields .field {
+  display: grid;
+  gap: 0.15rem;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+.pin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}

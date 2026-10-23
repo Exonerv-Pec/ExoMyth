@@ -370,6 +370,11 @@ export class Vault {
     });
   }
 
+  /** Rewrites a page's text with `fn` (for structured edits such as map pins). */
+  editText(path: string, fn: (text: string) => string): Promise<void> {
+    return this.editPage(path, fn);
+  }
+
   addRelation(path: string, type: string, link: WikiLink): Promise<void> {
     return this.editPage(path, (t) => addRelationToText(t, type.trim(), link));
   }

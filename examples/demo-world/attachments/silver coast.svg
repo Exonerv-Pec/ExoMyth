@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" font-family="Georgia, serif">
+  <rect width="800" height="520" fill="#ebe3cc"/>
+  <!-- hills -->
+  <g fill="#d8cba7" stroke="#b5a479" stroke-width="1.5">
+    <path d="M40 120 L90 60 L140 115 Z"/>
+    <path d="M110 105 L170 35 L230 100 Z"/>
+    <path d="M600 90 L650 40 L700 95 Z"/>
+    <path d="M660 110 L715 60 L770 115 Z"/>
+    <path d="M440 300 L485 235 L530 300 Z"/>
+  </g>
+  <!-- forests -->
+  <g fill="#9fb28a" stroke="#7e9169" stroke-width="1">
+    <circle cx="70" cy="250" r="16"/><circle cx="95" cy="238" r="14"/><circle cx="88" cy="266" r="15"/>
+    <circle cx="118" cy="252" r="13"/><circle cx="60" cy="280" r="12"/>
+    <circle cx="300" cy="250" r="12"/><circle cx="322" cy="262" r="13"/><circle cx="310" cy="282" r="11"/>
+    <circle cx="690" cy="250" r="14"/><circle cx="712" cy="268" r="13"/><circle cx="672" cy="272" r="12"/>
+  </g>
+  <!-- sea -->
+  <path d="M0 405 C110 385 210 425 320 400 C370 388 395 372 418 392 C440 412 470 428 560 418 C600 413 625 400 640 386 C652 375 668 380 670 395 C673 412 720 398 800 390 L800 520 L0 520 Z" fill="#a8c7cd"/>
+  <path d="M0 425 C110 405 210 445 320 420 C380 407 420 425 470 440 C560 446 640 425 800 415" fill="none" stroke="#8fb3ba" stroke-width="1.5" stroke-dasharray="7 6"/>
+  <!-- river -->
+  <path d="M168 70 C190 130 160 170 205 205 C250 240 300 215 330 250 C360 285 330 320 372 345 C395 360 410 372 418 392" fill="none" stroke="#8fb3ba" stroke-width="7" stroke-linecap="round"/>
+  <!-- road -->
+  <path d="M418 330 C440 300 470 285 480 265 M418 330 C350 320 280 210 240 152 M418 330 C520 350 600 370 650 390" fill="none" stroke="#a8916a" stroke-width="2" stroke-dasharray="2 5" stroke-linecap="round"/>
+  <!-- the town -->
+  <g fill="#c9b99a" stroke="#6d5c42" stroke-width="1">
+    <rect x="398" y="316" width="12" height="9"/><rect x="413" y="312" width="14" height="11"/>
+    <rect x="404" y="328" width="13" height="9"/><rect x="420" y="327" width="11" height="9"/>
+  </g>
+  <!-- the fortress -->
+  <g fill="#a39478" stroke="#4f4130" stroke-width="1.2">
+    <rect x="468" y="248" width="26" height="18"/><rect x="464" y="243" width="8" height="8"/><rect x="490" y="243" width="8" height="8"/>
+  </g>
+  <!-- the watchtower -->
+  <g fill="#b9ab8c" stroke="#4f4130" stroke-width="1.2">
+    <rect x="234" y="134" width="12" height="20"/><path d="M231 134 L240 124 L249 134 Z"/>
+  </g>
+  <text x="520" y="480" font-size="22" font-style="italic" fill="#4d7a82" letter-spacing="2">Silver Sea</text>
+  <text x="250" y="232" font-size="12" font-style="italic" fill="#4d7a82" transform="rotate(18 250 232)">Silver River</text>
+  <g transform="translate(752 470)" fill="#3a3226" font-size="12" text-anchor="middle">
+    <path d="M0 -22 L6 0 L0 -5 L-6 0 Z"/><text y="16">N</text>
+  </g>
+</svg>

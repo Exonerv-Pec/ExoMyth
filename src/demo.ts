@@ -36,7 +36,7 @@ const DEMO_HISTORY: Record<string, string[]> = {
   '.exomyth/settings.json': ['g6-f2c86461'],
   'Organizations/Order of the Silver River.md': ['50-fc67a0b8'],
   'Places/Rivertown.md': ['5k-99396e61', '6c-d6c4526e'],
-  'Welcome.md': ['iq-8864ffcc', 'ir-a0430db9', 'lm-e11e2110', 'ln-31dd7d01', 'q1-6bd26b98'],
+  'Welcome.md': ['iq-8864ffcc', 'ir-a0430db9', 'lm-e11e2110', 'ln-31dd7d01', 'q0-bf260e99', 'q1-6bd26b98'],
 };
 
 /**

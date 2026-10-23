@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.6.0 — 2026-10-23
+
+### Added
+
+- **Interactive maps.** A page with `map: picture` in its header shows an interactive map in the reading
+  view: zoom, pan, full screen. Pins point to pages or carry a label, use their page's folder colour,
+  show a preview on hover and open the page on click.
+- **Editing pins**: click to place, drag to move, arrow keys to nudge, Delete to remove; the selected
+  pin's page, label and years are edited below the map. Pins are written to the page header as plain
+  text (`pins:`), with positions as fractions of the picture.
+- **Moving through the years**: pins can have `from` and `to` years. "Show by year" adds a slider that
+  shows only what existed in the chosen year.
+- Map pages show their map as the picture on cards, and in the editor under the `map:` line.
+- Demo world: "Silver Coast", an original map with four pins and their years.
+
+### Changed
+
+- Editing a page header keeps short lists as they were written (`tags: [map]` no longer becomes
+  `tags: [ map ]`).
+
 ## 0.5.3 — 2026-10-23
 
 ### Fixed
