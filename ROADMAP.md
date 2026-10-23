@@ -32,6 +32,9 @@ Click a section to open it.
 | **0.2.0** | 2026-10-22 | 🕸️ Relations graph with a stable layout; page previews on hover |
 | **0.1.0** | 2026-10-22 | 📝 Pages, `[[links]]`, typed relations in a stable panel, search, tags, safe rename |
 
+💬 Tester ideas that are already in: a web version, a story bible / wiki, fast search across the
+world, a timeline, art and music in pages, and separate worlds for separate stories.
+
 Every change in detail: [CHANGELOG.md](CHANGELOG.md).
 
 </details>
@@ -56,7 +59,7 @@ Every change in detail: [CHANGELOG.md](CHANGELOG.md).
 </details>
 
 <details>
-<summary><b>📝 Writing tools</b> · 7 ideas</summary>
+<summary><b>📝 Writing tools</b> · 8 ideas</summary>
 
 <br>
 
@@ -69,6 +72,7 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 | ⬜ | Story structure templates 💬 | M | Three acts, the hero's journey and other well-known shapes, in our own words, to plan a story or check a draft |
 | ⬜ | Writing stats 💬 | M | Words per day, time spent writing, streaks; stored in the world, never sent anywhere |
 | ⬜ | Dangerous drafting mode 💬 | M | An optional sprint: new text fades if you stop typing, until a goal is reached, then it goes to the draft. Never touches existing text |
+| ⬜ | Mood boards and collages 💬 | M | Pictures, colours and quotes arranged freely for a character, place or scene |
 | ⬜ | Editing workspace 💬 | L | Comments, revision notes, comparing versions |
 | ⬜ | Dictionary / thesaurus 💬 | L | Must work offline, so the data has to ship with the app under a suitable licence |
 
@@ -91,16 +95,29 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 </details>
 
 <details>
-<summary><b>💻 Platforms</b> · 4 ideas</summary>
+<summary><b>💻 Platforms</b> · 5 ideas</summary>
 
 <br>
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
 | ⬜ | Install as an app (PWA), fully offline | M | Works without a connection after the first visit; can be installed on phones |
+| ⬜ | Mobile version 💬 | M–L | A layout made for phones first, installable from the browser; later perhaps a store app |
 | ⬜ | Desktop app (Tauri) 💬 | L | Windows, macOS, Linux; no browser limits on folders |
 | ⬜ | Sync between devices 💬 | L | Without a server of our own: through a folder the user already syncs (Syncthing, iCloud Drive, Dropbox, Git) |
 | ⬜ | Voice notes to text 💬 | L | Needs an offline speech engine: the browser's built-in one sends audio to a server, which Exomyth must not do |
+
+</details>
+
+<details>
+<summary><b>🧩 Workspace</b> · 2 ideas</summary>
+
+<br>
+
+| | Idea | Size | Notes |
+| --- | --- | :---: | --- |
+| ⬜ | Customizable workspace 💬 | M | Choose which views and panels to show, move them around, set your own shortcuts. Easy to change, never required |
+| ⬜ | Project folders 💬 | M | A ready set of folders for a new story: brainstorming, outline, drafts, story bible, art, research, notes, playlist |
 
 </details>
 
@@ -113,5 +130,8 @@ Exomyth started as a world wiki. These would make it a place to write the story 
   and write them. A documented format and a small command-line tool may be enough.
 - **Projects and worlds** 💬. Today each world is a folder. Do writers want one project with several
   stories sharing a world, or one world per story?
+
+Ideas stay on this list even when they look hard or far away: it is a place to remember them, and
+the notes say what would have to be true for them to fit Exomyth's rules.
 
 </details>
