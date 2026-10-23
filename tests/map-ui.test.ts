@@ -106,7 +106,7 @@ describe('maps in the reading view', () => {
   it('places, edits, moves and deletes pins, writing them into the page header', async () => {
     const { target, vault } = await boot();
     const button = (text: string) => [...target.querySelectorAll<HTMLButtonElement>('.map-wrap button')].find((b) => b.textContent?.trim() === text)!;
-    button('Edit pins').click();
+    button('Edit map').click();
     flushSync();
     const viewport = target.querySelector('.map-viewport')!;
     viewport.dispatchEvent(pointer('pointerdown', 10, 10));
@@ -124,7 +124,7 @@ describe('maps in the reading view', () => {
       flushSync();
     };
     set(fields[0]!, 'Kira Vale');
-    set(fields[2]!, '412');
+    set(fields[3]!, '412'); // page, label, layer, from, to
     target.querySelector<HTMLFormElement>('.pin-editor')!.requestSubmit();
     await wait();
     flushSync();
@@ -148,5 +148,65 @@ describe('maps in the reading view', () => {
     expect(pins.map((p) => p.label ?? p.page)).toEqual(['Fortress of the Order', 'Old Watchtower', "Smugglers' Cove", 'Kira Vale']);
     // The rest of the page is untouched.
     expect(await vault.readRaw(MAP)).toContain('# The Silver Coast');
+  });
+
+  it('draws areas on layers that can be switched off', async () => {
+    const { target, vault } = await boot();
+    const labels2 = () => [...target.querySelectorAll('.region-label')].map((e) => e.textContent);
+    expect(labels2()).toEqual(['Kingdom of the Vales', 'Lands of the Order', 'Westwood', 'Flooded Lowlands']);
+    expect(target.querySelector('.map-count')!.textContent).toContain('Areas: 4');
+    // Switching off the History layer hides its area and its pin.
+    target.querySelector<HTMLElement>('.map-layers summary')!.click();
+    const history = [...target.querySelectorAll<HTMLLabelElement>('.map-layers-menu label')].find((l) => l.textContent?.trim() === 'History')!;
+    history.querySelector('input')!.click();
+    flushSync();
+    expect(labels2()).not.toContain('Flooded Lowlands');
+    expect(labels(target)).not.toContain('Old Watchtower');
+    // In the flood year only, the lowlands follow their event page's year.
+    history.querySelector('input')!.click();
+    app.setByYear(true);
+    app.setYear(404);
+    flushSync();
+    expect(labels2()).not.toContain('Flooded Lowlands');
+    app.setYear(405);
+    flushSync();
+    expect(labels2()).toContain('Flooded Lowlands');
+    app.setByYear(false);
+
+    // Draw a new area: three clicks and "Done".
+    const button = (text: string) => [...target.querySelectorAll<HTMLButtonElement>('.map-wrap button')].find((b) => b.textContent?.trim() === text)!;
+    button('Edit map').click();
+    flushSync();
+    button('Draw an area').click();
+    flushSync();
+    const viewport = target.querySelector('.map-viewport')!;
+    for (const [x, y] of [[5, 5], [30, 5], [30, 30]]) {
+      viewport.dispatchEvent(pointer('pointerdown', x, y));
+      viewport.dispatchEvent(pointer('pointerup', x, y));
+      await wait(10);
+      flushSync();
+    }
+    expect(target.querySelectorAll('.vertex.draft').length).toBe(3);
+    button('Done, close it').click();
+    await wait();
+    flushSync();
+    let regions = mapOf(vault.getPage(MAP)!)!.regions;
+    expect(regions.length).toBe(5);
+    expect(regions[4]!.points.length).toBe(3);
+    // It is selected: name it and put it on a layer.
+    const fields = target.querySelectorAll<HTMLInputElement>('.pin-editor input');
+    fields[1]!.value = 'Northern Marches';
+    fields[1]!.dispatchEvent(new Event('input', { bubbles: true }));
+    fields[2]!.value = 'Politics';
+    fields[2]!.dispatchEvent(new Event('input', { bubbles: true }));
+    flushSync();
+    target.querySelector<HTMLFormElement>('.pin-editor')!.requestSubmit();
+    await wait();
+    regions = mapOf(vault.getPage(MAP)!)!.regions;
+    expect(regions[4]).toMatchObject({ label: 'Northern Marches', layer: 'Politics' });
+    expect(await vault.readRaw(MAP)).toContain('Kingdom of the Vales');
+    button('Delete area').click();
+    await wait();
+    expect(mapOf(vault.getPage(MAP)!)!.regions.length).toBe(4);
   });
 });

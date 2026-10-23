@@ -144,9 +144,10 @@ export function worldYearSpan(pages: readonly Page[]): { min: number; max: numbe
       add(y.from);
       add(y.to);
     }
-    for (const pin of mapOf(page)?.pins ?? []) {
-      add(pin.from);
-      add(pin.to);
+    const map = mapOf(page);
+    for (const thing of [...(map?.pins ?? []), ...(map?.regions ?? [])]) {
+      add(thing.from);
+      add(thing.to);
     }
   }
   return min <= max ? { min, max } : undefined;

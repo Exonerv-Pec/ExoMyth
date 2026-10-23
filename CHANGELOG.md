@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.14.0 — 2026-10-24
+
+### Added
+
+- **Areas on maps.** "Draw an area" (in Edit map) outlines a country, a forest, a flooded plain… by
+  clicking its corners. Areas can link to a page (with its preview on hover), have a label, a colour
+  (or the page's folder colour) and years, follow "Show by year", and be reshaped by dragging corners.
+  They are stored in the page header as `regions:` with `points:` as fractions of the picture.
+- **Map layers.** Pins and areas can be given a `layer` (Politics, Terrain, History…); the **Layers**
+  menu above a map switches layers on and off, remembered per map in this browser.
+- Demo world: the Silver Coast has four areas on three layers, including the lowlands of the Great Flood.
+
+### Changed
+
+- "Edit pins" is now "Edit map". Editing an area keeps comments and the rest of the header exactly as
+  written.
+- The language button in the sidebar is shorter (EN / RU), so the sidebar footer fits.
+
 ## 0.13.0 — 2026-10-23
 
 ### Added

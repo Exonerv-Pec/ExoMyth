@@ -3,7 +3,7 @@ import { baseName, dirName, joinPath, sanitizePageName, stripMd } from './core/n
 import { parseLinkText } from './core/parse';
 import { emptyLayout, type StoredLayout } from './core/layout';
 import { mediaKind } from './core/media';
-import { addPin, changePin, removePin, type PinData } from './core/maps';
+import { addPin, addRegion, changePin, changeRegion, removePin, removeRegion, type PinData, type RegionData } from './core/maps';
 import { existsIn, pageYears, setYearsInText, worldYearSpan } from './core/years';
 import { worldToZip, zipFolderName } from './core/archive';
 import { appendIdea } from './core/writing';
@@ -837,6 +837,18 @@ class App {
 
   removePin(path: string, index: number): Promise<boolean> {
     return this.editMap(path, (t) => removePin(t, index));
+  }
+
+  addRegion(path: string, region: RegionData): Promise<boolean> {
+    return this.editMap(path, (t) => addRegion(t, region));
+  }
+
+  changeRegion(path: string, index: number, patch: Partial<RegionData>): Promise<boolean> {
+    return this.editMap(path, (t) => changeRegion(t, index, patch));
+  }
+
+  removeRegion(path: string, index: number): Promise<boolean> {
+    return this.editMap(path, (t) => removeRegion(t, index));
   }
 
   fail(e: unknown): void {

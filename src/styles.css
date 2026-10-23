@@ -3010,3 +3010,145 @@ svg.graph:focus-visible {
   display: flex;
   justify-content: flex-end;
 }
+
+/* ============================================================ map areas and layers (v0.14) */
+
+.map-regions {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.region {
+  fill: color-mix(in srgb, var(--c) 24%, transparent);
+  stroke: var(--c);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  cursor: default;
+  outline: none;
+}
+.region.linked {
+  cursor: pointer;
+}
+.region:hover,
+.region:focus-visible {
+  fill: color-mix(in srgb, var(--c) 36%, transparent);
+}
+.region.ghost {
+  opacity: 0.35;
+}
+.region.selected {
+  stroke-width: 3;
+  stroke-dasharray: 8 5;
+}
+.map-wrap.editing .region {
+  cursor: pointer;
+}
+.region-draft {
+  fill: color-mix(in srgb, var(--accent) 15%, transparent);
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+.region-label {
+  position: absolute;
+  transform: translate(-50%, -50%) scale(var(--inv, 1));
+  padding: 0.05rem 0.45rem;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  color: color-mix(in srgb, var(--c) 65%, var(--ink));
+  font-family: var(--font-text);
+  font-size: 0.82rem;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.vertex {
+  position: absolute;
+  width: 0.85rem;
+  height: 0.85rem;
+  padding: 0;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  background: var(--surface);
+  transform: translate(-50%, -50%) scale(var(--inv, 1));
+  cursor: move;
+  z-index: 2;
+}
+.vertex.draft {
+  cursor: pointer;
+  width: 0.7rem;
+  height: 0.7rem;
+}
+.vertex.first {
+  background: var(--accent);
+  width: 1rem;
+  height: 1rem;
+}
+.map-layers {
+  position: relative;
+}
+.map-layers summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.22rem 0.6rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-s);
+  font-size: 0.88rem;
+}
+.map-layers summary::-webkit-details-marker {
+  display: none;
+}
+.map-layers summary::after {
+  content: ' ▾';
+  color: var(--ink-faint);
+}
+.map-layers .count {
+  color: var(--ink-faint);
+}
+.map-layers-menu {
+  position: absolute;
+  top: calc(100% + 0.3rem);
+  left: 0;
+  z-index: 20;
+  display: grid;
+  gap: 0.35rem;
+  min-width: 11rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-m);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.region-colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  align-items: center;
+}
+.swatch {
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 0 1px var(--line-strong);
+}
+.swatch[aria-pressed='true'] {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.swatch.auto {
+  width: auto;
+  border-radius: 999px;
+  padding: 0 0.5rem;
+  background: var(--paper);
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}

@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 15 releases, latest 0.13.0 (2026-10-23)</summary>
+<summary><b>✅ Done</b> · 16 releases, latest 0.14.0 (2026-10-24)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.14.0** | 2026-10-24 | 🗾 Areas on maps and map layers |
 | **0.13.0** | 2026-10-23 | ⚙️ Settings: switch off views and tools you don't use; theme and language 💬 |
 | **0.12.0** | 2026-10-23 | 🌳 Family trees from relations (father, mother, spouse…), three generations up and two down |
 | **0.11.0** | 2026-10-23 | 🧩 Page templates: Character, Place, Organization, Event, Scene, and your own 💬 |
@@ -80,7 +81,7 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 </details>
 
 <details>
-<summary><b>🗺️ Worldbuilding</b> · 5 ideas</summary>
+<summary><b>🗺️ Worldbuilding</b> · 4 ideas</summary>
 
 <br>
 
@@ -88,7 +89,6 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 | --- | --- | :---: | --- |
 | ⬜ | Playlists for a world or a scene 💬 | S | Audio already works in pages; a page of tracks that plays in order |
 | ⬜ | Months, days, custom calendars and eras | M–L | Beyond whole years: "3rd of Frostmonth, Year 412 of the Second Age" |
-| ⬜ | Map regions and layers | M | Shapes for countries and areas; layers for politics, terrain, routes |
 | ⬜ | Export a world as a static site | M | To share with players or readers, without the editor |
 | ⬜ | Infinite whiteboard / canvas 💬 | L | Cards, images and notes placed freely, linked to pages |
 

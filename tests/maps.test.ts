@@ -77,3 +77,73 @@ describe('maps', () => {
     expect(idx.backlinkPaths('Rivertown.md')).toEqual(['Maps/Coast.md']);
   });
 });
+
+import { addRegion, changeRegion, mapLayers, regionCentre, removeRegion } from '../src/core/maps';
+import { worldYearSpan } from '../src/core/years';
+
+describe('map regions and layers', () => {
+  const MAPR = `---
+map: coast.png
+pins:
+  - label: Tower
+    x: 0.3
+    y: 0.3
+    layer: History
+regions:
+  # the old kingdom
+  - label: Kingdom
+    layer: Politics
+    color: "#2f63a8"
+    from: 300
+    points: [[0.1, 0.1], [0.5, 0.1], [0.5, 0.5], [0.1, 0.5]]
+  - page: "[[Westwood]]"
+    layer: Terrain
+    color: blue
+    points: [[0, 0], [0.2, 0]]
+  - label: Marsh
+    points: [[0.6, 0.6], [0.9, 0.6], [0.8, "0.9"], [2, -1]]
+---
+Body
+`;
+
+  it('reads regions with their page, label, layer, colour and years; skips broken ones', () => {
+    const m = mapOf(parsePage('Maps/Coast.md', MAPR, 1))!;
+    expect(m.regions.map((r) => [r.index, r.label ?? r.page, r.layer, r.color, r.points.length])).toEqual([
+      [0, 'Kingdom', 'Politics', '#2f63a8', 4],
+      [2, 'Marsh', undefined, undefined, 4],
+    ]);
+    expect(m.regions[1]!.points[3]).toEqual([1, 0]); // clamped onto the picture
+    expect(m.pins[0]!.layer).toBe('History');
+    expect(mapLayers(m)).toEqual(['History', 'Politics']);
+    const [cx, cy] = regionCentre(m.regions[0]!.points);
+    expect(cx).toBeCloseTo(0.3);
+    expect(cy).toBeCloseTo(0.3);
+    expect(worldYearSpan([parsePage('Maps/Coast.md', MAPR, 1)])).toEqual({ min: 300, max: 300 });
+  });
+
+  it('adds, changes and removes regions, keeping the rest of the header', () => {
+    let text = addRegion(MAPR, { label: 'Order lands', layer: 'Politics', points: [[0.5, 0.4], [0.7, 0.4], [0.123456, 0.6]], from: 371 });
+    expect(text).toContain('# the old kingdom');
+    expect(text).toContain('points: [[0.5, 0.4], [0.7, 0.4], [0.1235, 0.6]]');
+    let m = mapOf(parsePage('M.md', text, 1))!;
+    expect(m.regions.map((r) => r.label)).toEqual(['Kingdom', 'Marsh', 'Order lands']);
+    // Index 3 among entries: the Westwood region with too few points still counts in the file.
+    text = changeRegion(text, 3, { page: 'Order of the Silver River', color: '#a86214', layer: undefined });
+    expect(text).toContain('color: blue'); // other regions are left exactly as written
+    m = mapOf(parsePage('M.md', text, 1))!;
+    const order = m.regions.find((r) => r.index === 3)!;
+    expect([order.page, order.color, order.layer, order.from]).toEqual(['Order of the Silver River', '#a86214', undefined, 371]);
+    text = removeRegion(text, 0);
+    m = mapOf(parsePage('M.md', text, 1))!;
+    expect(m.regions.map((r) => r.label ?? r.page)).toEqual(['Marsh', 'Order lands']);
+    expect(m.pins.length).toBe(1);
+    expect(removeRegion(removeRegion(removeRegion(text, 0), 0), 0)).not.toContain('regions:');
+  });
+
+  it('pins keep their layer when moved, and lose it when cleared', () => {
+    let text = changePin(MAPR, 0, { x: 0.4 });
+    expect(mapOf(parsePage('M.md', text, 1))!.pins[0]!.layer).toBe('History');
+    text = changePin(text, 0, { layer: undefined });
+    expect(mapOf(parsePage('M.md', text, 1))!.pins[0]!.layer).toBeUndefined();
+  });
+});

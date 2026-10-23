@@ -190,7 +190,7 @@
     <button class="icon-btn" title={t(`theme.${app.theme}` as 'theme.auto')} aria-label={t(`theme.${app.theme}` as 'theme.auto')} onclick={() => app.cycleTheme()}>
       <Icon name="theme" />
     </button>
-    <button class="btn ghost" onclick={() => app.toggleLang()}>{t('lang.switch')}</button>
+    <button class="btn ghost lang-btn" title={t('lang.switch')} aria-label={t('lang.switch')} onclick={() => app.toggleLang()}>{t('lang.short')}</button>
   </div>
 </aside>
 

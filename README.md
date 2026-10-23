@@ -118,8 +118,13 @@ interactive map: zoom with the wheel or a pinch, drag to move, and use "Full scr
 
 - **Pins** point to pages (a city, a fortress, a character) or just carry a label. Hover a pin for a
   preview of its page, click it to open the page. Pins have the colour of their page's folder.
-- **Edit pins**: click the map to place a pin, drag pins to move them, and set the selected pin's page,
-  label and years. Arrow keys move the selected pin; Delete removes it.
+- **Edit map**: click the map to place a pin, drag pins to move them, and set the selected pin's page,
+  label, layer and years. Arrow keys move the selected pin; Delete removes it.
+- **Areas**: in Edit map, "Draw an area" and click the corners of a country, a forest or a flooded
+  plain; close it on the first corner, with Enter or "Done". An area can link to a page, have a label,
+  a colour (or its page's folder colour) and years; drag its corners to reshape it.
+- **Layers**: give pins and areas a layer (Politics, Terrain, History…) and switch layers on and off
+  with **Layers** above the map. Things without a layer are always shown.
 - **Years**: a pin can have `from` and `to` (both included). Switch on "Show by year" and move the
   slider to see the map as it was in that year.
 
@@ -138,6 +143,13 @@ pins:
     y: 0.27
     from: 210
     to: 405
+    layer: History
+regions:
+  - label: Kingdom of the Vales
+    layer: Politics
+    color: "#a86214"
+    from: 300
+    points: [[0.19, 0.12], [0.53, 0.16], [0.7, 0.37], [0.76, 0.71], [0.38, 0.77], [0.16, 0.37]]
 ```
 
 Pinned pages count as links: they appear in backlinks and on the graph.
