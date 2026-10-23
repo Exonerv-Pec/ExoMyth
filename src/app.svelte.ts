@@ -146,6 +146,8 @@ class App {
   layout = $state.raw<StoredLayout | null>(null);
   /** Asks the graph to bring a page into view; `seq` makes repeated requests distinct. */
   graphFocus = $state<{ path: string; seq: number } | null>(null);
+  /** Which page view the Cards mode shows: the dossier or the family tree. */
+  cardsTab = $state<'dossier' | 'family'>('dossier');
   /** Asks the timeline to bring a page into view. */
   timelineFocus = $state<{ path: string; seq: number } | null>(null);
   /** "Show by year": the graph, cards, maps and timeline show the world as it was in `year`. */
@@ -231,6 +233,15 @@ class App {
       if (path) this.graphFocus = { path, seq: (this.graphFocus?.seq ?? 0) + 1 };
     });
   }
+  /** Shows the family tree of `path` (in the Cards mode). */
+  showFamily(path: string): void {
+    void this.flush().then(async () => {
+      this.cardsTab = 'family';
+      this.setMode('cards');
+      await this.open(path);
+    });
+  }
+
   /** Switches to the timeline and brings `path` into view. */
   showOnTimeline(path: string | null): void {
     void this.flush().then(() => {

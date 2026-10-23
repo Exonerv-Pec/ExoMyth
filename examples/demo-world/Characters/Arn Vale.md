@@ -4,6 +4,8 @@ tags: [character, ruler]
 born: 349
 died: 430
 relations:
+  father: "[[Oren Vale]]"
+  mother: "[[Ysolde Vale]]"
   spouse: "[[Liara Vale]]"
   rules: "[[Rivertown]]"
 ---

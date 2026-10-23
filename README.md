@@ -233,6 +233,18 @@ new world in the browser. Nothing is uploaded anywhere; the file is made on your
 Worlds kept in the browser can be cleared by the browser when the disk is nearly full. Exomyth asks
 the browser to keep them, but a .zip now and then is the safe way to back up.
 
+## Family trees
+
+In **Cards**, the **Family tree** tab draws the family of the selected character: grandparents,
+parents, brothers and sisters (half-siblings too), spouses, children and grandchildren, each with
+their picture and years. Click someone to move the tree to them; double-click to open their page.
+The tree button at the top of the relations panel opens it for the current page.
+
+Trees are drawn from ordinary relations: `father`, `mother`, `parent`, `son`, `daughter`, `children`,
+`spouse`, `wife`, `husband`, `brother`, `sister`, `sibling`, and the same words in Russian. For other
+words, set `"family": "parent"` (or `child`, `spouse`, `sibling`) on the relation type in
+`.exomyth/settings.json`; `"family": "none"` keeps a word out of trees.
+
 ## Images, video and audio
 
 Drag files into the editor, paste a screenshot, or use the image button in the top bar. Files are saved

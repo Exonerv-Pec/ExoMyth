@@ -39,7 +39,7 @@ describe('card models', () => {
   it('lists folders as tabs, root last', () => {
     const tabs = folderTabs(demoIndex());
     expect(tabs).toEqual([
-      { folder: 'Characters', count: 8 },
+      { folder: 'Characters', count: 10 },
       { folder: 'Events', count: 2 },
       { folder: 'Maps', count: 1 },
       { folder: 'Organizations', count: 1 },
@@ -55,6 +55,8 @@ describe('card models', () => {
       'Kira Vale',
       'Liara Vale',
       'Mara Holt',
+      'Oren Vale',
+      'Ysolde Vale',
     ]);
   });
 
@@ -143,7 +145,7 @@ describe('cards view', () => {
     const target = await boot('Welcome.md');
     [...target.querySelectorAll<HTMLButtonElement>('.cards-tabs button')].find((b) => b.textContent?.includes('Characters'))!.click();
     flushSync();
-    expect(target.querySelectorAll('.card-grid .page-card').length).toBe(8);
+    expect(target.querySelectorAll('.card-grid .page-card').length).toBe(10);
     expect(target.querySelector('.hero-title')).toBeNull();
   });
 });

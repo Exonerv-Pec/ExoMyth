@@ -2778,3 +2778,128 @@ svg.graph:focus-visible {
   font: inherit;
   cursor: pointer;
 }
+
+/* ============================================================ family tree (v0.12) */
+
+.family {
+  padding: 0.25rem 0 1.5rem;
+}
+.family-help {
+  margin-bottom: 0.75rem;
+}
+.family-inner {
+  position: relative;
+  display: grid;
+  gap: 2.6rem;
+  min-width: max-content;
+  padding: 0.5rem 0.25rem;
+}
+.family-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.family-lines path {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1.5;
+}
+.family-lines path.couple {
+  stroke: var(--accent);
+}
+.family-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  align-items: center;
+}
+.family-gen {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.family-units {
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 2.2rem;
+}
+.family-unit {
+  display: flex;
+  gap: 1.6rem;
+}
+.family-card {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 0.25rem;
+  width: 8.5rem;
+  padding: 0.7rem 0.5rem 0.6rem;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--c);
+  border-radius: var(--r-m);
+  background: var(--surface);
+  color: var(--ink);
+  text-align: center;
+}
+.family-card:hover {
+  border-color: var(--c);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--c) 18%, transparent);
+}
+.family-card.focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.family-card.faded {
+  opacity: 0.4;
+  filter: grayscale(0.7);
+}
+.fc-media {
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--c) 16%, var(--paper));
+}
+.fc-media :is(img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.fc-initials {
+  font-family: var(--font-text);
+  font-weight: 600;
+  color: color-mix(in srgb, var(--c) 70%, var(--ink));
+}
+.fc-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+.fc-years {
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+.family-empty {
+  display: grid;
+  gap: 0.6rem;
+  max-width: 38rem;
+}
+@media (max-width: 640px) {
+  .family-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.4rem;
+  }
+  .family-units {
+    justify-content: flex-start;
+  }
+}

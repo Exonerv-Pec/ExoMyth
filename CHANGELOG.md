@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.12.0 — 2026-10-23
+
+### Added
+
+- **Family trees.** A "Family tree" tab in Cards draws the family of the selected character from their
+  relations: up to great-grandparents, parents, full and half siblings, spouses, children and
+  grandchildren, with pictures, years and joining lines. Clicking someone moves the tree to them;
+  double-click opens the page. A tree button in the relations panel opens it for the current page.
+- Family words are recognised in English and Russian (father, mother, son, daughter, spouse, brother,
+  sister…); any relation type can be marked with `"family"` in the world settings.
+- Demo world: Arn Vale's parents, Oren and Ysolde Vale, so the Vales have three generations.
+
+### Changed
+
+- The "Customizable workspace" idea on the roadmap now describes turning off views and tools one does
+  not use.
+
 ## 0.11.0 — 2026-10-23
 
 ### Added

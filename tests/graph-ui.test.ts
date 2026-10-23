@@ -78,7 +78,7 @@ describe('graph view', () => {
     const { target } = await boot({ 'Notes/Stray idea.md': 'Links to nobody.' });
     await openGraph(target);
     const nodes = target.querySelectorAll('svg.graph .node');
-    expect(nodes.length).toBe(15);
+    expect(nodes.length).toBe(17);
     const lonely = [...nodes].find((n) => n.getAttribute('aria-label') === 'Stray idea')!;
     expect(lonely.classList.contains('shelved')).toBe(true);
     expect(target.querySelector('.shelf-head text')!.textContent).toContain('No connections · 1');
@@ -173,7 +173,7 @@ describe('graph view', () => {
 
   it('opens on the graph from the relations panel', async () => {
     const { target } = await boot();
-    target.querySelector<HTMLButtonElement>('.relpanel .panel-head .icon-btn')!.click();
+    target.querySelector<HTMLButtonElement>('.relpanel .panel-head .icon-btn[aria-label="Show on graph"]')!.click();
     await wait();
     flushSync();
     expect(app.mode).toBe('graph');

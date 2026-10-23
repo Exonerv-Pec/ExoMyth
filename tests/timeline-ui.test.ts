@@ -70,7 +70,7 @@ describe('the timeline', () => {
       'Places',
     ]);
     const titles = rowTitles(target);
-    expect(titles.slice(0, 3)).toEqual(['Arn Vale', 'Brother Tomas', 'Liara Vale']);
+    expect(titles.slice(0, 3)).toEqual(['Oren Vale', 'Ysolde Vale', 'Arn Vale']);
     expect(titles).toContain('Siege of Rivertown');
     expect(titles).not.toContain('Welcome');
     const flood = target.querySelector('.tl-row[data-path="Events/The Great Flood.md"]')!;

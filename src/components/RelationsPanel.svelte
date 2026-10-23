@@ -5,6 +5,7 @@
   import Icon from './Icon.svelte';
   import Resizer from './Resizer.svelte';
   import YearsEditor from './YearsEditor.svelte';
+  import { hasFamily, kinship } from '../core/family';
   import { previewOn } from '../actions';
 
   let { path }: { path: string | null } = $props();
@@ -22,6 +23,11 @@
   const pageNames = $derived.by(() => {
     app.version;
     return (app.vault?.index.worldPages ?? []).slice(0, 1000).map((p) => p.name);
+  });
+  const inFamily = $derived.by(() => {
+    app.version;
+    const index = app.vault?.index;
+    return !!index && !!path && hasFamily(kinship(index), path);
   });
   const pageTitle = $derived.by(() => {
     app.version;
@@ -74,6 +80,11 @@
   <header class="panel-head">
     <div class="panel-title-row">
       <h2 class="panel-title">{t('panel.title')}{#if pageTitle}<span class="panel-page"> · {pageTitle}</span>{/if}</h2>
+      {#if path && inFamily}
+        <button class="icon-btn" title={t('family.show')} aria-label={t('family.show')} onclick={() => path && app.showFamily(path)}>
+          <Icon name="tree" />
+        </button>
+      {/if}
       {#if path}
         <button class="icon-btn" title={t('panel.onGraph')} aria-label={t('panel.onGraph')} onclick={() => app.showOnGraph(path)}>
           <Icon name="relations" />

@@ -49,6 +49,11 @@ export interface RelationTypeDef {
   inverse?: string;
   /** Symmetric relations (e.g. allies) are shown in one group for both sides. */
   symmetric?: boolean;
+  /**
+   * What the relation means for family trees, when its name alone does not say: the target is the
+   * page's `parent`, `child`, `spouse` or `sibling`; `none` keeps a family-sounding name out of trees.
+   */
+  family?: 'parent' | 'child' | 'spouse' | 'sibling' | 'none';
 }
 
 export interface VaultSettings {

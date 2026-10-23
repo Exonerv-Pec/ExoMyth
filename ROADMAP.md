@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 13 releases, latest 0.11.0 (2026-10-23)</summary>
+<summary><b>✅ Done</b> · 14 releases, latest 0.12.0 (2026-10-23)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.12.0** | 2026-10-23 | 🌳 Family trees from relations (father, mother, spouse…), three generations up and two down |
 | **0.11.0** | 2026-10-23 | 🧩 Page templates: Character, Place, Organization, Event, Scene, and your own 💬 |
 | **0.10.0** | 2026-10-23 | 🎯 Focus mode; 📁 move pages between folders (drag and drop); 🔤 spell check switch 💬 |
 | **0.9.0** | 2026-10-23 | ⌨️ A list of all keyboard shortcuts (Ctrl+/) |
@@ -78,7 +79,7 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 </details>
 
 <details>
-<summary><b>🗺️ Worldbuilding</b> · 6 ideas</summary>
+<summary><b>🗺️ Worldbuilding</b> · 5 ideas</summary>
 
 <br>
 
@@ -87,7 +88,6 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 | ⬜ | Playlists for a world or a scene 💬 | S | Audio already works in pages; a page of tracks that plays in order |
 | ⬜ | Months, days, custom calendars and eras | M–L | Beyond whole years: "3rd of Frostmonth, Year 412 of the Second Age" |
 | ⬜ | Map regions and layers | M | Shapes for countries and areas; layers for politics, terrain, routes |
-| ⬜ | Family trees | M | Drawn from relations such as `father`, `mother`, `spouse` |
 | ⬜ | Export a world as a static site | M | To share with players or readers, without the editor |
 | ⬜ | Infinite whiteboard / canvas 💬 | L | Cards, images and notes placed freely, linked to pages |
 
@@ -115,7 +115,7 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
-| ⬜ | Customizable workspace 💬 | M | Choose which views and panels to show, move them around, set your own shortcuts. Easy to change, never required |
+| ⬜ | Customizable workspace 💬 | M | A settings page to turn off what you don't use: views (Graph, Cards, Timeline), maps, years, word count, the relations panel, quick notes. Then arranging panels and your own shortcuts. Easy to change, never required; everything stays on by default |
 | ⬜ | Project folders 💬 | M | A ready set of folders for a new story: brainstorming, outline, drafts, story bible, art, research, notes, playlist |
 
 </details>

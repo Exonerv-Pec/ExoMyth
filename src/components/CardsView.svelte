@@ -8,6 +8,7 @@
   import MediaThumb from './MediaThumb.svelte';
   import PageCard from './PageCard.svelte';
   import YearSlider from './YearSlider.svelte';
+  import FamilyTree from './FamilyTree.svelte';
 
   const t = app.t;
 
@@ -22,7 +23,8 @@
   const slots = $derived(folderColorSlots(tabs.map((x) => x.folder), app.layout?.groups));
   const colorOf = (group: string) => (slots[group] === undefined ? 'var(--g-root)' : `var(--g${slots[group]})`);
 
-  const doc = $derived(index && app.current && folder === null ? dossier(index, app.current) : undefined);
+  const family = $derived(folder === null && app.cardsTab === 'family');
+  const doc = $derived(index && app.current && folder === null && !family ? dossier(index, app.current) : undefined);
   const collection = $derived(index && folder !== null ? folderCards(index, folder) : []);
   const excerptHtml = $derived(doc && index ? renderMarkdown(doc.page.excerpt, index) : '');
 
@@ -66,8 +68,11 @@
 
 <div class="cards-view">
   <div class="cards-tabs" role="tablist" aria-label={t('cards.tabs')}>
-    <button role="tab" aria-selected={folder === null} onclick={() => (folder = null)} disabled={!app.current}>
+    <button role="tab" aria-selected={folder === null && !family} onclick={() => ((folder = null), (app.cardsTab = 'dossier'))} disabled={!app.current}>
       {t('cards.dossier')}
+    </button>
+    <button role="tab" aria-selected={family} onclick={() => ((folder = null), (app.cardsTab = 'family'))}>
+      {t('family.tab')}
     </button>
     {#each tabs as tab (tab.folder)}
       <button role="tab" aria-selected={folder === tab.folder} onclick={() => (folder = tab.folder)} style:--c={colorOf(tab.folder)}>
@@ -92,6 +97,8 @@
           {/each}
         </div>
       </section>
+    {:else if family}
+      <FamilyTree {colorOf} />
     {:else if doc}
       <article class="dossier-hero" class:faded={faded(doc.page.path)} style:--c={colorOf(doc.page.group)}>
         <div class="hero-media" aria-hidden="true">

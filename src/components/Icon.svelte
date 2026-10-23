@@ -17,7 +17,8 @@
     | 'keyboard'
     | 'move'
     | 'focus'
-    | 'spell';
+    | 'spell'
+    | 'tree';
 
   let { name }: { name: Name } = $props();
 </script>
@@ -71,6 +72,11 @@
   {:else if name === 'spell'}
     <path d="M3 15l3-9 3 9M4 12h4M12 6v9h3a2.2 2.2 0 0 0 0-4.5H12M15 10.5a2 2 0 0 0 0-4.5h-3" />
     <path d="M14 19l2.5 2L21 16" />
+  {:else if name === 'tree'}
+    <rect x="9" y="3" width="6" height="4" rx="1" />
+    <rect x="3" y="16" width="6" height="4" rx="1" />
+    <rect x="15" y="16" width="6" height="4" rx="1" />
+    <path d="M12 7v4.5M6 16v-4.5h12V16" />
   {:else if name === 'keyboard'}
     <rect x="3" y="6" width="18" height="12" rx="2" />
     <path d="M7 10h.01M11 10h.01M15 10h.01M17 10h.01M7 14h10" />

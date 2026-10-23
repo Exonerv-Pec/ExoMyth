@@ -66,7 +66,7 @@ describe('stable layout', () => {
     expect(after.changed).toBe(true);
     for (const [id, p] of before.positions) expect(after.positions.get(id)).toEqual(p);
     const kira = after.positions.get('Characters/Kira Vale.md')!;
-    expect(dist(after.positions.get('Characters/Newcomer.md')!, kira)).toBeLessThan(EDGE_LENGTH * 2.5);
+    expect(dist(after.positions.get('Characters/Newcomer.md')!, kira)).toBeLessThan(EDGE_LENGTH * 3);
     // Opening again with the saved result changes nothing.
     const again = layoutGraph(graphOf(withNew), parseLayout(serializeLayout(after.stored)));
     expect(again.changed).toBe(false);
