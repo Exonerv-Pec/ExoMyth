@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 17 releases, latest 0.15.0 (2026-10-24)</summary>
+<summary><b>✅ Done</b> · 18 releases, latest 0.15.1 (2026-10-24)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.15.1** | 2026-10-24 | 🔒 Safer .zip opening (library update, real size check) |
 | **0.15.0** | 2026-10-24 | 🔎 Settings show how many pages use a part before you switch it off |
 | **0.14.0** | 2026-10-24 | 🗾 Areas on maps and map layers |
 | **0.13.0** | 2026-10-23 | ⚙️ Settings: switch off views and tools you don't use; theme and language 💬 |

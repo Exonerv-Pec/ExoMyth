@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.15.1 — 2026-10-24
+
+### Security
+
+- The .zip library (fflate) is updated to 0.8.3: a deliberately broken archive could freeze the tab
+  while opening (GHSA-px8p-9vwx-vf98). No data could leak; the tab just stopped responding.
+- Opening a .zip now also checks how much actually came out of the archive, not only the sizes the
+  archive claims, before anything is stored in the browser.
+
 ## 0.15.0 — 2026-10-24
 
 ### Added

@@ -61,6 +61,14 @@ describe('worlds as .zip files', () => {
     expect(readWorldZip(many, { files: 5, bytes: 500 }).files.size).toBe(5);
   });
 
+  it('does not trust the sizes an archive claims', () => {
+    // Stored (not compressed) files whose central directory says they are 1 byte long.
+    const zip = zipSync({ 'a.md': [strToU8('x'.repeat(400)), { level: 0 }], 'b.md': [strToU8('y'.repeat(400)), { level: 0 }] });
+    const view = new DataView(zip.buffer, zip.byteOffset, zip.byteLength);
+    for (let i = 0; i + 4 <= zip.length; i++) if (view.getUint32(i, true) === 0x02014b50) view.setUint32(i + 24, 1, true);
+    expect(() => readWorldZip(zip, { files: 10, bytes: 500 })).toThrow(ZipTooLargeError);
+  });
+
   it('names worlds from file names without clashing', () => {
     expect(worldNameFromZip('Silver Coast.zip')).toBe('Silver Coast');
     expect(worldNameFromZip('a/b:c.ZIP')).toBe('a b c');

@@ -84,6 +84,11 @@ export function readWorldZip(data: Uint8Array, limits = ZIP_LIMITS): { files: Ma
     },
   });
 
+  // Sizes written in an archive can lie: check what actually came out before storing any of it.
+  let actual = 0;
+  for (const data of Object.values(unpacked)) actual += data.byteLength;
+  if (actual > limits.bytes) throw new ZipTooLargeError();
+
   const paths = Object.keys(unpacked).map((p) => [p, safeZipPath(p)!] as const);
   // One folder holding everything: unwrap it.
   const first = paths[0]?.[1].split('/')[0];
