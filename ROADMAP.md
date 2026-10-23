@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 11 releases, latest 0.9.0 (2026-10-23)</summary>
+<summary><b>✅ Done</b> · 12 releases, latest 0.10.0 (2026-10-23)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.10.0** | 2026-10-23 | 🎯 Focus mode; 📁 move pages between folders (drag and drop); 🔤 spell check switch 💬 |
 | **0.9.0** | 2026-10-23 | ⌨️ A list of all keyboard shortcuts (Ctrl+/) |
 | **0.8.0** | 2026-10-23 | 📦 Download and open worlds as .zip; 💡 quick notes inbox (Alt+I) 💬; 🔢 word count 💬 |
 | **0.7.0** | 2026-10-23 | 🕰️ Timeline; years of pages; one "Show by year" for the graph, cards, maps and timeline |
@@ -35,30 +36,27 @@ Click a section to open it.
 | **0.1.0** | 2026-10-22 | 📝 Pages, `[[links]]`, typed relations in a stable panel, search, tags, safe rename |
 
 💬 Tester ideas that are already in: a web version, a story bible / wiki, fast search across the
-world, a timeline, art and music in pages, separate worlds for separate stories, an ideas inbox and
-a word count.
+world, a timeline, art and music in pages, separate worlds for separate stories, an ideas inbox,
+a word count and a spell checker.
 
 Every change in detail: [CHANGELOG.md](CHANGELOG.md).
 
 </details>
 
 <details open>
-<summary><b>🔜 Next: small and useful</b> · 5 ideas</summary>
+<summary><b>🔜 Next: small and useful</b> · 2 ideas</summary>
 
 <br>
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
-| ⬜ | Move a page to another folder | S | Today only renaming is possible |
-| ⬜ | Spell check in the editor 💬 | S | The browser's own offline spell checker; the language follows the app |
-| ⬜ | Focus mode | S | Hide the panels and centre the text, for writing without distractions |
 | ⬜ | Quick look-up from anywhere 💬 | S | Search as an overlay in any view, with the preview card, to check lore without leaving the page |
 | ⬜ | Page templates 💬 | M | "New page from template": Character, Place, Organization, Event, Scene. Templates are pages in a `Templates/` folder that anyone can edit |
 
 </details>
 
 <details>
-<summary><b>📝 Writing tools</b> · 8 ideas</summary>
+<summary><b>📝 Writing tools</b> · 9 ideas</summary>
 
 <br>
 
@@ -69,6 +67,7 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 | ⬜ | Manuscript: chapters and scenes in order | L | A `Manuscript/` folder with an order; read and export it as one text |
 | ⬜ | Scene list / outline board | M | Scenes as cards with status, point of view, place and year; linked to the timeline |
 | ⬜ | Story structure templates 💬 | M | Three acts, the hero's journey and other well-known shapes, in our own words, to plan a story or check a draft |
+| ⬜ | Typewriter scrolling | S | In focus mode the line being written stays in the middle of the screen, and the other paragraphs are dimmed a little |
 | ⬜ | Writing stats 💬 | M | Words per day, time spent writing, streaks; stored in the world, never sent anywhere |
 | ⬜ | Dangerous drafting mode 💬 | M | An optional sprint: new text fades if you stop typing, until a goal is reached, then it goes to the draft. Never touches existing text |
 | ⬜ | Mood boards and collages 💬 | M | Pictures, colours and quotes arranged freely for a character, place or scene |

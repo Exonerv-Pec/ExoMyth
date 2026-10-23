@@ -14,7 +14,10 @@
     | 'image'
     | 'download'
     | 'bulb'
-    | 'keyboard';
+    | 'keyboard'
+    | 'move'
+    | 'focus'
+    | 'spell';
 
   let { name }: { name: Name } = $props();
 </script>
@@ -60,6 +63,14 @@
     <path d="M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7" />
   {:else if name === 'download'}
     <path d="M12 4v11M7 10.5l5 5 5-5M5 19.5h14" />
+  {:else if name === 'move'}
+    <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+    <path d="M10 13h6M13.5 10.5L16 13l-2.5 2.5" />
+  {:else if name === 'focus'}
+    <path d="M4 9V5h4M16 5h4v4M20 15v4h-4M8 19H4v-4" />
+  {:else if name === 'spell'}
+    <path d="M3 15l3-9 3 9M4 12h4M12 6v9h3a2.2 2.2 0 0 0 0-4.5H12M15 10.5a2 2 0 0 0 0-4.5h-3" />
+    <path d="M14 19l2.5 2L21 16" />
   {:else if name === 'keyboard'}
     <rect x="3" y="6" width="18" height="12" rx="2" />
     <path d="M7 10h.01M11 10h.01M15 10h.01M17 10h.01M7 14h10" />

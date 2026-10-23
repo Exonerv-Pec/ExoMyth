@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.10.0 — 2026-10-23
+
+### Added
+
+- **Focus mode**: Ctrl+. (or the button in the top bar) shows only the text being written, with the
+  word count in the corner; Esc returns to the view you came from.
+- **Move a page to another folder**: drag it onto a folder in the sidebar (or onto the world's name for
+  the top level), or use the new folder button next to a page, which suggests existing folders and
+  accepts new ones. Links written with a folder path are updated; links by name keep working.
+- **Spell check switch**: the ABC button in the top bar turns the browser's offline spell checker on or
+  off in the editor, and the choice is remembered.
+
+### Changed
+
+- The top bar is a little more compact, so the view switcher fits next to the new buttons.
+
 ## 0.9.0 — 2026-10-23
 
 ### Added

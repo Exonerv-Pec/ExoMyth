@@ -57,6 +57,34 @@
     activeTag ? pages.filter((p) => p.tags.includes(activeTag!)).sort((a, b) => compareText(a.title, b.title)) : [],
   );
 
+  /* Dragging a page onto a folder moves it there; onto the world's name, to the top. */
+  let dragging = $state<string | null>(null);
+  let dropOn = $state<string | null>(null);
+  const DRAG_TYPE = 'application/x-exomyth-page';
+
+  function dragStart(e: DragEvent, path: string) {
+    dragging = path;
+    e.dataTransfer?.setData(DRAG_TYPE, path);
+    e.dataTransfer?.setData('text/plain', `[[${baseName(path)}]]`);
+    if (e.dataTransfer) e.dataTransfer.effectAllowed = 'copyMove';
+  }
+
+  function dragOver(e: DragEvent, folder: string) {
+    if (!dragging || dirName(dragging) === folder) return;
+    e.preventDefault();
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+    dropOn = folder;
+  }
+
+  function drop(e: DragEvent, folder: string) {
+    const path = e.dataTransfer?.getData(DRAG_TYPE) || dragging;
+    dropOn = null;
+    dragging = null;
+    if (!path || dirName(path) === folder) return;
+    e.preventDefault();
+    void app.movePage(path, folder);
+  }
+
   function openHit(path: string) {
     query = '';
     void app.open(path);
@@ -71,7 +99,15 @@
 <aside class="sidebar" class:open={app.sidebarOpen} aria-label={t('side.files')}>
   <Resizer edge="sidebar-edge" value={app.sidebarW} onresize={(w) => app.setSidebarW(w)} label={t('side.files')} />
   <div class="side-head">
-    <span class="world" title={app.vault?.storage.label}>{app.vault?.storage.label}</span>
+    <span
+      class="world"
+      class:drop={dropOn === ''}
+      title={app.vault?.storage.label}
+      role="group"
+      ondragover={(e) => dragOver(e, '')}
+      ondragleave={() => dropOn === '' && (dropOn = null)}
+      ondrop={(e) => drop(e, '')}
+    >{app.vault?.storage.label}</span>
     <button class="icon-btn" title="{t('inbox.title')} (Alt+I)" aria-label={t('inbox.title')} onclick={() => app.askIdea()}>
       <Icon name="bulb" />
     </button>
@@ -158,7 +194,14 @@
     {#each node.folders as f (f.path)}
       {@const closed = app.collapsed['dir:' + f.path]}
       <li>
-        <div class="tree-row">
+        <div
+          class="tree-row"
+          class:drop={dropOn === f.path}
+          role="group"
+          ondragover={(e) => dragOver(e, f.path)}
+          ondragleave={() => dropOn === f.path && (dropOn = null)}
+          ondrop={(e) => drop(e, f.path)}
+        >
           <button class="tree-item" aria-expanded={!closed} onclick={() => app.toggleCollapsed('dir:' + f.path)}>
             <span class="caret" class:open={!closed}>▸</span>
             <span class="label">{f.name}</span>
@@ -175,13 +218,23 @@
     {#each node.pages as p (p.path)}
       <li>
         <div class="tree-row" class:active={app.current === p.path}>
-          <button class="tree-item" onclick={() => app.open(p.path)} aria-current={app.current === p.path ? 'page' : undefined}>
+          <button
+            class="tree-item"
+            onclick={() => app.open(p.path)}
+            aria-current={app.current === p.path ? 'page' : undefined}
+            draggable="true"
+            ondragstart={(e) => dragStart(e, p.path)}
+            ondragend={() => (dragging = null)}
+          >
             <span class="caret"></span>
             <span class="label">{p.title}</span>
           </button>
           <span class="row-actions">
             <button class="icon-btn" title={t('dialog.rename')} aria-label={t('dialog.rename')} onclick={() => app.askRename(p.path)}>
               <Icon name="pencil" />
+            </button>
+            <button class="icon-btn" title={t('side.move')} aria-label={t('side.move')} onclick={() => app.askMove(p.path)}>
+              <Icon name="move" />
             </button>
             <button class="icon-btn" title={t('dialog.delete.confirm')} aria-label={t('dialog.delete.confirm')} onclick={() => app.askTrash(p.path)}>
               <Icon name="trash" />

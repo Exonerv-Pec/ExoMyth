@@ -181,9 +181,20 @@ without years of its own follows the years of its page. Pages without years are 
 
 - **Word count.** The top bar shows how many words the open page has; hover it for the whole world.
   Only the text a reader sees counts: links count as their shown text, the header and files do not.
+- **Focus mode.** **Ctrl+.** (or the corners button in the top bar) hides everything but the text you
+  are writing, with the word count in the corner. **Esc** brings the rest back.
+- **Spell check.** The editor uses the browser's own spell checker, which works offline in the
+  languages set up in the browser. The **ABC** button in the top bar turns it off, for example while
+  a page is full of invented names.
 - **Quick notes.** Press **Alt+I** anywhere (or the light bulb at the top of the sidebar) to write
   down an idea without leaving the page. It is added with the date and time to an **Inbox** page,
   which is created the first time.
+
+## Folders
+
+Pages live in folders (Characters, Places…). To move a page, drag it onto a folder in the sidebar (or
+onto the world's name for the top level), or use the folder button next to the page. Links by name
+keep working; links written with a folder path are updated.
 
 ## Keyboard shortcuts
 

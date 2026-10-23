@@ -31,8 +31,16 @@
       e.preventDefault();
       e.stopPropagation();
       app.shortcutsOpen = !app.shortcutsOpen;
+    } else if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.code === 'Period' || e.key === '.') && app.vault && !app.dialog) {
+      // Ctrl+. : focus mode on and off.
+      e.preventDefault();
+      e.stopPropagation();
+      app.setFocus(!app.focus);
+    } else if (e.key === 'Escape' && app.focus && !app.dialog && !app.shortcutsOpen && !app.hover) {
+      app.setFocus(false);
     } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k' && app.vault) {
       e.preventDefault();
+      app.setFocus(false);
       app.sidebarOpen = true;
       queueMicrotask(() => searchInput?.focus());
     } else if (e.altKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyI' && app.vault && !app.dialog) {

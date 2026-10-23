@@ -33,7 +33,7 @@
     if (!d) return;
     close();
     if (d.kind === 'prompt') {
-      if (value.trim()) await d.onSubmit(value.trim());
+      if (value.trim() || d.allowEmpty) await d.onSubmit(value.trim());
     } else {
       await d.onConfirm();
     }
@@ -62,7 +62,10 @@
           {#if d.multiline}
             <textarea rows="5" bind:this={input} bind:value onkeydown={areaKey}></textarea>
           {:else}
-            <input type="text" bind:this={input} bind:value />
+            <input type="text" bind:this={input} bind:value list={d.suggestions?.length ? 'dialog-suggestions' : undefined} autocomplete="off" />
+            {#if d.suggestions?.length}
+              <datalist id="dialog-suggestions">{#each d.suggestions as s (s)}<option value={s}></option>{/each}</datalist>
+            {/if}
           {/if}
         </label>
         {#if d.hint}<p class="dialog-hint">{d.hint}</p>{/if}
@@ -75,7 +78,7 @@
           type="submit"
           class="btn {d.kind === 'confirm' && d.danger ? 'danger' : 'primary'}"
           bind:this={confirmBtn}
-          disabled={d.kind === 'prompt' && !value.trim()}
+          disabled={d.kind === 'prompt' && !d.allowEmpty && !value.trim()}
         >
           {d.confirmLabel}
         </button>

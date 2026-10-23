@@ -25,6 +25,7 @@
       rows: [
         { keys: [['Ctrl', 'K']], what: 'keys.search' },
         { keys: [['Alt', 'I']], what: 'keys.idea' },
+        { keys: [['Ctrl', '.']], what: 'keys.focus' },
         { keys: [['Ctrl', '/'], ['?']], what: 'keys.help' },
         { keys: [['Esc']], what: 'keys.close' },
       ],

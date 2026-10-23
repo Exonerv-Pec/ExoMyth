@@ -43,6 +43,10 @@ export type DialogState =
       multiline?: boolean;
       /** A short note under the field. */
       hint?: string;
+      /** Values offered while typing (for example existing folders). */
+      suggestions?: string[];
+      /** An empty value is a valid answer (for example "the top of the world"). */
+      allowEmpty?: boolean;
       onSubmit: (value: string) => void | Promise<void>;
     }
   | {
@@ -122,6 +126,11 @@ class App {
   hover = $state<HoverState | null>(null);
   /** The list of keyboard shortcuts is open. */
   shortcutsOpen = $state(false);
+  /** Focus mode: only the text being written is shown. */
+  focus = $state(false);
+  /** The browser's spell checker underlines words in the editor. */
+  spellcheck = $state(read('exomyth:spellcheck') !== '0');
+  private modeBeforeFocus: ViewMode | null = null;
   /** Saved graph positions of the open world (null while loading). */
   layout = $state.raw<StoredLayout | null>(null);
   /** Asks the graph to bring a page into view; `seq` makes repeated requests distinct. */
@@ -180,6 +189,28 @@ class App {
       this.textMode = mode as TextMode;
       save('exomyth:textMode', mode);
     }
+  }
+
+  /** Turns focus mode on or off. It shows the editor alone; leaving it restores the view from before. */
+  setFocus(on: boolean): void {
+    if (on === this.focus) return;
+    if (on) {
+      if (!this.vault || !this.current) return;
+      this.hoverClose();
+      this.modeBeforeFocus = this.mode;
+      if (this.mode !== 'edit') this.setMode('edit');
+      this.sidebarOpen = false;
+      this.panelOpen = false;
+    } else if (this.modeBeforeFocus) {
+      this.setMode(this.modeBeforeFocus);
+      this.modeBeforeFocus = null;
+    }
+    this.focus = on;
+  }
+
+  toggleSpellcheck(): void {
+    this.spellcheck = !this.spellcheck;
+    save('exomyth:spellcheck', this.spellcheck ? '1' : '0');
   }
 
   /** Switches to the graph and brings `path` into view. */
@@ -248,6 +279,8 @@ class App {
   }
 
   closeVault(): void {
+    this.focus = false;
+    this.modeBeforeFocus = null;
     this.unsubscribe?.();
     this.unsubscribe = null;
     this.vault = null;
@@ -601,6 +634,26 @@ class App {
     }
   }
 
+  /** Moves a page into `folder` ('' = the top of the world), keeping links to it working. */
+  async movePage(path: string, folder: string): Promise<void> {
+    const vault = this.vault;
+    if (!vault) return;
+    try {
+      await this.flush();
+      const newPath = await vault.movePage(path, folder);
+      if (newPath === path) return;
+      if (this.current === path) {
+        this.current = newPath;
+        save(this.prefKey('last'), newPath);
+      }
+      this.backStack = this.backStack.map((p) => (p === path ? newPath : p));
+      const where = dirName(newPath);
+      this.notify(where ? this.t('toast.moved', where) : this.t('toast.movedRoot'));
+    } catch (e) {
+      this.fail(e);
+    }
+  }
+
   async trashPage(path: string): Promise<void> {
     const vault = this.vault;
     if (!vault) return;
@@ -708,6 +761,20 @@ class App {
       value: name,
       confirmLabel: this.t('dialog.confirm'),
       onSubmit: (v) => void this.renamePage(path, v),
+    };
+  }
+
+  askMove(path: string): void {
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('dialog.move', baseName(path)),
+      label: this.t('dialog.move.label'),
+      value: dirName(path),
+      hint: this.t('dialog.move.hint'),
+      suggestions: this.vault?.folders() ?? [],
+      confirmLabel: this.t('dialog.move.confirm'),
+      allowEmpty: true,
+      onSubmit: (v) => void this.movePage(path, v),
     };
   }
 

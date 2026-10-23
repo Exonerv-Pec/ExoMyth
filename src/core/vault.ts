@@ -348,6 +348,73 @@ export class Vault {
     return newPath;
   }
 
+  /**
+   * Moves a page into another folder ('' for the top of the world), keeping its name. Links by name
+   * keep working as they are; links written with a folder path are updated to the new place.
+   * Returns the new path.
+   */
+  movePage(path: string, folder: string): Promise<string> {
+    return this.exclusive(() => this._movePage(path, folder));
+  }
+
+  private async _movePage(path: string, folderRaw: string): Promise<string> {
+    const page = this.pageMap.get(path);
+    if (!page) throw new Error(`Page not found: ${path}`);
+    const folder = folderRaw
+      .replace(/\\/g, '/')
+      .split('/')
+      .map((s) => sanitizePageName(s))
+      .filter(Boolean)
+      .join('/');
+    const newPath = joinPath(folder, baseName(path) + '.md');
+    if (newPath === path) return path;
+    if (this.files.some((f) => f.path.toLowerCase() === newPath.toLowerCase())) {
+      throw new Error(`A page named "${page.name}" already exists in that folder`);
+    }
+
+    // Only links that spell out a folder ([[Characters/Arn]]) need to change.
+    const oldIndex = this._index;
+    const oldPathNorm = normalizeName(stripMd(path));
+    const newTarget = stripMd(newPath);
+    const pointsHere = (target: string): boolean => {
+      const n = normalizeName(stripMd(target));
+      return n.includes('/') && (oldPathNorm === n || oldPathNorm.endsWith('/' + n)) && oldIndex.resolve(target)?.path === path;
+    };
+    const rewrite = (text: string): string => {
+      const out = mapWikiLinks(
+        text,
+        (link) => (pointsHere(link.target) ? `${newTarget}${link.heading ? '#' + link.heading : ''}${link.alias ? '|' + link.alias : ''}` : undefined),
+        { embeds: true },
+      );
+      return renamePlainRelations(out, pointsHere, newTarget);
+    };
+
+    const updates: [string, string][] = [];
+    for (const p of this.pageMap.values()) {
+      const text = await this.storage.readText(p.path);
+      const next = rewrite(text);
+      if (next !== text) updates.push([p.path, next]);
+    }
+    const own = updates.find(([p]) => p === path);
+    // Write the new file first, so an interruption can never lose the page itself.
+    await this.storage.writeText(newPath, own ? own[1] : await this.storage.readText(path));
+    for (const [p, text] of updates) if (p !== path) await this.storage.writeText(p, text);
+    await this.storage.remove(path);
+    await this.moveLayoutKey(path, newPath).catch(() => undefined);
+    await this._refresh();
+    return newPath;
+  }
+
+  /** Every folder that holds pages, plus the folders above them ('' is not included). */
+  folders(): string[] {
+    const out = new Set<string>();
+    for (const f of this.files) {
+      if (!f.path.toLowerCase().endsWith('.md')) continue;
+      for (let d = dirName(f.path); d; d = dirName(d)) out.add(d);
+    }
+    return [...out].sort((a, b) => a.localeCompare(b));
+  }
+
   /** Moves a page to `.trash/` (kept recoverable; nothing is permanently deleted by the app). */
   trashPage(path: string): Promise<void> {
     return this.exclusive(async () => {

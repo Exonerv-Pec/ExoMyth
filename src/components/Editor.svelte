@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { EditorState, type Range } from '@codemirror/state';
+  import { Compartment, EditorState, type Range } from '@codemirror/state';
   import {
     EditorView,
     Decoration,
@@ -270,6 +270,11 @@
     '.cm-completionDetail': { marginLeft: '0.6em', opacity: '0.7', fontStyle: 'normal' },
   });
 
+  /** The browser's own spell checker (offline, in the languages set up in the browser). */
+  const spellCompartment = new Compartment();
+  const spellAttrs = (on: boolean) =>
+    EditorView.contentAttributes.of({ spellcheck: on ? 'true' : 'false', autocorrect: 'off', autocapitalize: on ? 'sentences' : 'off' });
+
   /* ------------------------------------------------------------ lifecycle */
 
   function jumpToHeading(heading: string) {
@@ -304,7 +309,8 @@
           // In "Text" mode pictures and players appear under their lines; "Side by side" shows them in the reading pane.
           mediaCompartment.of(inlineMedia(app.mode === 'edit')),
           theme,
-          EditorView.contentAttributes.of({ 'aria-label': path, spellcheck: 'true' }),
+          EditorView.contentAttributes.of({ 'aria-label': path }),
+          spellCompartment.of(spellAttrs(app.spellcheck)),
           EditorView.updateListener.of((u) => {
             if (!u.docChanged || applyingExternal) return;
             dirty = true;
@@ -333,6 +339,11 @@
   });
 
   // Pick up changes made elsewhere (relations panel, other programs) unless the user has unsaved edits.
+  $effect(() => {
+    const on = app.spellcheck;
+    view?.dispatch({ effects: spellCompartment.reconfigure(spellAttrs(on)) });
+  });
+
   // Switching between "Text" and "Side by side" turns the inline media on or off.
   $effect(() => {
     const on = app.mode === 'edit';

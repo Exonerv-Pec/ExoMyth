@@ -37,7 +37,7 @@
   });
 </script>
 
-<div class="workspace" style:--sidebar-w="{app.sidebarW}px" style:--panel-w="{app.panelW}px">
+<div class="workspace" class:focus={app.focus} style:--sidebar-w="{app.sidebarW}px" style:--panel-w="{app.panelW}px">
   <Sidebar bind:searchInput />
 
   <main class="center">
@@ -58,6 +58,19 @@
         {/if}
       </div>
       {#if page && app.canInsert}
+        <button
+          class="icon-btn"
+          class:on={app.spellcheck}
+          title={app.spellcheck ? t('spell.off') : t('spell.on')}
+          aria-label={t('spell.label')}
+          aria-pressed={app.spellcheck}
+          onclick={() => app.toggleSpellcheck()}
+        >
+          <Icon name="spell" />
+        </button>
+        <button class="icon-btn" title="{t('focus.enter')} (Ctrl+.)" aria-label={t('focus.enter')} onclick={() => app.setFocus(true)}>
+          <Icon name="focus" />
+        </button>
         <button class="icon-btn" title={t('media.insert')} aria-label={t('media.insert')} onclick={() => mediaInput?.click()}>
           <Icon name="image" />
         </button>
@@ -124,4 +137,11 @@
   </main>
 
   <RelationsPanel path={app.current} />
+
+  {#if app.focus}
+    <button class="focus-exit btn ghost" onclick={() => app.setFocus(false)} title="{t('focus.exit')} (Esc)">
+      <Icon name="focus" /> {t('focus.exit')}
+    </button>
+    {#if page}<span class="focus-words" aria-live="polite">{countWords(app.lang, pageWords)}</span>{/if}
+  {/if}
 </div>
