@@ -16,9 +16,9 @@ export interface Profile {
 
 export const PROFILES: readonly Profile[] = [
   { id: 'writer', emoji: '✍️', off: ['graph', 'maps'] },
-  { id: 'worldbuilder', emoji: '🗺️', off: ['manuscript', 'focusMode', 'wordCount'] },
-  { id: 'gamemaster', emoji: '🎲', off: ['manuscript', 'focusMode', 'wordCount'] },
-  { id: 'notes', emoji: '🗒️', off: ['timeline', 'manuscript', 'family', 'maps', 'years', 'focusMode'] },
+  { id: 'worldbuilder', emoji: '🗺️', off: ['manuscript', 'focusMode', 'typewriter', 'wordCount'] },
+  { id: 'gamemaster', emoji: '🎲', off: ['manuscript', 'focusMode', 'typewriter', 'wordCount'] },
+  { id: 'notes', emoji: '🗒️', off: ['timeline', 'manuscript', 'family', 'maps', 'years', 'focusMode', 'typewriter', 'playlists'] },
   { id: 'everything', emoji: '✨', off: [] },
 ];
 
@@ -99,6 +99,7 @@ export function starterFiles(id: ProfileId, lang: Lang, world: string): { path: 
             '- После игры: **+** слева → шаблон «Сессия». Его можно поменять в папке «Шаблоны»',
             '- NPC, места и фракции: шаблоны «Персонаж», «Место», «Организация»',
             '- Быстро записать что-то прямо за столом: **Alt+I**',
+            '- Музыка для сессии: страница с `playlist: true` в шапке и строками `- ![[трек.mp3]]`',
             '- Карта мира с метками: страница с `map: картинка.png`',
           ])
         : page('Start here', [
@@ -107,6 +108,7 @@ export function starterFiles(id: ProfileId, lang: Lang, world: string): { path: 
             '- After a game: **+** on the left → the Session template. You can change it in the Templates folder',
             '- NPCs, places and factions: the Character, Place and Organization templates',
             '- Jot something down at the table: **Alt+I**',
+            '- Music for a session: a page with `playlist: true` in its header and lines like `- ![[track.mp3]]`',
             '- A world map with pins: a page with `map: picture.png`',
           ]),
     });

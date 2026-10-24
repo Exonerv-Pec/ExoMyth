@@ -38,7 +38,7 @@
   });
 </script>
 
-<div class="workspace" class:focus={app.focus} class:no-panel={!app.on('relationsPanel')} style:--sidebar-w="{app.sidebarW}px" style:--panel-w="{app.panelW}px">
+<div class="workspace" class:focus={app.focus} class:typewriter={app.focus && app.on('typewriter')} class:no-panel={!app.on('relationsPanel')} style:--sidebar-w="{app.sidebarW}px" style:--panel-w="{app.panelW}px">
   <Sidebar bind:searchInput />
 
   <main class="center">
@@ -58,6 +58,11 @@
           <span class="where">{page.path}</span>
         {/if}
       </div>
+      {#if app.on('quickLookup')}
+        <button class="icon-btn" title="{t('lookup.title')} (Ctrl+K)" aria-label={t('lookup.title')} onclick={() => (app.lookupOpen = true)}>
+          <Icon name="search" />
+        </button>
+      {/if}
       {#if page && app.canInsert}
         <button
           class="icon-btn"

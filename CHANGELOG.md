@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.18.0 — 2026-10-24
+
+### Added
+
+- **Quick look-up.** **Ctrl+K** (or the magnifier in the top bar) opens a search over whatever is on
+  screen: the text, graph, cards, timeline or book. Arrow keys move through the results, the chosen
+  page is previewed next to the list (facts, the opening of its text, link counts), **Enter** opens it
+  and **Esc** puts you back exactly where you were, in focus mode too. It can be switched off in
+  Settings.
+- **Typewriter scrolling.** In focus mode the line being written stays in the middle of the screen
+  (typing and moving with the keyboard recentre it; a click does not), and the paragraphs around the
+  one being written are dimmed a little. It only changes how the text is shown. A switch in Settings,
+  under focus mode.
+- **Playlists.** A page with `playlist: true` in its header shows a player above its text: the audio
+  files of its list items (`- ![[Fiddle in the rain.mp3]]`, a name after `|` is optional) play one
+  after another, with previous, next, repeat and the list of tracks to pick from. A track whose file
+  is missing is marked and skipped. Any page can be a playlist, so a scene can carry its own music.
+  The music stops when you leave the page. A switch in Settings, which says which pages are playlists.
+- The Game master start page mentions playlists; the Just notes profile switches them off, and the
+  profiles without focus mode switch typewriter scrolling off with it.
+
+### Changed
+
+- **Ctrl+K** now opens the quick look-up instead of moving to the search field in the sidebar. With
+  the look-up switched off in Settings it works as before.
+- The `playlist` header field is not shown as a fact in a page's infobox.
+
 ## 0.17.0 — 2026-10-24
 
 ### Added

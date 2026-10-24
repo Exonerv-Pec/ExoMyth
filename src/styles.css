@@ -2713,6 +2713,21 @@ svg.graph:focus-visible {
   color: var(--accent);
 }
 
+/* Typewriter scrolling (v0.18): room above and below, so the line being written can stay in the middle. */
+.workspace.typewriter .editor-host .cm-content {
+  padding-top: 38vh;
+  padding-bottom: 50vh;
+}
+.cm-line.cm-tw-dim {
+  opacity: 0.4;
+  transition: opacity 0.2s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cm-line.cm-tw-dim {
+    transition: none;
+  }
+}
+
 /* Dragging a page onto a folder (or the world's name) to move it there. */
 .tree-row.drop,
 .side-head .world.drop {
@@ -3497,4 +3512,262 @@ svg.graph:focus-visible {
   align-items: center;
   gap: 0.4rem;
   color: var(--ink);
+}
+
+/* ===================================================== quick look-up (v0.18) */
+
+.scrim.lookup-scrim {
+  place-items: start center;
+  padding-top: min(9vh, 5rem);
+}
+.dialog.lookup {
+  width: min(54rem, 100%);
+  max-height: min(34rem, calc(100vh - 2rem));
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+.lookup-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.8rem 0.55rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+.lookup-bar > svg {
+  flex: none;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--ink-faint);
+}
+.lookup-bar input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 0.35rem 0;
+  font-size: 1.05rem;
+}
+.lookup-bar input:focus {
+  outline: none;
+}
+.lookup-body {
+  display: grid;
+  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+  min-height: 0;
+}
+.lookup-body:not(:has(.lookup-preview)) {
+  grid-template-columns: minmax(0, 1fr);
+}
+.lookup-list {
+  overflow: auto;
+  padding: 0.35rem;
+  min-height: 6rem;
+  border-right: 1px solid var(--line);
+}
+.lookup-body:not(:has(.lookup-preview)) .lookup-list {
+  border-right: 0;
+}
+.lookup-hit {
+  display: grid;
+  gap: 0.05rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: var(--r-s);
+  cursor: pointer;
+}
+.lookup-hit.chosen {
+  background: var(--accent-soft);
+}
+.lookup-hit .t {
+  font-weight: 600;
+}
+.lookup-hit .p,
+.lookup-hit .s {
+  color: var(--ink-faint);
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lookup-preview {
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.85rem 1.1rem 0.7rem;
+  min-height: 0;
+}
+.lookup-preview header h3 {
+  margin: 0;
+  font-family: var(--font-text);
+  font-weight: 600;
+  font-size: 1.2rem;
+  line-height: 1.25;
+}
+.lookup-preview .meta {
+  margin: 0.15rem 0 0;
+  color: var(--ink-faint);
+  font-size: 0.82rem;
+}
+.lookup-preview .meta .sep::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  margin: 0 0.45rem;
+  vertical-align: middle;
+}
+.lookup-preview .facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.15rem 0.7rem;
+  margin: 0;
+  font-size: 0.86rem;
+}
+.lookup-preview .facts dt {
+  color: var(--ink-faint);
+}
+.lookup-preview .facts dd {
+  margin: 0;
+  min-width: 0;
+}
+.lookup-preview .excerpt {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+.lookup-preview .excerpt > :last-child {
+  margin-bottom: 0;
+}
+.lookup-preview .excerpt h1,
+.lookup-preview .excerpt h2,
+.lookup-preview .excerpt h3 {
+  font-size: 1rem;
+  margin: 0.6em 0 0.3em;
+}
+.lookup-preview .excerpt.faded {
+  -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent);
+  mask-image: linear-gradient(to bottom, #000 70%, transparent);
+}
+.lookup-preview .embed img,
+.lookup-preview .embed video {
+  max-width: 100%;
+  max-height: 10rem;
+}
+.lookup-preview footer {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: auto;
+  font-size: 0.8rem;
+  color: var(--ink-faint);
+  border-top: 1px solid var(--line);
+  padding-top: 0.5rem;
+}
+.lookup-preview footer .btn {
+  margin-left: auto;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.85rem;
+}
+@media (max-width: 640px) {
+  .scrim.lookup-scrim {
+    padding-top: 0.6rem;
+  }
+  .dialog.lookup {
+    max-height: calc(100vh - 1.2rem);
+  }
+  .lookup-body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 11rem) minmax(0, 1fr);
+  }
+  .lookup-list {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .lookup-body:not(:has(.lookup-preview)) {
+    grid-template-rows: minmax(0, 1fr);
+  }
+}
+
+/* ===================================================== playlists (v0.18) */
+
+.playlist {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0 0 1.4rem;
+  padding: 0.8rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-m);
+}
+.pl-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.pl-now {
+  font-family: var(--font-text);
+  font-weight: 600;
+  font-size: 1.1rem;
+  overflow-wrap: anywhere;
+}
+.pl-pos {
+  flex: none;
+  color: var(--ink-faint);
+  font-size: 0.82rem;
+}
+.playlist audio {
+  width: 100%;
+  max-width: none;
+}
+.pl-controls {
+  display: flex;
+  gap: 0.2rem;
+}
+.pl-tracks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.1rem;
+}
+.pl-tracks button {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: var(--r-s);
+  padding: 0.35rem 0.5rem;
+}
+.pl-tracks button:hover:not(:disabled),
+.pl-tracks button:focus-visible {
+  background: var(--accent-soft);
+}
+.pl-tracks li.current button {
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+.pl-tracks .n {
+  flex: none;
+  width: 1.4rem;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+.pl-tracks li.missing .t {
+  color: var(--broken);
+}
+.pl-tracks .m {
+  margin-left: auto;
+  color: var(--ink-faint);
+  font-size: 0.8rem;
+}
+.pl-empty {
+  margin: 0;
+  color: var(--ink-faint);
 }

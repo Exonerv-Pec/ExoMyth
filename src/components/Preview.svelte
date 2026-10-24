@@ -8,7 +8,9 @@
   import { pageImage } from '../core/cards';
   import MediaThumb from './MediaThumb.svelte';
   import MapView from './MapView.svelte';
+  import PlaylistPlayer from './PlaylistPlayer.svelte';
   import { mapOf } from '../core/maps';
+  import { isPlaylist, withoutTracks } from '../core/playlist';
 
   let { path }: { path: string } = $props();
   const t = app.t;
@@ -26,9 +28,17 @@
     return m && m[1]!.trim().toLocaleLowerCase() === title.trim().toLocaleLowerCase() ? body.slice(m[0].length) : body;
   }
 
+  /** A page with `playlist: true` shows a player; its track lines are listed there instead of in the text. */
+  const playlist = $derived.by(() => {
+    app.version;
+    return !!page && app.on('playlists') && isPlaylist(page);
+  });
+
   const html = $derived.by(() => {
     app.version;
-    return page && app.vault ? renderMarkdown(withoutTitleHeading(page.body, page.title), app.vault.index) : '';
+    if (!page || !app.vault) return '';
+    const body = playlist ? withoutTracks(page.body) : page.body;
+    return renderMarkdown(withoutTitleHeading(body, page.title), app.vault.index);
   });
 
   /** Facts for the infobox: every non-structural field with a simple value. */
@@ -101,6 +111,9 @@
       {/if}
       {#if page.parseError}
         <p class="notice" role="alert">{t('page.parseError', page.parseError)}</p>
+      {/if}
+      {#if playlist}
+        <PlaylistPlayer {path} />
       {/if}
       {#if mapOf(page)}
         {#if app.on('maps')}<MapView {path} />{/if}

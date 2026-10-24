@@ -19,6 +19,7 @@
   import { headingSlug } from '../core/render';
   import { parseLinkText } from '../core/parse';
   import { inlineMedia, mediaCompartment, refreshMedia } from '../editorMedia';
+  import { centerCursor, typewriter, typewriterCompartment } from '../editorTypewriter';
 
   let { path }: { path: string } = $props();
 
@@ -311,6 +312,8 @@
           theme,
           EditorView.contentAttributes.of({ 'aria-label': path }),
           spellCompartment.of(spellAttrs(app.spellcheck)),
+          // Typewriter scrolling: in focus mode the line being written stays in the middle.
+          typewriterCompartment.of(app.focus && app.on('typewriter') ? typewriter() : []),
           EditorView.updateListener.of((u) => {
             if (!u.docChanged || applyingExternal) return;
             dirty = true;
@@ -342,6 +345,20 @@
   $effect(() => {
     const on = app.spellcheck;
     view?.dispatch({ effects: spellCompartment.reconfigure(spellAttrs(on)) });
+  });
+
+  // Entering or leaving focus mode (or the switch in Settings) turns typewriter scrolling on or off.
+  let typewriterWas = app.focus && app.on('typewriter');
+  $effect(() => {
+    const on = app.focus && app.on('typewriter');
+    if (!view) return;
+    view.dispatch({ effects: typewriterCompartment.reconfigure(on ? typewriter() : []) });
+    if (on && !typewriterWas) {
+      // The extra room above and below comes with the next layout, so centre after it.
+      const v = view;
+      requestAnimationFrame(() => v === view && centerCursor(v));
+    }
+    typewriterWas = on;
   });
 
   // Switching between "Text" and "Side by side" turns the inline media on or off.

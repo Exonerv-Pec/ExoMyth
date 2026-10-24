@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 20 releases, latest 0.17.0 (2026-10-24)</summary>
+<summary><b>✅ Done</b> · 21 releases, latest 0.18.0 (2026-10-24)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.18.0** | 2026-10-24 | 🔎 Quick look-up: Ctrl+K over any view, with a preview 💬; ⌨️ typewriter scrolling in focus mode; 🎵 playlists: a page of tracks that plays in order 💬 |
 | **0.17.0** | 2026-10-24 | 🎭 Start profiles: Writer, Worldbuilder, Game master, Just notes; settings per world 💬 |
 | **0.16.0** | 2026-10-24 | 📖 Books: chapters and scenes on a board, reading straight through, download; scene navigation 💬 |
 | **0.15.1** | 2026-10-24 | 🔒 Safer .zip opening (library update, real size check) |
@@ -45,7 +46,7 @@ Click a section to open it.
 
 💬 Tester ideas that are already in: a web version, a story bible / wiki, fast search across the
 world, a timeline, art and music in pages, separate worlds for separate stories, an ideas inbox,
-a word count, a spell checker and
+a word count, a spell checker, a quick look-up, playlists and
 story planning templates.
 
 Every change in detail: [CHANGELOG.md](CHANGELOG.md).
@@ -53,18 +54,19 @@ Every change in detail: [CHANGELOG.md](CHANGELOG.md).
 </details>
 
 <details open>
-<summary><b>🔜 Next: small and useful</b> · 1 idea</summary>
+<summary><b>🔜 Next: small and useful</b> · 2 ideas</summary>
 
 <br>
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
-| ⬜ | Quick look-up from anywhere 💬 | S | Search as an overlay in any view, with the preview card, to check lore without leaving the page |
+| ⬜ | Playlist template and demo tracks | S | A built-in "Playlist" page template, and a few short tracks of our own in the demo world. The demo holds only text files today, so it would have to ship small audio files |
+| ⬜ | Music that keeps playing while you browse | M | A small player that stays on screen when you open another page, so a session's music does not stop. Needs one player kept outside the page view |
 
 </details>
 
 <details>
-<summary><b>📝 Writing tools</b> · 7 ideas</summary>
+<summary><b>📝 Writing tools</b> · 6 ideas</summary>
 
 <br>
 
@@ -73,7 +75,6 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
 | ⬜ | Story structure templates 💬 | M | Three acts, the hero's journey and other well-known shapes, in our own words, to plan a story or check a draft |
-| ⬜ | Typewriter scrolling | S | In focus mode the line being written stays in the middle of the screen, and the other paragraphs are dimmed a little |
 | ⬜ | Writing stats 💬 | M | Words per day, time spent writing, streaks; stored in the world, never sent anywhere |
 | ⬜ | Dangerous drafting mode 💬 | M | An optional sprint: new text fades if you stop typing, until a goal is reached, then it goes to the draft. Never touches existing text |
 | ⬜ | Mood boards and collages 💬 | M | Pictures, colours and quotes arranged freely for a character, place or scene |
@@ -83,13 +84,12 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 </details>
 
 <details>
-<summary><b>🗺️ Worldbuilding</b> · 4 ideas</summary>
+<summary><b>🗺️ Worldbuilding</b> · 3 ideas</summary>
 
 <br>
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
-| ⬜ | Playlists for a world or a scene 💬 | S | Audio already works in pages; a page of tracks that plays in order |
 | ⬜ | Months, days, custom calendars and eras | M–L | Beyond whole years: "3rd of Frostmonth, Year 412 of the Second Age" |
 | ⬜ | Export a world as a static site | M | To share with players or readers, without the editor |
 | ⬜ | Infinite whiteboard / canvas 💬 | L | Cards, images and notes placed freely, linked to pages |

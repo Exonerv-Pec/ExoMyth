@@ -8,6 +8,7 @@
   import Shortcuts from './components/Shortcuts.svelte';
   import Settings from './components/Settings.svelte';
   import ProfilePicker from './components/ProfilePicker.svelte';
+  import QuickLookup from './components/QuickLookup.svelte';
 
   let searchInput = $state<HTMLInputElement>();
 
@@ -45,13 +46,20 @@
       e.preventDefault();
       e.stopPropagation();
       app.setFocus(!app.focus);
-    } else if (e.key === 'Escape' && app.focus && !app.dialog && !app.shortcutsOpen && !app.hover) {
+    } else if (e.key === 'Escape' && app.focus && !app.dialog && !app.shortcutsOpen && !app.hover && !app.lookupOpen) {
       app.setFocus(false);
-    } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k' && app.vault) {
+    } else if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 'k' && app.vault) {
       e.preventDefault();
-      app.setFocus(false);
-      app.sidebarOpen = true;
-      queueMicrotask(() => searchInput?.focus());
+      if (app.on('quickLookup')) {
+        // Ctrl+K: search over whatever is on screen, with a preview, and back to the same place on Esc.
+        if (app.dialog || app.shortcutsOpen || app.settingsOpen || app.profilePicker) return;
+        app.hoverClose();
+        app.lookupOpen = !app.lookupOpen;
+      } else {
+        app.setFocus(false);
+        app.sidebarOpen = true;
+        queueMicrotask(() => searchInput?.focus());
+      }
     } else if (e.altKey && !e.ctrlKey && !e.metaKey && e.code === 'KeyI' && app.vault && !app.dialog && app.on('quickNotes')) {
       // Alt+I: catch an idea from anywhere, without leaving the page.
       e.preventDefault();
@@ -105,6 +113,7 @@
 <Shortcuts />
 <Settings />
 <ProfilePicker />
+<QuickLookup />
 
 {#if app.toast}
   <div class="toast" class:error={app.toast.error} role="status">{app.toast.text}</div>

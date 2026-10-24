@@ -34,6 +34,7 @@
     {
       title: 'keys.group.search',
       rows: [
+        { keys: [['↑'], ['↓']], what: 'keys.search.move' },
         { keys: [['Enter']], what: 'keys.search.open' },
         { keys: [['Esc']], what: 'keys.search.clear' },
       ],

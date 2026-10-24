@@ -19,7 +19,11 @@
     | 'focus'
     | 'spell'
     | 'tree'
-    | 'gear';
+    | 'gear'
+    | 'search'
+    | 'skip-back'
+    | 'skip-forward'
+    | 'repeat';
 
   let { name }: { name: Name } = $props();
 </script>
@@ -90,5 +94,14 @@
     <rect x="3.5" y="5" width="17" height="14" rx="2" />
     <circle cx="9" cy="10" r="1.6" />
     <path d="M20.5 16l-5-5-8 8" />
+  {:else if name === 'search'}
+    <circle cx="10.5" cy="10.5" r="5.5" />
+    <path d="M15 15l5 5" />
+  {:else if name === 'skip-back'}
+    <path d="M6 5v14M18 6l-9 6 9 6z" />
+  {:else if name === 'skip-forward'}
+    <path d="M18 5v14M6 6l9 6-9 6z" />
+  {:else if name === 'repeat'}
+    <path d="M17 3l3 3-3 3M4 11V9a3 3 0 0 1 3-3h13M7 21l-3-3 3-3M20 13v2a3 3 0 0 1-3 3H4" />
   {/if}
 </svg>

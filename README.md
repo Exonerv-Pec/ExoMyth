@@ -222,13 +222,21 @@ put them on the graph.
 - **Word count.** The top bar shows how many words the open page has; hover it for the whole world.
   Only the text a reader sees counts: links count as their shown text, the header and files do not.
 - **Focus mode.** **Ctrl+.** (or the corners button in the top bar) hides everything but the text you
-  are writing, with the word count in the corner. **Esc** brings the rest back.
+  are writing, with the word count in the corner. **Esc** brings the rest back. With **typewriter
+  scrolling** the line you are writing stays in the middle of the screen and the other paragraphs are
+  dimmed a little (it never changes the text; switch it off in Settings).
 - **Spell check.** The editor uses the browser's own spell checker, which works offline in the
   languages set up in the browser. The **ABC** button in the top bar turns it off, for example while
   a page is full of invented names.
 - **Quick notes.** Press **Alt+I** anywhere (or the light bulb at the top of the sidebar) to write
   down an idea without leaving the page. It is added with the date and time to an **Inbox** page,
   which is created the first time.
+- **Quick look-up.** **Ctrl+K** (or the magnifier in the top bar) opens a search over whatever you are
+  looking at: the text, graph, cards, timeline or book. The arrow keys move through the results and the
+  page you point at is previewed next to the list, so you can check a name or a date without leaving
+  the page. **Enter** opens it; **Esc** closes the look-up and you are back exactly where you were, in
+  focus mode too. With the look-up switched off in Settings, **Ctrl+K** goes to the search field in the
+  sidebar instead.
 
 ## Page templates
 
@@ -265,7 +273,7 @@ A new, empty world asks **What are you making?**
 | ✍️ Writer | Book, cards, timeline, family trees, focus mode, word count | Graph, maps |
 | 🗺️ Worldbuilder | Graph, cards, maps, timeline, family trees | Book, focus mode, word count |
 | 🎲 Game master | Graph, cards, maps, timeline, family trees, quick notes; a Session template | Book, focus mode, word count |
-| 🗒️ Just notes | Graph, cards, links | Timeline, years, maps, family trees, Book, focus mode |
+| 🗒️ Just notes | Graph, cards, links | Timeline, years, maps, family trees, Book, focus mode, playlists |
 | ✨ Everything | All of it, like the demo world | — |
 
 A profile only switches parts on and off and adds a few starting pages (a "Start here" page; for a
@@ -276,15 +284,15 @@ or switch single parts there. Each world keeps its own choice.
 
 The gear at the bottom of the sidebar (or **Ctrl+,**) opens the settings. Turn off what you do not
 use and the app gets simpler: the Graph, Cards and Timeline views, family trees, interactive maps,
-years, the relations panel, previews on hover, the word count, quick notes, focus mode and spell
-check. Theme and language are there too. Under a switch, Settings say how many pages of the open
+years, playlists, the quick look-up, the relations panel, previews on hover, the word count, quick
+notes, focus mode (and its typewriter scrolling) and spell check. Theme and language are there too. Under a switch, Settings say how many pages of the open
 world use that part (maps, years, family trees) and list them, so you know what would be hidden. Everything is on to begin with; settings are kept in the
 browser, never in your worlds, and "Turn everything back on" restores them in one click.
 
 ## Keyboard shortcuts
 
 Press **Ctrl+/** (or **?** outside a text field), or the keyboard button at the bottom of the sidebar,
-for the list of all shortcuts. The most useful: **Ctrl+K** search, **Alt+I** quick note,
+for the list of all shortcuts. The most useful: **Ctrl+K** quick look-up, **Alt+I** quick note,
 **Ctrl+click** on a `[[link]]` in the editor to follow it. On a Mac, use ⌘ instead of Ctrl and ⌥
 instead of Alt.
 
@@ -318,6 +326,29 @@ WebP, AVIF, SVG, BMP; MP4, WebM, OGV, MOV; MP3, WAV, OGG, Opus, M4A, AAC, FLAC. 
 own storage; images from web addresses are shown as links and never loaded automatically.
 In **Text** mode the pictures and players appear right under the lines that embed them; in **Side by
 side** they are shown in the reading pane.
+
+## Playlists
+
+Music for a world, a place or a scene. A page with `playlist: true` in its header is a playlist; its
+tracks are the list items that embed an audio file, in order:
+
+```markdown
+---
+playlist: true
+---
+# The Tavern
+
+Played while the party rests.
+
+- ![[Fiddle in the rain.mp3]]
+- ![[Last call.ogg|Last call, slow]]
+```
+
+The reading view shows a player above the text: play, previous and next, repeat, and the list of
+tracks to pick from. Tracks play one after another; a track whose file is missing is marked and
+skipped. The text after `|` names a track, otherwise the file name does. Any page can be a playlist,
+so a scene can carry its own music. The music stops when you leave the page. With playlists switched
+off in Settings, such a page is an ordinary page with a player under each line, as before.
 
 ## Page previews
 

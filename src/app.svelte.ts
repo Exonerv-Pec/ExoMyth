@@ -44,6 +44,9 @@ export const FEATURES = [
   'wordCount',
   'quickNotes',
   'focusMode',
+  'typewriter',
+  'quickLookup',
+  'playlists',
 ] as const;
 export type Feature = (typeof FEATURES)[number];
 
@@ -195,6 +198,8 @@ class App {
   features = $state<Record<Feature, boolean>>(loadFeatures());
   /** Focus mode: only the text being written is shown. */
   focus = $state(false);
+  /** The quick look-up (search over the current view, with a preview) is open. */
+  lookupOpen = $state(false);
   /** The browser's spell checker underlines words in the editor. */
   spellcheck = $state(read('exomyth:spellcheck') !== '0');
   private modeBeforeFocus: ViewMode | null = null;
@@ -347,6 +352,7 @@ class App {
     if (!this.modeOn(this.mode)) this.setMode(this.textMode);
     if (!this.on('years') && this.byYear) this.byYear = false;
     if (!this.on('focusMode') && this.focus) this.setFocus(false);
+    if (!this.on('quickLookup')) this.lookupOpen = false;
     if (!this.on('relationsPanel')) this.panelOpen = false;
     if (!this.on('family')) this.cardsTab = 'dossier';
     if (!this.on('hoverPreviews')) this.hoverClose();
@@ -459,6 +465,7 @@ class App {
     this.features = loadFeatures();
     this.profile = null;
     this.focus = false;
+    this.lookupOpen = false;
     this.modeBeforeFocus = null;
     this.unsubscribe?.();
     this.unsubscribe = null;
