@@ -165,6 +165,9 @@
           <h2>{t('page.empty.title')}</h2>
           <p>{t('page.empty.text')}</p>
           <button class="btn primary" onclick={() => app.askNewPage()}>{t('side.newPage')}</button>
+          {#if app.on('storyProjects')}
+            <button class="btn ghost" onclick={() => app.askProject()}>{t('project.new')}</button>
+          {/if}
         </div>
       </div>
     {/if}

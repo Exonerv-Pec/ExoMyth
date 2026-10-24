@@ -46,6 +46,11 @@
     await app.addTemplatesToWorld();
   }
 
+  function newProject() {
+    onclose();
+    app.askProject();
+  }
+
   async function openTemplates() {
     const first = own[0]?.path;
     onclose();
@@ -98,6 +103,12 @@
     />
     <datalist id="new-page-folders">{#each folders as f (f)}<option value={f}></option>{/each}</datalist>
   </label>
+
+  {#if app.on('storyProjects') && !d.lockFolder && !d.message}
+    <p class="dialog-hint">
+      <button type="button" class="link-btn" onclick={newProject}>{t('project.link')}</button>
+    </p>
+  {/if}
 
   <div class="actions">
     <button type="button" class="btn ghost" onclick={onclose}>{t('dialog.cancel')}</button>

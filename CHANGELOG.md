@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.20.0 — 2026-10-24
+
+### Added
+
+- **Story projects.** The New page window (and the empty screen) offers **Set up a whole story
+  project**: give a story a name and it gets a folder with eight inside, 1 Brainstorm, 2 Outline,
+  3 Drafts, 4 Story bible, 5 Art, 6 Research, 7 Notes and 8 Playlist. Each holds one page that says
+  what it is for, named after the story so several stories fit in one world, and an overview page
+  links them all. The Drafts page is a book and the Playlist page is a playlist, so Book and the
+  player work on them at once. Existing pages are never overwritten. A switch in Settings, off for
+  the Worldbuilder, Game master and Just notes profiles.
+
 ## 0.19.0 — 2026-10-24
 
 ### Added

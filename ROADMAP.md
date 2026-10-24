@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 22 releases, latest 0.19.0 (2026-10-24)</summary>
+<summary><b>✅ Done</b> · 23 releases, latest 0.20.0 (2026-10-24)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.20.0** | 2026-10-24 | 📁 Story projects: a ready set of folders for a new story 💬 |
 | **0.19.0** | 2026-10-24 | 📊 Writing stats: words and time per day, streaks, a daily goal, a 30-day chart; kept in the world 💬 |
 | **0.18.0** | 2026-10-24 | 🔎 Quick look-up: Ctrl+K over any view, with a preview 💬; ⌨️ typewriter scrolling in focus mode; 🎵 playlists: a page of tracks that plays in order 💬 |
 | **0.17.0** | 2026-10-24 | 🎭 Start profiles: Writer, Worldbuilder, Game master, Just notes; settings per world 💬 |
@@ -47,7 +48,7 @@ Click a section to open it.
 
 💬 Tester ideas that are already in: a web version, a story bible / wiki, fast search across the
 world, a timeline, art and music in pages, separate worlds for separate stories, an ideas inbox,
-a word count, a spell checker, a quick look-up, playlists, writing stats and
+a word count, a spell checker, a quick look-up, playlists, writing stats, project folders and
 story planning templates.
 
 Every change in detail: [CHANGELOG.md](CHANGELOG.md).
@@ -112,14 +113,13 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 </details>
 
 <details>
-<summary><b>🧩 Workspace</b> · 2 ideas</summary>
+<summary><b>🧩 Workspace</b> · 1 idea</summary>
 
 <br>
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
 | 🚧 | Customizable workspace 💬 | M | ✅ Settings to turn off views and tools (0.13.0). Next: arranging panels, your own shortcuts, text size and fonts |
-| ⬜ | Project folders 💬 | M | A ready set of folders for a new story: brainstorming, outline, drafts, story bible, art, research, notes, playlist |
 
 </details>
 

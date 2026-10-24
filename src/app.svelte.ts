@@ -10,6 +10,7 @@ import { appendIdea } from './core/writing';
 import { addSeconds, addWords, cleanGoal, dayKey, emptyStats, IDLE_SECONDS, mergeStats, setGoal, type WritingStats } from './core/stats';
 import { applyTemplate, builtInTemplateFiles, builtInTemplates, worldTemplates, type TemplateChoice } from './core/templates';
 import { profileById, starterFiles, type ProfileId } from './core/profiles';
+import { projectFiles, projectName } from './core/project';
 import {
   addChapterToText,
   addSceneToText,
@@ -49,6 +50,7 @@ export const FEATURES = [
   'quickLookup',
   'playlists',
   'writingStats',
+  'storyProjects',
 ] as const;
 export type Feature = (typeof FEATURES)[number];
 
@@ -1176,6 +1178,54 @@ class App {
 
   askNewPage(dir = ''): void {
     this.dialog = { kind: 'newPage', title: this.t('dialog.newPage'), name: '', folder: dir, lockFolder: dir !== '' };
+  }
+
+  /** Asks for the name of a story, to set up its folders. */
+  askProject(): void {
+    if (!this.vault || !this.on('storyProjects')) return;
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('project.new'),
+      label: this.t('project.label'),
+      value: '',
+      confirmLabel: this.t('dialog.create'),
+      hint: this.t('project.hint'),
+      onSubmit: (v) => void this.createProject(v),
+    };
+  }
+
+  /**
+   * Makes the folders of a story project (see core/project.ts) and opens its overview. Pages that
+   * already exist are left as they are, so asking again for the same story never overwrites anything.
+   */
+  async createProject(name: string): Promise<string | undefined> {
+    const vault = this.vault;
+    const story = projectName(name);
+    if (!vault || !story) return undefined;
+    try {
+      await this.flush();
+      let overview: string | undefined;
+      let made = 0;
+      for (const f of projectFiles(story, this.lang)) {
+        if (vault.getPage(f.path) || (await vault.storage.exists(f.path))) {
+          overview ??= f.path;
+          continue;
+        }
+        const page = await vault.createPage(baseName(f.path), dirName(f.path), f.text);
+        overview ??= page.path;
+        made++;
+      }
+      if (!made) {
+        this.notify(this.t('project.exists', story));
+        return undefined;
+      }
+      this.notify(this.t('project.created', story));
+      if (overview) await this.open(overview);
+      return overview;
+    } catch (e) {
+      this.fail(e);
+      return undefined;
+    }
   }
 
   /**

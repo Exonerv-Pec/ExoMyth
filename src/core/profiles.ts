@@ -16,9 +16,9 @@ export interface Profile {
 
 export const PROFILES: readonly Profile[] = [
   { id: 'writer', emoji: '✍️', off: ['graph', 'maps'] },
-  { id: 'worldbuilder', emoji: '🗺️', off: ['manuscript', 'focusMode', 'typewriter', 'wordCount', 'writingStats'] },
-  { id: 'gamemaster', emoji: '🎲', off: ['manuscript', 'focusMode', 'typewriter', 'wordCount', 'writingStats'] },
-  { id: 'notes', emoji: '🗒️', off: ['timeline', 'manuscript', 'family', 'maps', 'years', 'focusMode', 'typewriter', 'playlists', 'writingStats'] },
+  { id: 'worldbuilder', emoji: '🗺️', off: ['manuscript', 'focusMode', 'typewriter', 'wordCount', 'writingStats', 'storyProjects'] },
+  { id: 'gamemaster', emoji: '🎲', off: ['manuscript', 'focusMode', 'typewriter', 'wordCount', 'writingStats', 'storyProjects'] },
+  { id: 'notes', emoji: '🗒️', off: ['timeline', 'manuscript', 'family', 'maps', 'years', 'focusMode', 'typewriter', 'playlists', 'writingStats', 'storyProjects'] },
   { id: 'everything', emoji: '✨', off: [] },
 ];
 
