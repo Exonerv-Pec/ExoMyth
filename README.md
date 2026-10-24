@@ -275,6 +275,16 @@ template:
 tags: [ship]
 ```
 
+**Story structure.** Under the usual templates the window has a second group, **Story structure**:
+**Three acts**, **Five acts**, **Hero's journey**, **Seven points** and **Kishōtenketsu**, five
+well-known shapes written in our own words. Each makes a page in `Outlines/` with a heading for every
+part, a question under it to answer, and a **Check the draft** list at the end, so the same page
+plans a story or checks one you have written. Link the scenes that carry each part
+(`- [[Scene name]]`) and the plan connects to the story. The shapes are always offered, even in a world
+with templates of its own (its own copy with the same name replaces the built-in one; "Add them to
+the world" copies them too, with `group: structure` in the `template:` block). Switch them off in
+Settings.
+
 Template pages are not part of the world itself: they stay out of the graph, cards, timeline, tags and
 word counts, and links never lead to them.
 
@@ -290,10 +300,10 @@ A new, empty world asks **What are you making?**
 
 | Profile | On | Off |
 | --- | --- | --- |
-| ✍️ Writer | Book, cards, timeline, family trees, focus mode, word count, writing stats, story projects | Graph, maps |
-| 🗺️ Worldbuilder | Graph, cards, maps, timeline, family trees | Book, focus mode, word count, writing stats, story projects |
-| 🎲 Game master | Graph, cards, maps, timeline, family trees, quick notes; a Session template | Book, focus mode, word count, writing stats, story projects |
-| 🗒️ Just notes | Graph, cards, links | Timeline, years, maps, family trees, Book, focus mode, playlists, writing stats, story projects |
+| ✍️ Writer | Book, cards, timeline, family trees, focus mode, word count, writing stats, story projects, story structures | Graph, maps |
+| 🗺️ Worldbuilder | Graph, cards, maps, timeline, family trees | Book, focus mode, word count, writing stats, story projects, story structures |
+| 🎲 Game master | Graph, cards, maps, timeline, family trees, quick notes; a Session template | Book, focus mode, word count, writing stats, story projects, story structures |
+| 🗒️ Just notes | Graph, cards, links | Timeline, years, maps, family trees, Book, focus mode, playlists, writing stats, story projects, story structures |
 | ✨ Everything | All of it, like the demo world | — |
 
 A profile only switches parts on and off and adds a few starting pages (a "Start here" page; for a
@@ -304,7 +314,7 @@ or switch single parts there. Each world keeps its own choice.
 
 The gear at the bottom of the sidebar (or **Ctrl+,**) opens the settings. Turn off what you do not
 use and the app gets simpler: the Graph, Cards and Timeline views, family trees, interactive maps,
-years, playlists, the quick look-up, the relations panel, previews on hover, the word count, writing stats, story projects, quick
+years, playlists, the quick look-up, the relations panel, previews on hover, the word count, writing stats, story projects, story structures, quick
 notes, focus mode (and its typewriter scrolling) and spell check. Theme and language are there too. Under a switch, Settings say how many pages of the open
 world use that part (maps, years, family trees) and list them, so you know what would be hidden. Everything is on to begin with; settings are kept in the
 browser, never in your worlds, and "Turn everything back on" restores them in one click.

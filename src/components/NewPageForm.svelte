@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { app, type DialogState, type Feature } from '../app.svelte';
   import { builtInTemplates, TEMPLATE_DIRS, worldTemplates, type TemplateChoice } from '../core/templates';
+  import { STRUCTURE_GROUP, structureTemplates } from '../core/structures';
 
   let { d, onclose }: { d: Extract<DialogState, { kind: 'newPage' }>; onclose: () => void } = $props();
   const t = app.t;
@@ -20,8 +21,17 @@
     app.version;
     return worldTemplates(app.vault?.pages ?? []);
   });
-  /** The world's own templates, or the built-in set until it has some. */
-  const templates = $derived<TemplateChoice[]>(own.length ? own : builtInTemplates(app.lang).filter((t) => !t.feature || app.on(t.feature as Feature)));
+  /**
+   * The world's own templates, or the built-in set until it has some. The story structures are
+   * always offered (the world's own copy of one replaces the built-in), unless switched off.
+   */
+  const templates = $derived.by<TemplateChoice[]>(() => {
+    const basics = own.length ? own : builtInTemplates(app.lang);
+    const names = new Set(own.map((t) => t.name));
+    const all = [...basics, ...structureTemplates(app.lang).filter((t) => !names.has(t.name))];
+    return all.filter((t) => !t.feature || app.on(t.feature as Feature)).filter((t) => t.group !== STRUCTURE_GROUP || app.on('storyStructures'));
+  });
+  const hasStructures = $derived(templates.some((t) => t.group === STRUCTURE_GROUP));
   const folders = $derived.by(() => {
     app.version;
     return (app.vault?.folders() ?? []).filter((f) => !TEMPLATE_DIRS.some((dir) => f === dir || f.startsWith(dir + '/')));
@@ -77,7 +87,9 @@
     <div class="template-chips" role="radiogroup" aria-label={t('newPage.template')}>
       <button type="button" role="radio" aria-checked={choice === -1} onclick={() => pick(-1)}>{t('newPage.blank')}</button>
       {#each templates as tpl, i (tpl.path ?? tpl.name)}
-        <button type="button" role="radio" aria-checked={choice === i} onclick={() => pick(i)}>{tpl.name}</button>
+        {#if tpl.group !== STRUCTURE_GROUP}
+          <button type="button" role="radio" aria-checked={choice === i} onclick={() => pick(i)}>{tpl.name}</button>
+        {/if}
       {/each}
     </div>
     <p class="dialog-hint">
@@ -90,6 +102,20 @@
       {/if}
     </p>
   </fieldset>
+
+  {#if hasStructures}
+    <fieldset class="template-pick">
+      <legend>{t('newPage.structures')}</legend>
+      <div class="template-chips" role="radiogroup" aria-label={t('newPage.structures')}>
+        {#each templates as tpl, i (tpl.path ?? tpl.name)}
+          {#if tpl.group === STRUCTURE_GROUP}
+            <button type="button" role="radio" aria-checked={choice === i} onclick={() => pick(i)}>{tpl.name}</button>
+          {/if}
+        {/each}
+      </div>
+      <p class="dialog-hint">{t('newPage.structures.hint')}</p>
+    </fieldset>
+  {/if}
 
   <label>
     {t('newPage.folder')}

@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.22.0 — 2026-10-24
+
+### Added
+
+- **Story structure templates.** **+ New page** has a second group of templates, **Story
+  structure**: **Three acts**, **Five acts**, **Hero's journey**, **Seven points** and
+  **Kishōtenketsu**, in English and Russian, written in our own words. Each makes a page in
+  `Outlines/` (`Структуры/`) with a heading for every part, a question under it, and a **Check the
+  draft** checklist at the end, so one page plans a story or checks a draft. Link the scenes that
+  carry each part to connect the plan to the story.
+- The shapes are offered even when a world has templates of its own; a template of the world with the
+  same name replaces the built-in one. **Add them to the world** copies them too, marked with
+  `group: structure` in the `template:` block (a new field next to `folder:`).
+- A switch in Settings, off for the Worldbuilder, Game master and Just notes profiles.
+
 ## 0.21.0 — 2026-10-24
 
 ### Added

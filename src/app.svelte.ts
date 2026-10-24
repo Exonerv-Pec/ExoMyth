@@ -51,6 +51,7 @@ export const FEATURES = [
   'playlists',
   'writingStats',
   'storyProjects',
+  'storyStructures',
 ] as const;
 export type Feature = (typeof FEATURES)[number];
 

@@ -49,7 +49,7 @@ describe('the Playlist template', () => {
     flushSync();
   }
 
-  const chips = () => [...document.querySelectorAll('.template-chips button')].map((b) => b.textContent);
+  const chips = () => [...document.querySelectorAll('.template-pick')[0]!.querySelectorAll('.template-chips button')].map((b) => b.textContent);
 
   it('is offered with the built-in templates while playlists are on, and not when they are off', async () => {
     await boot();

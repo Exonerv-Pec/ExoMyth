@@ -16,6 +16,7 @@
  */
 import type { Page } from './types';
 import { compareText } from './names';
+import { structureTemplateFiles } from './structures';
 
 export const TEMPLATE_DIRS = ['Templates', 'Шаблоны'];
 
@@ -36,6 +37,8 @@ export interface TemplateChoice {
   folder?: string;
   /** The Settings switch a built-in template belongs to; it is not offered while that is off. */
   feature?: string;
+  /** A group the New page window shows apart from the rest, from `template: group:` (`structure`). */
+  group?: string;
 }
 
 /** The templates of a world (pages in its templates folder), by name. */
@@ -46,6 +49,8 @@ export function worldTemplates(pages: readonly Page[]): TemplateChoice[] {
       const t: TemplateChoice = { name: p.title, text: p.raw, path: p.path };
       const folder = templateFolder(p.raw);
       if (folder) t.folder = folder;
+      const group = templateGroup(p.raw);
+      if (group) t.group = group;
       return t;
     })
     .sort((a, b) => compareText(a.name, b.name));
@@ -65,21 +70,32 @@ function templateBlock(header: string): { start: number; end: number } | undefin
   return { start, end };
 }
 
-/** The folder a template sends new pages to (`template: folder:`), if it says. */
-export function templateFolder(text: string): string | undefined {
+/** A field of the `template:` block in a header (`folder`, `group`), if it says. */
+function templateField(text: string, key: string): string | undefined {
   const m = HEADER.exec(text);
   if (!m) return undefined;
   const header = m[1]!;
   const block = templateBlock(header);
   if (!block) return undefined;
-  for (const line of header.split('\n').slice(block.start + 1, block.end)) {
-    const f = /^[ \t]+folder:[ \t]*(.*?)[ \t]*(?:#.*)?\r?$/.exec(line);
+  const line = new RegExp(`^[ \\t]+${key}:[ \\t]*(.*?)[ \\t]*(?:#.*)?\\r?$`);
+  for (const l of header.split('\n').slice(block.start + 1, block.end)) {
+    const f = line.exec(l);
     if (f) {
       const value = f[1]!.replace(/^["']|["']$/g, '').trim();
       return value || undefined;
     }
   }
   return undefined;
+}
+
+/** The folder a template sends new pages to (`template: folder:`), if it says. */
+export function templateFolder(text: string): string | undefined {
+  return templateField(text, 'folder');
+}
+
+/** The group a template is shown in (`template: group:`), if it says. */
+export function templateGroup(text: string): string | undefined {
+  return templateField(text, 'group');
 }
 
 function today(date: Date): string {
@@ -419,5 +435,5 @@ export function builtInTemplates(lang: 'ru' | 'en'): TemplateChoice[] {
 /** Files for a world's own templates folder: the built-in set, ready to edit. */
 export function builtInTemplateFiles(lang: 'ru' | 'en'): { path: string; text: string }[] {
   const dir = lang === 'ru' ? 'Шаблоны' : 'Templates';
-  return (lang === 'ru' ? RU : EN).map((b) => ({ path: `${dir}/${b.file}.md`, text: b.text }));
+  return [...(lang === 'ru' ? RU : EN).map((b) => ({ path: `${dir}/${b.file}.md`, text: b.text })), ...structureTemplateFiles(lang)];
 }

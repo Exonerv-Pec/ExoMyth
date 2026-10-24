@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 24 releases, latest 0.21.0 (2026-10-24)</summary>
+<summary><b>✅ Done</b> · 25 releases, latest 0.22.0 (2026-10-24)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.22.0** | 2026-10-24 | 🧭 Story structure templates: three acts, five acts, the hero's journey, seven points, kishōtenketsu 💬 |
 | **0.21.0** | 2026-10-24 | 🎵 A Playlist page template, and three short tracks of our own in the demo world |
 | **0.20.0** | 2026-10-24 | 📁 Story projects: a ready set of folders for a new story 💬 |
 | **0.19.0** | 2026-10-24 | 📊 Writing stats: words and time per day, streaks, a daily goal, a 30-day chart; kept in the world 💬 |
@@ -50,7 +51,7 @@ Click a section to open it.
 💬 Tester ideas that are already in: a web version, a story bible / wiki, fast search across the
 world, a timeline, art and music in pages, separate worlds for separate stories, an ideas inbox,
 a word count, a spell checker, a quick look-up, playlists, writing stats, project folders and
-story planning templates.
+story structure templates.
 
 Every change in detail: [CHANGELOG.md](CHANGELOG.md).
 
@@ -68,7 +69,7 @@ Every change in detail: [CHANGELOG.md](CHANGELOG.md).
 </details>
 
 <details>
-<summary><b>📝 Writing tools</b> · 5 ideas</summary>
+<summary><b>📝 Writing tools</b> · 4 ideas</summary>
 
 <br>
 
@@ -76,7 +77,6 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
-| ⬜ | Story structure templates 💬 | M | Three acts, the hero's journey and other well-known shapes, in our own words, to plan a story or check a draft |
 | ⬜ | Dangerous drafting mode 💬 | M | An optional sprint: new text fades if you stop typing, until a goal is reached, then it goes to the draft. Never touches existing text |
 | ⬜ | Mood boards and collages 💬 | M | Pictures, colours and quotes arranged freely for a character, place or scene |
 | ⬜ | Editing workspace 💬 | L | Comments, revision notes, comparing versions |
