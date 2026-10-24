@@ -5,6 +5,7 @@
   import Icon from './Icon.svelte';
   import Resizer from './Resizer.svelte';
   import YearsEditor from './YearsEditor.svelte';
+  import SceneNav from './SceneNav.svelte';
   import { hasFamily, kinship } from '../core/family';
   import { previewOn } from '../actions';
 
@@ -96,6 +97,7 @@
 
   <div class="panel-scroll">
     {#if path}
+      {#if app.on('manuscript')}<SceneNav {path} />{/if}
       {#if app.on('years')}{#key path}<YearsEditor {path} />{/key}{/if}
       {#if !hasAny}
         <p class="rel-empty">{t('panel.empty')}</p>

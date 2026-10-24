@@ -69,6 +69,13 @@
       ],
     },
     {
+      title: 'keys.group.book',
+      rows: [
+        { keys: [['Alt', '←↑→↓']], what: 'keys.book.move' },
+        { keys: [['Enter']], what: 'keys.graph.open' },
+      ],
+    },
+    {
       title: 'keys.group.map',
       rows: [
         { keys: [['wheel']], what: 'keys.map.zoom' },

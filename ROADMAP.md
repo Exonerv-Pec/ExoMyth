@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 18 releases, latest 0.15.1 (2026-10-24)</summary>
+<summary><b>✅ Done</b> · 19 releases, latest 0.16.0 (2026-10-24)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.16.0** | 2026-10-24 | 📖 Books: chapters and scenes on a board, reading straight through, download; scene navigation 💬 |
 | **0.15.1** | 2026-10-24 | 🔒 Safer .zip opening (library update, real size check) |
 | **0.15.0** | 2026-10-24 | 🔎 Settings show how many pages use a part before you switch it off |
 | **0.14.0** | 2026-10-24 | 🗾 Areas on maps and map layers |
@@ -62,7 +63,7 @@ Every change in detail: [CHANGELOG.md](CHANGELOG.md).
 </details>
 
 <details>
-<summary><b>📝 Writing tools</b> · 9 ideas</summary>
+<summary><b>📝 Writing tools</b> · 7 ideas</summary>
 
 <br>
 
@@ -70,8 +71,6 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
-| ⬜ | Manuscript: chapters and scenes in order | L | A `Manuscript/` folder with an order; read and export it as one text |
-| ⬜ | Scene list / outline board | M | Scenes as cards with status, point of view, place and year; linked to the timeline |
 | ⬜ | Story structure templates 💬 | M | Three acts, the hero's journey and other well-known shapes, in our own words, to plan a story or check a draft |
 | ⬜ | Typewriter scrolling | S | In focus mode the line being written stays in the middle of the screen, and the other paragraphs are dimmed a little |
 | ⬜ | Writing stats 💬 | M | Words per day, time spent writing, streaks; stored in the world, never sent anywhere |

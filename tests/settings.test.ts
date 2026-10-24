@@ -58,7 +58,7 @@ describe('settings', () => {
     flushSync();
     expect(document.querySelector('.dialog.settings')).toBeTruthy();
     const switches = [...document.querySelectorAll<HTMLInputElement>('.settings input[role="switch"]')];
-    expect(switches.length).toBe(12);
+    expect(switches.length).toBe(13);
     expect(switches.every((s) => s.checked)).toBe(true);
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     flushSync();
@@ -141,8 +141,8 @@ describe('what switching off affects', () => {
     const u = featureUsage(vault.index);
     expect(u.maps.map((p) => p.title)).toEqual(['Silver Coast']);
     expect(u.family.map((p) => p.title)).toEqual(['Arn Vale', 'Eva Crow', 'Kira Vale', 'Liara Vale', 'Oren Vale', 'Ysolde Vale']);
-    expect(u.timeline.length).toBe(14);
-    expect(u.years.length).toBe(15); // the map's pins have years too
+    expect(u.timeline.length).toBe(18);
+    expect(u.years.length).toBe(19); // the map's pins have years too
     expect(u.years.map((p) => p.title)).toContain('Silver Coast');
   });
 

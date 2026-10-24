@@ -3171,3 +3171,254 @@ svg.graph:focus-visible {
 .setting-usage li {
   margin: 0.1rem 0;
 }
+
+/* ============================================================ book (v0.16) */
+
+.book-view {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.book-name {
+  font-family: var(--font-text);
+  font-size: 1.05rem;
+}
+.book-stats {
+  color: var(--ink-faint);
+  font-size: 0.82rem;
+}
+.book-progress {
+  display: inline-flex;
+  width: 8rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--line);
+}
+.bp-idea { background: #9aa7ae; }
+.bp-draft { background: #d9a441; }
+.bp-revised { background: #4f86c6; }
+.bp-done { background: #3f9a6b; }
+.bp-none { background: transparent; }
+.book-board {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 0.9rem;
+  overflow: auto;
+}
+.book-col {
+  flex: none;
+  width: 17rem;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  background: color-mix(in srgb, var(--panel) 70%, var(--paper));
+}
+.book-col.drop-target {
+  border-color: var(--accent);
+}
+.book-col-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.1rem 0.4rem;
+}
+.book-col-head h3 {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.book-col-meta {
+  grid-column: 1;
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+}
+.book-col-acts {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+}
+.book-col-cards {
+  display: grid;
+  gap: 0.45rem;
+  overflow-y: auto;
+  min-height: 1.5rem;
+}
+.scene-wrap {
+  position: relative;
+}
+.scene-card {
+  width: 100%;
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-s);
+  background: var(--surface);
+  color: var(--ink);
+  text-align: left;
+  cursor: grab;
+}
+.scene-card:hover {
+  border-color: var(--line-strong);
+}
+.scene-card.selected {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.scene-card.dragging {
+  opacity: 0.4;
+}
+.scene-card.missing {
+  border-style: dashed;
+  background: transparent;
+}
+.sc-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+.sc-title {
+  font-weight: 600;
+  font-size: 0.92rem;
+  line-height: 1.25;
+}
+.sc-summary {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.sc-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.6rem;
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+}
+.sc-status {
+  flex: none;
+  padding: 0.05rem 0.45rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: var(--paper);
+  color: var(--ink-soft);
+}
+.sc-status.st-idea { border-color: #9aa7ae; }
+.sc-status.st-draft { border-color: #d9a441; color: color-mix(in srgb, #d9a441 60%, var(--ink)); }
+.sc-status.st-revised { border-color: #4f86c6; color: color-mix(in srgb, #4f86c6 60%, var(--ink)); }
+.sc-status.st-done { border-color: #3f9a6b; color: color-mix(in srgb, #3f9a6b 60%, var(--ink)); }
+.sc-remove {
+  position: absolute;
+  top: -0.45rem;
+  right: -0.45rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  opacity: 0;
+}
+.scene-wrap:hover .sc-remove,
+.sc-remove:focus-visible {
+  opacity: 1;
+}
+.drop-line {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+.book-add {
+  justify-self: start;
+}
+.book-col-new {
+  justify-content: center;
+  min-height: 4rem;
+  border-style: dashed;
+  color: var(--ink-soft);
+  font-weight: 600;
+  cursor: pointer;
+}
+.book-read {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 1.5rem clamp(1rem, 5vw, 3rem) 4rem;
+}
+.book-text {
+  max-width: 42rem;
+  margin: 0 auto;
+}
+.book-text h2 {
+  margin-top: 2.5rem;
+}
+.book-scene-title {
+  margin: 1.8rem 0 0.4rem;
+  font-size: 0.85rem;
+  font-family: inherit;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.book-scene-title .link-btn {
+  color: var(--ink-faint);
+  text-decoration: none;
+}
+.book-scene-title .link-btn:hover {
+  color: var(--accent);
+}
+
+/* A scene's place in its book, at the top of the relations panel. */
+.scene-nav {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.2rem 0 0.8rem;
+  margin-bottom: 0.6rem;
+  border-bottom: 1px solid var(--line);
+}
+.scene-nav-book {
+  justify-self: start;
+  font-weight: 600;
+  text-decoration: none;
+}
+.scene-nav-where {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+}
+.scene-nav-steps {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+.scene-nav-steps .btn:disabled {
+  opacity: 0.4;
+}
+.scene-nav-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+.scene-nav-status .sc-status {
+  cursor: pointer;
+}
+.scene-nav-status .sc-status[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}

@@ -1,19 +1,30 @@
 import { Vault } from './core/vault';
 import { baseName, dirName, joinPath, sanitizePageName, stripMd } from './core/names';
-import { parseLinkText } from './core/parse';
+import { editFrontmatter, parseLinkText } from './core/parse';
 import { emptyLayout, type StoredLayout } from './core/layout';
 import { mediaKind } from './core/media';
 import { addPin, addRegion, changePin, changeRegion, removePin, removeRegion, type PinData, type RegionData } from './core/maps';
 import { existsIn, pageYears, setYearsInText, worldYearSpan } from './core/years';
 import { worldToZip, zipFolderName } from './core/archive';
 import { appendIdea } from './core/writing';
-import { applyTemplate, builtInTemplateFiles, type TemplateChoice } from './core/templates';
+import { applyTemplate, builtInTemplateFiles, builtInTemplates, worldTemplates, type TemplateChoice } from './core/templates';
+import {
+  addChapterToText,
+  addSceneToText,
+  bookMarkdown,
+  moveChapterInText,
+  moveSceneInText,
+  parseBook,
+  removeSceneFromText,
+  renameChapterInText,
+  type SceneStatus,
+} from './core/manuscript';
 import { detectLang, translate, type Key, type Lang } from './i18n';
 
-export type ViewMode = 'edit' | 'split' | 'preview' | 'graph' | 'cards' | 'timeline';
-export type TextMode = Exclude<ViewMode, 'graph' | 'cards' | 'timeline'>;
+export type ViewMode = 'edit' | 'split' | 'preview' | 'graph' | 'cards' | 'timeline' | 'book';
+export type TextMode = Exclude<ViewMode, 'graph' | 'cards' | 'timeline' | 'book'>;
 /** Views of the whole world rather than of one page's text. */
-export const WORLD_MODES: readonly ViewMode[] = ['graph', 'cards', 'timeline'];
+export const WORLD_MODES: readonly ViewMode[] = ['graph', 'cards', 'timeline', 'book'];
 
 /**
  * Parts of the app that can be turned off in the settings, for people who do not use them.
@@ -23,6 +34,7 @@ export const FEATURES = [
   'graph',
   'cards',
   'timeline',
+  'manuscript',
   'family',
   'maps',
   'years',
@@ -151,8 +163,8 @@ class App {
   current = $state<string | null>(null);
   pendingHeading = $state<string | null>(null);
   mode = $state<ViewMode>(
-    ((m: ViewMode): ViewMode => (loadFeatures()[m as Feature] === false ? 'split' : m))(
-      load<ViewMode>('exomyth:mode', ['edit', 'split', 'preview', 'graph', 'cards', 'timeline'], 'split'),
+    ((m: ViewMode): ViewMode => (loadFeatures()[(m === 'book' ? 'manuscript' : m) as Feature] === false ? 'split' : m))(
+      load<ViewMode>('exomyth:mode', ['edit', 'split', 'preview', 'graph', 'cards', 'timeline', 'book'], 'split'),
     ),
   );
   /** The text mode to return to from the graph. */
@@ -184,6 +196,8 @@ class App {
   layout = $state.raw<StoredLayout | null>(null);
   /** Asks the graph to bring a page into view; `seq` makes repeated requests distinct. */
   graphFocus = $state<{ path: string; seq: number } | null>(null);
+  /** The book shown in the Book mode (path of its page), remembered per world. */
+  bookPath = $state<string | null>(null);
   /** Which page view the Cards mode shows: the dossier or the family tree. */
   cardsTab = $state<'dossier' | 'family'>('dossier');
   /** Asks the timeline to bring a page into view. */
@@ -253,6 +267,7 @@ class App {
 
   /** Whether a view can be chosen (the world views can be switched off). */
   modeOn(mode: ViewMode): boolean {
+    if (mode === 'book') return this.on('manuscript');
     return mode === 'graph' ? this.on('graph') : mode === 'cards' ? this.on('cards') : mode === 'timeline' ? this.on('timeline') : true;
   }
 
@@ -359,6 +374,7 @@ class App {
     }
     this.layout = null;
     if (vault.storage.kind === 'browser') void this.keepStorage();
+    this.bookPath = read(this.prefKey('book'));
     this.byYear = read(this.prefKey('byYear')) === '1';
     const y = Number(read(this.prefKey('year')));
     this.year = Number.isFinite(y) ? Math.trunc(y) : 0;
@@ -428,6 +444,147 @@ class App {
     } catch (e) {
       this.fail(e);
     }
+  }
+
+  /* ------------------------------------------------------------------- books */
+
+  setBook(path: string | null): void {
+    this.bookPath = path;
+    if (path) save(this.prefKey('book'), path);
+  }
+
+  /** Applies an edit to a book's table of contents. */
+  private async editBook(path: string, fn: (text: string) => string): Promise<boolean> {
+    const vault = this.vault;
+    if (!vault) return false;
+    try {
+      await this.flush();
+      await vault.editText(path, fn);
+      return true;
+    } catch (e) {
+      this.fail(e);
+      return false;
+    }
+  }
+
+  moveScene(book: string, from: { c: number; s: number }, to: { c: number; s: number }): Promise<boolean> {
+    return this.editBook(book, (t) => moveSceneInText(t, from, to));
+  }
+  moveChapter(book: string, from: number, to: number): Promise<boolean> {
+    return this.editBook(book, (t) => moveChapterInText(t, from, to));
+  }
+  removeScene(book: string, c: number, s: number): Promise<boolean> {
+    return this.editBook(book, (t) => removeSceneFromText(t, c, s));
+  }
+
+  /** The Scene template: the world's own (named Scene or Сцена), or the built-in one. */
+  private sceneTemplate(): TemplateChoice | undefined {
+    const own = worldTemplates(this.vault?.pages ?? []).find((t) => /^(scene|сцена)$/i.test(t.name));
+    return own ?? builtInTemplates(this.lang).find((t) => /^(scene|сцена)$/i.test(t.name));
+  }
+
+  /** Creates a new book page with one empty chapter and shows it. */
+  async createBook(title: string): Promise<void> {
+    const vault = this.vault;
+    const name = sanitizePageName(title);
+    if (!vault || !name) return;
+    try {
+      await this.flush();
+      const folder = this.lang === 'ru' ? 'Рукопись' : 'Manuscript';
+      const text = `---\nmanuscript: true\n---\n# ${title.trim()}\n\n## ${this.t('book.chapter1')}\n`;
+      const page = await vault.createPage(name, folder, text);
+      this.setBook(page.path);
+      this.notify(this.t('toast.created', page.title));
+    } catch (e) {
+      this.fail(e);
+    }
+  }
+
+  /** Writes a new scene page (from the Scene template) and adds it to the end of a chapter. */
+  async addSceneToBook(book: string, chapter: number, name: string): Promise<void> {
+    const vault = this.vault;
+    const title = sanitizePageName(name);
+    if (!vault || !title) return;
+    try {
+      await this.flush();
+      const existing = vault.index.resolve(title);
+      let target = existing?.name ?? title;
+      if (!existing) {
+        const tpl = this.sceneTemplate();
+        const folder = tpl?.folder ?? (this.lang === 'ru' ? 'Сцены' : 'Scenes');
+        const page = await vault.createPage(title, folder, tpl ? applyTemplate(tpl.text, { title }) : undefined);
+        target = page.name;
+      }
+      await vault.editText(book, (t) => addSceneToText(t, chapter, target));
+    } catch (e) {
+      this.fail(e);
+    }
+  }
+
+  addChapter(book: string, title: string): Promise<boolean> {
+    return this.editBook(book, (t) => addChapterToText(t, title));
+  }
+  renameChapter(book: string, c: number, title: string): Promise<boolean> {
+    return this.editBook(book, (t) => renameChapterInText(t, c, title));
+  }
+
+  /** Sets a scene's status in its header, in the words of the interface language. */
+  setSceneStatus(path: string, status: SceneStatus): Promise<boolean> {
+    const word = this.t(`status.${status}` as Key).toLocaleLowerCase();
+    return this.editBook(path, (t) => editFrontmatter(t, (doc) => doc.set('status', word)));
+  }
+
+  /** Saves the whole book as one Markdown file. */
+  async downloadBook(path: string, sceneTitles: boolean): Promise<void> {
+    const vault = this.vault;
+    const page = vault?.getPage(path);
+    if (!vault || !page) return;
+    await this.flush();
+    const book = parseBook(page, vault.index);
+    const md = bookMarkdown(book, vault.index, { sceneTitles });
+    const url = URL.createObjectURL(new Blob([md], { type: 'text/markdown;charset=utf-8' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${zipFolderName(book.title)}.md`;
+    document.body.append(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10_000);
+  }
+
+  askBook(): void {
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('book.new'),
+      label: this.t('book.new.label'),
+      value: '',
+      confirmLabel: this.t('dialog.create'),
+      onSubmit: (v) => void this.createBook(v),
+    };
+  }
+
+  askScene(book: string, chapter: number): void {
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('book.scene.new'),
+      label: this.t('book.scene.label'),
+      value: '',
+      confirmLabel: this.t('dialog.create'),
+      hint: this.t('book.scene.hint'),
+      suggestions: (this.vault?.index.worldPages ?? []).map((p) => p.name),
+      onSubmit: (v) => void this.addSceneToBook(book, chapter, v),
+    };
+  }
+
+  askChapter(book: string, c?: number, current = ''): void {
+    this.dialog = {
+      kind: 'prompt',
+      title: c === undefined ? this.t('book.chapter.new') : this.t('book.chapter.rename'),
+      label: this.t('book.chapter.label'),
+      value: current,
+      confirmLabel: c === undefined ? this.t('dialog.create') : this.t('dialog.confirm'),
+      onSubmit: (v) => void (c === undefined ? this.addChapter(book, v) : this.renameChapter(book, c, v)),
+    };
   }
 
   /* ------------------------------------------------------------- ideas inbox */

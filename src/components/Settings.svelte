@@ -16,7 +16,7 @@
   }
 
   const groups: Group[] = [
-    { title: 'settings.group.views', items: [{ feature: 'graph' }, { feature: 'cards' }, { feature: 'timeline' }] },
+    { title: 'settings.group.views', items: [{ feature: 'graph' }, { feature: 'cards' }, { feature: 'timeline' }, { feature: 'manuscript' }] },
     { title: 'settings.group.world', items: [{ feature: 'family', needs: 'cards' }, { feature: 'maps' }, { feature: 'years' }] },
     { title: 'settings.group.writing', items: [{ feature: 'wordCount' }, { feature: 'quickNotes' }, { feature: 'focusMode' }] },
     { title: 'settings.group.interface', items: [{ feature: 'relationsPanel' }, { feature: 'hoverPreviews' }] },

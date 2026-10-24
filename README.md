@@ -189,6 +189,34 @@ the slider. The chosen year is shared by the whole world: the timeline draws a l
 and cards fade the pages that did not exist yet (or any more), and maps hide their pins. A map pin
 without years of its own follows the years of its page. Pages without years are always shown.
 
+## Writing a book
+
+Switch to **Book** to write the story itself. A book is an ordinary page with `manuscript: true` in its
+header; its text is the table of contents: `##` headings are chapters, and list items with a link are
+the scenes, in reading order. Notes and anything else on the page are kept as written.
+
+```markdown
+---
+manuscript: true
+---
+# The Silver Thread
+
+## Chapter 1: The River
+- [[Arrival at Rivertown]]
+- [[The Market]]
+```
+
+- **Board**: chapters as columns, scenes as cards with their status, point of view, year, summary and
+  word count. Drag cards between chapters (or Alt+arrows), add a scene (made from the Scene template)
+  or a chapter, rename and reorder chapters.
+- **Read**: the whole book straight through, chapter by chapter.
+- **Download (.md)**: the book as one Markdown file, links turned into plain words.
+- On a scene's page, the relations panel shows where it is in the book, with **Previous / Next scene**
+  and its status: Idea, Draft, Revised, Done (`status:` in the header, in English or Russian).
+
+Scenes are ordinary pages, so their `year:` puts them on the timeline and `pov:` / `place:` relations
+put them on the graph.
+
 ## Writing helpers
 
 - **Word count.** The top bar shows how many words the open page has; hover it for the whole world.

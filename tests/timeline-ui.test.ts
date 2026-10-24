@@ -68,6 +68,7 @@ describe('the timeline', () => {
       'Events',
       'Organizations',
       'Places',
+      'Scenes',
     ]);
     const titles = rowTitles(target);
     expect(titles.slice(0, 3)).toEqual(['Oren Vale', 'Ysolde Vale', 'Arn Vale']);

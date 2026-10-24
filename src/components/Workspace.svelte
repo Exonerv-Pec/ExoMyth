@@ -7,6 +7,7 @@
   import GraphView from './GraphView.svelte';
   import CardsView from './CardsView.svelte';
   import TimelineView from './TimelineView.svelte';
+  import BookView from './BookView.svelte';
   import Icon from './Icon.svelte';
   import { MEDIA_ACCEPT } from '../core/media';
   import { wordCount } from '../core/writing';
@@ -22,10 +23,10 @@
     return app.current ? app.vault?.getPage(app.current) : undefined;
   });
   const statusText = $derived(t(`save.${app.saveStatus}` as 'save.saved'));
-  const modes = ['edit', 'split', 'preview', 'graph', 'cards', 'timeline'] as const;
+  const modes = ['edit', 'split', 'preview', 'graph', 'cards', 'timeline', 'book'] as const;
   /** Graph, cards and the timeline show the whole world, not one page's text. */
   const inGraph = $derived(WORLD_MODES.includes(app.mode));
-  const worldTitle = $derived(app.mode === 'cards' ? t('mode.cards') : app.mode === 'timeline' ? t('timeline.title') : t('graph.title'));
+  const worldTitle = $derived(app.mode === 'cards' ? t('mode.cards') : app.mode === 'timeline' ? t('timeline.title') : app.mode === 'book' ? t('book.title') : t('graph.title'));
   let mediaInput = $state<HTMLInputElement>();
   // A page object is replaced whenever the page changes, so its count can be remembered until then.
   const counted = new WeakMap<Page, number>();
@@ -120,6 +121,8 @@
       <CardsView />
     {:else if app.mode === 'timeline' && app.modeOn('timeline')}
       <TimelineView />
+    {:else if app.mode === 'book' && app.modeOn('book')}
+      <BookView />
     {:else if page && app.current}
       <div class="stage" class:split={app.mode === 'split'}>
         {#if app.mode !== 'preview'}

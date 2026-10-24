@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.16.0 — 2026-10-24
+
+### Added
+
+- **Books.** A new **Book** view for writing the story itself. A book is a page with `manuscript: true`
+  whose text is its table of contents (`##` chapters, `- [[scene]]` lists), so it stays plain
+  Markdown.
+  - **Board**: chapters as columns and scenes as cards (status, point of view, year, summary, words);
+    drag and drop or Alt+arrows to reorder, add scenes from the Scene template, add, rename and reorder
+    chapters, take a scene out of the book.
+  - **Read** the whole book straight through, and **download** it as one Markdown file.
+  - Progress by status (Idea, Draft, Revised, Done) and word count for the book and each chapter.
+- **Scene navigation**: a scene's page shows its book, chapter and position, Previous / Next scene, and
+  status buttons.
+- The Book view can be switched off in Settings.
+- Demo world: the novel *The Silver Thread* with two chapters and four scenes.
+
 ## 0.15.1 — 2026-10-24
 
 ### Security
