@@ -111,13 +111,14 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 </details>
 
 <details>
-<summary><b>🧩 Workspace</b> · 2 ideas</summary>
+<summary><b>🧩 Workspace</b> · 3 ideas</summary>
 
 <br>
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
 | 🚧 | Customizable workspace 💬 | M | ✅ Settings to turn off views and tools (0.13.0). Next: arranging panels, your own shortcuts, text size and fonts |
+| ⬜ | Start profiles: "What are you making?" | M | When creating a world (and later in Settings), pick a profile: **Writer** (Book, scenes, focus mode, word count), **Worldbuilder** (graph, maps, timeline, family trees), **Game master** (maps, cards, quick notes, sessions), or **Just notes**. A profile only switches features on or off and adds starting folders and templates; everything can be changed afterwards |
 | ⬜ | Project folders 💬 | M | A ready set of folders for a new story: brainstorming, outline, drafts, story bible, art, research, notes, playlist |
 
 </details>
