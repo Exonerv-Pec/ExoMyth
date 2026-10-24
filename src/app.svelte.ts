@@ -8,6 +8,7 @@ import { existsIn, pageYears, setYearsInText, worldYearSpan } from './core/years
 import { worldToZip, zipFolderName } from './core/archive';
 import { appendIdea } from './core/writing';
 import { applyTemplate, builtInTemplateFiles, builtInTemplates, worldTemplates, type TemplateChoice } from './core/templates';
+import { profileById, starterFiles, type ProfileId } from './core/profiles';
 import {
   addChapterToText,
   addSceneToText,
@@ -46,10 +47,15 @@ export const FEATURES = [
 ] as const;
 export type Feature = (typeof FEATURES)[number];
 
-function loadFeatures(): Record<Feature, boolean> {
+/**
+ * Which parts are on: for one world (`key` is that world's preference key), or else the browser-wide
+ * choice. Worlds keep their own, because a novel and a campaign need different parts.
+ */
+function loadFeatures(key = 'exomyth:features'): Record<Feature, boolean> {
   const out = Object.fromEntries(FEATURES.map((f) => [f, true])) as Record<Feature, boolean>;
   try {
-    const saved = JSON.parse(localStorage.getItem('exomyth:features') ?? '{}') as Record<string, unknown>;
+    const raw = localStorage.getItem(key) ?? (key === 'exomyth:features' ? null : localStorage.getItem('exomyth:features'));
+    const saved = JSON.parse(raw ?? '{}') as Record<string, unknown>;
     for (const f of FEATURES) if (saved[f] === false) out[f] = false;
   } catch {
     /* Nothing saved, or storage is blocked: everything stays on. */
@@ -271,17 +277,69 @@ class App {
     return mode === 'graph' ? this.on('graph') : mode === 'cards' ? this.on('cards') : mode === 'timeline' ? this.on('timeline') : true;
   }
 
+  /** Where the parts that are on are remembered: per world while one is open. */
+  private featuresKey(): string {
+    return this.vault ? this.prefKey('features') : 'exomyth:features';
+  }
+
+  private saveFeatures(): void {
+    const off = Object.fromEntries(FEATURES.filter((f) => !this.features[f]).map((f) => [f, false]));
+    save(this.featuresKey(), JSON.stringify(off));
+  }
+
   setFeature(feature: Feature, on: boolean): void {
     this.features = { ...this.features, [feature]: on };
-    const off = Object.fromEntries(FEATURES.filter((f) => !this.features[f]).map((f) => [f, false]));
-    save('exomyth:features', JSON.stringify(off));
+    this.saveFeatures();
     this.applyFeatures();
   }
 
   /** Back to everything switched on. */
   resetFeatures(): void {
     this.features = Object.fromEntries(FEATURES.map((f) => [f, true])) as Record<Feature, boolean>;
-    save('exomyth:features', '{}');
+    this.saveFeatures();
+  }
+
+  /* ---------------------------------------------------------------- profiles */
+
+  /** The "What are you making?" window: for a new world (with starting pages) or from Settings. */
+  profilePicker = $state<'new' | 'settings' | null>(null);
+  /** The profile last applied to the open world. */
+  profile = $state<ProfileId | null>(null);
+
+  /**
+   * Applies a profile: its parts on, the others off, and (for a new world) its starting pages.
+   * Pages that already exist are never overwritten.
+   */
+  async applyProfile(id: ProfileId, starter: boolean): Promise<void> {
+    const p = profileById(id);
+    if (!p) return;
+    this.features = Object.fromEntries(FEATURES.map((f) => [f, !p.off.includes(f)])) as Record<Feature, boolean>;
+    this.saveFeatures();
+    this.profile = id;
+    if (this.vault) save(this.prefKey('profile'), id);
+    this.applyFeatures();
+    this.profilePicker = null;
+    const vault = this.vault;
+    if (!starter || !vault) return;
+    try {
+      let first: string | undefined;
+      for (const f of starterFiles(id, this.lang, vault.storage.label)) {
+        if (vault.getPage(f.path) || (await vault.storage.exists(f.path))) continue;
+        const page = await vault.createPage(baseName(f.path), dirName(f.path), f.text);
+        if (/^(Start here|С чего начать)$/.test(page.name)) first = page.path;
+        else first ??= page.path;
+      }
+      if (first) {
+        this.current = first;
+        save(this.prefKey('last'), first);
+      }
+      if (id === 'writer') {
+        const book = vault.index.worldPages.find((pg) => pg.path.startsWith(this.lang === 'ru' ? 'Рукопись/' : 'Manuscript/'));
+        if (book) this.setBook(book.path);
+      }
+    } catch (e) {
+      this.fail(e);
+    }
   }
 
   /** Leaves whatever was just switched off. */
@@ -375,6 +433,11 @@ class App {
     this.layout = null;
     if (vault.storage.kind === 'browser') void this.keepStorage();
     this.bookPath = read(this.prefKey('book'));
+    this.features = loadFeatures(this.prefKey('features'));
+    this.profile = (read(this.prefKey('profile')) as ProfileId | null) ?? null;
+    // A brand new, empty world: ask what it is for.
+    this.profilePicker = vault.pages.length === 0 ? 'new' : null;
+    if (!this.modeOn(this.mode)) this.mode = this.textMode;
     this.byYear = read(this.prefKey('byYear')) === '1';
     const y = Number(read(this.prefKey('year')));
     this.year = Number.isFinite(y) ? Math.trunc(y) : 0;
@@ -392,6 +455,9 @@ class App {
   }
 
   closeVault(): void {
+    this.profilePicker = null;
+    this.features = loadFeatures();
+    this.profile = null;
     this.focus = false;
     this.modeBeforeFocus = null;
     this.unsubscribe?.();

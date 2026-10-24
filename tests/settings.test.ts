@@ -77,7 +77,9 @@ describe('settings', () => {
     expect(app.mode).toBe('split');
     expect(modes(target)).not.toContain('Graph');
     expect(target.querySelector('.relpanel .icon-btn[aria-label="Show on graph"]')).toBeNull();
-    expect(JSON.parse(localStorage.getItem('exomyth:features')!)).toEqual({ graph: false });
+    // Kept for this world only.
+    const key = `exomyth:memory:${app.vault!.storage.label}:features`;
+    expect(JSON.parse(localStorage.getItem(key)!)).toEqual({ graph: false });
   });
 
   it('hides the relations panel, years, word count, quick notes and focus mode', async () => {

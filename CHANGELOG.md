@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.17.0 — 2026-10-24
+
+### Added
+
+- **Start profiles.** A new, empty world asks "What are you making?": Writer, Worldbuilder, Game master,
+  Just notes or Everything. A profile switches on the parts that kind of work needs and off the rest
+  (a worldbuilder gets no Book view, a writer no graph or maps), and can add starting pages: a "Start
+  here" page, a book named after the world for writers, a Session template for game masters.
+- **Settings → World profile** applies another profile at any time, without adding pages.
+
+### Changed
+
+- Settings are now kept for each world separately (in this browser): a novel and a campaign can have
+  different parts switched on. Worlds without their own settings use the earlier, browser-wide ones.
+
 ## 0.16.0 — 2026-10-24
 
 ### Added

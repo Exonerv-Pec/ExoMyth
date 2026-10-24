@@ -256,6 +256,22 @@ Pages live in folders (Characters, Places…). To move a page, drag it onto a fo
 onto the world's name for the top level), or use the folder button next to the page. Links by name
 keep working; links written with a folder path are updated.
 
+## Start profiles
+
+A new, empty world asks **What are you making?**
+
+| Profile | On | Off |
+| --- | --- | --- |
+| ✍️ Writer | Book, cards, timeline, family trees, focus mode, word count | Graph, maps |
+| 🗺️ Worldbuilder | Graph, cards, maps, timeline, family trees | Book, focus mode, word count |
+| 🎲 Game master | Graph, cards, maps, timeline, family trees, quick notes; a Session template | Book, focus mode, word count |
+| 🗒️ Just notes | Graph, cards, links | Timeline, years, maps, family trees, Book, focus mode |
+| ✨ Everything | All of it, like the demo world | — |
+
+A profile only switches parts on and off and adds a few starting pages (a "Start here" page; for a
+writer, a book named after the world). Choose another one any time in **Settings → World profile**,
+or switch single parts there. Each world keeps its own choice.
+
 ## Settings
 
 The gear at the bottom of the sidebar (or **Ctrl+,**) opens the settings. Turn off what you do not

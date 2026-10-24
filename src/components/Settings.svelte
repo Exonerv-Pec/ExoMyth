@@ -53,6 +53,16 @@
       <div class="settings-body">
         <p class="settings-note">{t('settings.note')}</p>
 
+        {#if app.vault}
+          <div class="setting-row profile-row">
+            <span>
+              <span class="setting-name">{t('profile.label')}</span>
+              <span class="setting-about">{app.profile ? t(`profile.${app.profile}` as Key) : t('profile.none')}</span>
+            </span>
+            <button class="btn" onclick={() => ((app.settingsOpen = false), (app.profilePicker = 'settings'))}>{t('profile.choose')}</button>
+          </div>
+        {/if}
+
         {#each groups as g (g.title)}
           <section>
             <h3>{t(g.title)}</h3>

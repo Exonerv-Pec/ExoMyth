@@ -7,6 +7,7 @@
   import HoverPreview from './components/HoverPreview.svelte';
   import Shortcuts from './components/Shortcuts.svelte';
   import Settings from './components/Settings.svelte';
+  import ProfilePicker from './components/ProfilePicker.svelte';
 
   let searchInput = $state<HTMLInputElement>();
 
@@ -103,6 +104,7 @@
 <HoverPreview />
 <Shortcuts />
 <Settings />
+<ProfilePicker />
 
 {#if app.toast}
   <div class="toast" class:error={app.toast.error} role="status">{app.toast.text}</div>

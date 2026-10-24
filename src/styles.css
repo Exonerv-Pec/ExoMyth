@@ -3422,3 +3422,79 @@ svg.graph:focus-visible {
   border-color: var(--accent);
   color: var(--accent-ink);
 }
+
+/* ============================================================ start profiles (v0.17) */
+
+.dialog.profiles {
+  width: min(46rem, 100%);
+  max-height: min(46rem, calc(100vh - 2rem));
+  grid-template-rows: auto minmax(0, 1fr);
+  padding: 0;
+  overflow: hidden;
+}
+.profiles-body {
+  overflow: auto;
+  padding: 0.6rem 1.3rem 1.2rem;
+  display: grid;
+  gap: 0.8rem;
+}
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: 0.7rem;
+}
+.profile-card {
+  display: grid;
+  align-content: start;
+  gap: 0.35rem;
+  padding: 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  background: var(--surface);
+  color: var(--ink);
+  text-align: left;
+}
+.profile-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.profile-card.current {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.pf-emoji {
+  font-size: 1.6rem;
+}
+.pf-name {
+  font-family: var(--font-text);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.pf-about {
+  font-size: 0.84rem;
+  color: var(--ink-soft);
+}
+.pf-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.2rem;
+}
+.pf-chips .chip {
+  font-size: 0.7rem;
+  padding: 0.05rem 0.45rem;
+}
+.profile-row {
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  padding: 0.6rem 0.75rem;
+}
+.profile-row > span {
+  display: grid;
+}
+.dialog label.pf-starter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--ink);
+}
