@@ -46,6 +46,7 @@
         { keys: [['Ctrl', 'Z']], what: 'keys.text.undo' },
         { keys: [['Ctrl', 'Shift', 'Z'], ['Ctrl', 'Y']], what: 'keys.text.redo' },
         { keys: [['Tab'], ['Shift', 'Tab']], what: 'keys.text.indent' },
+        { keys: [['Ctrl', 'Alt', 'M']], what: 'keys.text.comment' },
         { keys: [['Ctrl', 'Enter']], what: 'keys.text.saveNote' },
         { keys: [['Enter'], ['Space']], what: 'keys.text.spoiler' },
       ],

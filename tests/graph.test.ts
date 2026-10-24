@@ -9,7 +9,7 @@ import { DEMO_FILES } from '../src/demo';
 const page = (path: string, text: string) => parsePage(path, text, 1);
 const demoPages = (): Page[] =>
   Object.entries(DEMO_FILES)
-    .filter(([p]) => p.endsWith('.md'))
+    .filter(([p]) => p.endsWith('.md') && !p.startsWith('.exomyth/'))
     .map(([p, t]) => page(p, t));
 const graphOf = (pages: Page[]) => buildGraph(new VaultIndex(pages));
 const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.hypot(a.x - b.x, a.y - b.y);

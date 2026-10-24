@@ -6,7 +6,7 @@
  * that Exomyth (or any Markdown editor) can open.
  */
 import { unzipSync, zipSync, type Zippable } from 'fflate';
-import { isIgnoredPath, type VaultStorage } from './storage';
+import { isIgnoredPath, VERSIONS_DIR, type VaultStorage } from './storage';
 
 /** Files that are already compressed: stored as they are, which is faster and no bigger. */
 const PACKED = /\.(png|jpe?g|gif|webp|avif|mp4|m4v|webm|mov|mp3|m4a|aac|ogg|oga|opus|flac|zip|gz|pdf)$/i;
@@ -26,10 +26,12 @@ export function zipFolderName(name: string): string {
 // The .zip format stores times from 1980 on; older or missing times are left out.
 const ZIP_EPOCH = Date.UTC(1980, 0, 2);
 
-/** Packs every file of a world (pages, settings, pictures, sounds) into a .zip. */
+/** Packs every file of a world (pages, settings, pictures, sounds, saved versions of pages) into a .zip. */
 export async function worldToZip(storage: VaultStorage, name = storage.label): Promise<{ data: Uint8Array; files: number }> {
   const root = zipFolderName(name);
-  const entries = (await storage.list()).filter((f) => !isIgnoredPath(f.path)).sort((a, b) => (a.path < b.path ? -1 : 1));
+  const entries = [...(await storage.list()), ...(await storage.listDir(VERSIONS_DIR))]
+    .filter((f) => !isIgnoredPath(f.path))
+    .sort((a, b) => (a.path < b.path ? -1 : 1));
   const files: Zippable = {};
   for (const entry of entries) {
     const read = await storage.readBytes(entry.path);

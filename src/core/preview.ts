@@ -1,9 +1,10 @@
 import type { VaultIndex } from './index';
 import type { Page } from './types';
 import { headingSlug } from './slug';
+import { cleanText } from './critic';
 
 /** Frontmatter keys that describe the page's structure rather than its subject. */
-export const STRUCTURAL_KEYS = new Set(['title', 'aliases', 'tags', 'relations', 'pinned', 'image', 'map', 'pins', 'playlist', 'moodboard', 'board']);
+export const STRUCTURAL_KEYS = new Set(['title', 'aliases', 'tags', 'relations', 'pinned', 'image', 'map', 'pins', 'playlist', 'moodboard', 'board', 'revision']);
 
 export interface Fact {
   key: string;
@@ -60,7 +61,8 @@ export function sectionText(body: string, heading: string): string | undefined {
  * characters, skipping the page's own title heading. Never cuts a [[link]] or ||spoiler|| in half.
  */
 export function excerpt(text: string, budget = 360): { markdown: string; truncated: boolean } {
-  const blocks = text
+  // Comments and suggested changes are notes for the writer, not part of what a preview shows.
+  const blocks = cleanText(text)
     .replace(/\r\n/g, '\n')
     .split(/\n{2,}/)
     .map((b) => b.trim())

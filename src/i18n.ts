@@ -145,6 +145,10 @@ const ru = {
   'settings.years.about': 'Поля «Годы» на панели связей и «Показывать по годам» на графе, карточках и картах.',
   'settings.wordCount': 'Счётчик слов',
   'settings.wordCount.about': 'Число слов страницы в верхней панели.',
+  'settings.revision': 'Правка: комментарии и заметки',
+  'settings.revision.about': 'Комментарии к фрагментам и предложенные правки прямо в тексте (разметка CriticMarkup), список «Что исправить» в шапке страницы и панель «Правка», где всё это видно сразу.',
+  'settings.versions': 'Версии страниц',
+  'settings.versions.about': 'Exomyth сам сохраняет копию страницы перед правкой, не чаще раза в 30 минут и не больше 20 на страницу, а вы можете сохранить версию с названием. Версии можно сравнить и восстановить. Хранятся в мире, в папке .exomyth/versions.',
   'settings.quickNotes': 'Быстрые заметки',
   'settings.quickNotes.about': 'Кнопка с лампочкой и Alt+I.',
   'settings.focusMode': 'Режим без отвлечений',
@@ -192,6 +196,75 @@ const ru = {
   'board.kind.quote': 'цитата',
   'board.kind.page': 'страница',
   'board.removed': 'Убрано с доски',
+  'rev.title': 'Правка',
+  'rev.open': 'Правка: комментарии, заметки, версии',
+  'rev.close': 'Закрыть правку',
+  'rev.comments': 'Комментарии',
+  'rev.comment.add': '+ Комментарий',
+  'rev.comment.title': 'Новый комментарий',
+  'rev.comment.label': 'Комментарий к выделенному',
+  'rev.comment.point': 'Комментарий в месте курсора',
+  'rev.comment.confirm': 'Добавить',
+  'rev.comment.edit': 'Изменить комментарий',
+  'rev.comment.resolve': 'Закрыть комментарий: текст останется, комментарий уйдёт',
+  'rev.comment.mark': 'Подсвечено без комментария',
+  'rev.comment.needEditor': 'Чтобы выделить фрагмент, откройте страницу в режиме «Текст» или «Рядом».',
+  'rev.comment.empty': 'Выделите фрагмент в редакторе и нажмите «+ Комментарий» (Ctrl+Alt+M). Комментарий хранится прямо в тексте: {==фрагмент==}{>>комментарий<<}.',
+  'rev.comment.go': 'Показать в тексте',
+  'rev.changes': 'Предложенные правки',
+  'rev.change.insert': 'Добавить «{0}»',
+  'rev.change.delete': 'Убрать «{0}»',
+  'rev.change.replace': '«{0}» → «{1}»',
+  'rev.change.accept': 'Принять',
+  'rev.change.reject': 'Отклонить',
+  'rev.change.acceptAll': 'Принять все',
+  'rev.change.rejectAll': 'Отклонить все',
+  'rev.notes': 'Что исправить',
+  'rev.notes.placeholder': 'Например: поднять ставки перед дуэлью',
+  'rev.notes.add': 'Добавить',
+  'rev.notes.edit': 'Изменить заметку',
+  'rev.notes.editLabel': 'Заметка (пустая — удалить)',
+  'rev.notes.remove': 'Удалить заметку',
+  'rev.notes.clear': 'Убрать сделанные',
+  'rev.notes.empty': 'Список того, что поправить на этой странице при следующем проходе. Хранится в шапке страницы, в поле revision.',
+  'rev.versions': 'Версии',
+  'rev.versions.save': 'Сохранить версию…',
+  'rev.versions.saveTitle': 'Сохранить версию',
+  'rev.versions.nameLabel': 'Название, например «До переписывания»',
+  'rev.versions.nameHint': 'Версии с названием не удаляются сами.',
+  'rev.versions.auto': 'сохранена сама',
+  'rev.versions.compare': 'Сравнить',
+  'rev.versions.name': 'Дать название',
+  'rev.versions.rename': 'Название версии',
+  'rev.versions.delete': 'Удалить версию',
+  'rev.versions.deleteTitle': 'Удалить версию?',
+  'rev.versions.deleteText': 'Версия от {0} будет удалена. Сама страница не изменится.',
+  'rev.versions.empty': 'Пока нет версий. Exomyth сохранит копию сам, когда вы начнёте править страницу.',
+  'rev.versions.loading': 'Загружаю версии…',
+  'rev.versions.about': '{0} · {1}. Сами сохраняются не чаще раза в 30 минут и не больше 20 на страницу, старые прореживаются. Версии с названием остаются.',
+  'rev.versions.saved': 'Версия сохранена',
+  'rev.world': 'Во всём мире',
+  'rev.world.about': 'Страницы с открытыми комментариями, правками и заметками.',
+  'rev.world.comments': 'комментариев: {0}',
+  'rev.world.changes': 'правок: {0}',
+  'rev.world.notes': 'заметок: {0}',
+  'rev.off': 'Комментарии и версии выключены в Настройках.',
+  'cmp.title': 'Сравнение версий',
+  'cmp.from': 'Было',
+  'cmp.to': 'Стало',
+  'cmp.current': 'Текущий текст',
+  'cmp.only': 'Только изменения',
+  'cmp.stats': '+{0} · −{1}',
+  'cmp.statsTitle': 'Слов добавлено и убрано',
+  'cmp.same': 'Тексты совпадают.',
+  'cmp.loading': 'Сравниваю…',
+  'cmp.skip': '… {0} без изменений',
+  'cmp.restore': 'Восстановить «Было»',
+  'cmp.restoreTitle': 'Восстановить эту версию?',
+  'cmp.restoreText': 'Текст страницы станет таким, как в версии от {0}. Текущий текст сначала сохранится как версия, так что ничего не потеряется.',
+  'cmp.restored': 'Версия восстановлена',
+  'cmp.legend.del': 'убрано',
+  'cmp.legend.add': 'добавлено',
   'settings.storyProjects': 'Папки-проекты',
   'settings.storyProjects.about': 'В окне новой страницы появляется «целый проект истории»: папка с идеями, планом, черновиками, библией, артом, исследованиями, заметками и плейлистом.',
   'project.new': 'Новый проект истории',
@@ -311,6 +384,7 @@ const ru = {
   'keys.text.indent': 'Сдвинуть строку вправо / влево',
   'keys.text.saveNote': 'Сохранить быструю заметку',
   'keys.text.spoiler': 'Открыть спойлер в режиме чтения',
+  'keys.text.comment': 'Комментарий к выделенному',
   'keys.graph.move': 'Двигать граф',
   'keys.graph.zoom': 'Приблизить / отдалить',
   'keys.graph.fit': 'Показать весь мир',
@@ -624,6 +698,10 @@ const en: Record<Key, string> = {
   'settings.years.about': 'The Years fields in the relations panel and “Show by year” on the graph, cards and maps.',
   'settings.wordCount': 'Word count',
   'settings.wordCount.about': 'Words of the page in the top bar.',
+  'settings.revision': 'Editing: comments and notes',
+  'settings.revision.about': 'Comments on passages and suggested changes right in the text (CriticMarkup notation), a “To fix” list in the page header, and the Editing panel that shows them all.',
+  'settings.versions': 'Page versions',
+  'settings.versions.about': 'Exomyth keeps a copy of a page before you edit it, at most once every 30 minutes and no more than 20 per page, and you can save named versions. Versions can be compared and restored. Kept in the world, in the .exomyth/versions folder.',
   'settings.quickNotes': 'Quick notes',
   'settings.quickNotes.about': 'The light bulb button and Alt+I.',
   'settings.focusMode': 'Focus mode',
@@ -671,6 +749,75 @@ const en: Record<Key, string> = {
   'board.kind.quote': 'quote',
   'board.kind.page': 'page',
   'board.removed': 'Removed from the board',
+  'rev.title': 'Editing',
+  'rev.open': 'Editing: comments, notes, versions',
+  'rev.close': 'Close editing',
+  'rev.comments': 'Comments',
+  'rev.comment.add': '+ Comment',
+  'rev.comment.title': 'New comment',
+  'rev.comment.label': 'Comment on the selection',
+  'rev.comment.point': 'Comment at the cursor',
+  'rev.comment.confirm': 'Add',
+  'rev.comment.edit': 'Edit comment',
+  'rev.comment.resolve': 'Resolve: the text stays, the comment goes',
+  'rev.comment.mark': 'Marked, no comment',
+  'rev.comment.needEditor': 'To select a passage, open the page in Text or Side by side.',
+  'rev.comment.empty': 'Select a passage in the editor and press “+ Comment” (Ctrl+Alt+M). The comment is kept right in the text: {==passage==}{>>comment<<}.',
+  'rev.comment.go': 'Show in the text',
+  'rev.changes': 'Suggested changes',
+  'rev.change.insert': 'Add “{0}”',
+  'rev.change.delete': 'Remove “{0}”',
+  'rev.change.replace': '“{0}” → “{1}”',
+  'rev.change.accept': 'Accept',
+  'rev.change.reject': 'Reject',
+  'rev.change.acceptAll': 'Accept all',
+  'rev.change.rejectAll': 'Reject all',
+  'rev.notes': 'To fix',
+  'rev.notes.placeholder': 'For example: raise the stakes before the duel',
+  'rev.notes.add': 'Add',
+  'rev.notes.edit': 'Edit note',
+  'rev.notes.editLabel': 'Note (empty removes it)',
+  'rev.notes.remove': 'Remove note',
+  'rev.notes.clear': 'Remove done',
+  'rev.notes.empty': 'What to fix on this page in the next pass. Kept in the page header, in the revision field.',
+  'rev.versions': 'Versions',
+  'rev.versions.save': 'Save version…',
+  'rev.versions.saveTitle': 'Save version',
+  'rev.versions.nameLabel': 'Name, for example “Before the rewrite”',
+  'rev.versions.nameHint': 'Named versions are never removed by themselves.',
+  'rev.versions.auto': 'saved by itself',
+  'rev.versions.compare': 'Compare',
+  'rev.versions.name': 'Name it',
+  'rev.versions.rename': 'Version name',
+  'rev.versions.delete': 'Delete version',
+  'rev.versions.deleteTitle': 'Delete version?',
+  'rev.versions.deleteText': 'The version from {0} will be deleted. The page itself does not change.',
+  'rev.versions.empty': 'No versions yet. Exomyth keeps a copy by itself when you start editing the page.',
+  'rev.versions.loading': 'Loading versions…',
+  'rev.versions.about': '{0} · {1}. Saved by themselves at most once every 30 minutes and no more than 20 per page, older ones thinned out. Named versions stay.',
+  'rev.versions.saved': 'Version saved',
+  'rev.world': 'In the whole world',
+  'rev.world.about': 'Pages with open comments, changes and notes.',
+  'rev.world.comments': 'comments: {0}',
+  'rev.world.changes': 'changes: {0}',
+  'rev.world.notes': 'notes: {0}',
+  'rev.off': 'Comments and versions are switched off in Settings.',
+  'cmp.title': 'Compare versions',
+  'cmp.from': 'Before',
+  'cmp.to': 'After',
+  'cmp.current': 'Current text',
+  'cmp.only': 'Only changes',
+  'cmp.stats': '+{0} · −{1}',
+  'cmp.statsTitle': 'Words added and removed',
+  'cmp.same': 'The texts are the same.',
+  'cmp.loading': 'Comparing…',
+  'cmp.skip': '… {0} unchanged',
+  'cmp.restore': 'Restore “Before”',
+  'cmp.restoreTitle': 'Restore this version?',
+  'cmp.restoreText': 'The page text will become the version from {0}. The current text is saved as a version first, so nothing is lost.',
+  'cmp.restored': 'Version restored',
+  'cmp.legend.del': 'removed',
+  'cmp.legend.add': 'added',
   'settings.storyProjects': 'Story projects',
   'settings.storyProjects.about': 'The new page window offers a whole story project: a folder with brainstorming, outline, drafts, a story bible, art, research, notes and a playlist.',
   'project.new': 'New story project',
@@ -790,6 +937,7 @@ const en: Record<Key, string> = {
   'keys.text.indent': 'Indent / outdent a line',
   'keys.text.saveNote': 'Save a quick note',
   'keys.text.spoiler': 'Reveal a spoiler in the reading view',
+  'keys.text.comment': 'Comment on the selection',
   'keys.graph.move': 'Move around',
   'keys.graph.zoom': 'Zoom in / out',
   'keys.graph.fit': 'Show the whole world',
@@ -1002,6 +1150,44 @@ export function formatDuration(lang: Lang, seconds: number): string {
 export function formatDay(lang: Lang, day: string): string {
   const [y, m, d] = day.split('-').map(Number) as [number, number, number];
   return new Date(y, m - 1, d).toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'en-US', { month: 'short', day: 'numeric' });
+}
+
+/** "1 line", "3 lines"; "1 строка", "3 строки", "5 строк". */
+export function countLines(lang: Lang, n: number): string {
+  if (lang === 'en') return `${n} ${n === 1 ? 'line' : 'lines'}`;
+  const d10 = n % 10;
+  const d100 = n % 100;
+  const form = d10 === 1 && d100 !== 11 ? 'строка' : d10 >= 2 && d10 <= 4 && (d100 < 12 || d100 > 14) ? 'строки' : 'строк';
+  return `${n} ${form}`;
+}
+
+/** "1 version", "3 versions"; "1 версия", "3 версии", "5 версий". */
+export function countVersions(lang: Lang, n: number): string {
+  if (lang === 'en') return `${n} ${n === 1 ? 'version' : 'versions'}`;
+  const d10 = n % 10;
+  const d100 = n % 100;
+  const form = d10 === 1 && d100 !== 11 ? 'версия' : d10 >= 2 && d10 <= 4 && (d100 < 12 || d100 > 14) ? 'версии' : 'версий';
+  return `${n} ${form}`;
+}
+
+/** File sizes: "12 KB", "1.4 MB"; "12 КБ", "1,4 МБ". */
+export function formatSize(lang: Lang, bytes: number): string {
+  const locale = lang === 'ru' ? 'ru-RU' : 'en-US';
+  const [kb, mb] = lang === 'ru' ? ['КБ', 'МБ'] : ['KB', 'MB'];
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024)).toLocaleString(locale)} ${kb}`;
+  return `${(bytes / 1024 / 1024).toLocaleString(locale, { maximumFractionDigits: 1 })} ${mb}`;
+}
+
+/** A moment: "today, 15:30", "Oct 24, 15:30", "Oct 24, 2025, 15:30"; "сегодня, 15:30", "24 окт., 15:30". */
+export function formatTime(lang: Lang, time: number, now = Date.now()): string {
+  const locale = lang === 'ru' ? 'ru-RU' : 'en-US';
+  const d = new Date(time);
+  const n = new Date(now);
+  const clock = d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+  const sameDay = d.toDateString() === n.toDateString();
+  if (sameDay) return `${lang === 'ru' ? 'сегодня' : 'today'}, ${clock}`;
+  const date = d.toLocaleDateString(locale, { month: 'short', day: 'numeric', ...(d.getFullYear() !== n.getFullYear() ? { year: 'numeric' } : {}) });
+  return `${date}, ${clock}`;
 }
 
 export function detectLang(): Lang {

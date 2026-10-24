@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.24.0 — 2026-10-24
+
+### Added
+
+- **Editing workspace.** A speech-bubble button in the top bar opens the **Editing** panel in place of
+  the relations panel, with comments, suggested changes, a to-fix list and versions of the page.
+- **Comments in the text.** Select a passage and press **Ctrl+Alt+M** (or **+ Comment**): the comment is
+  written with the open CriticMarkup notation, `{==passage==}{>>comment<<}`, so it moves with its
+  passage and stays readable in other editors. The editor colours comments; the reading view
+  highlights the passage with a numbered marker that shows the comment on hover or tap. The panel
+  jumps to a comment, edits it, or resolves it (the passage stays).
+- **Suggested changes.** `{++added++}`, `{--removed--}` and `{~~old~>new~~}` show as additions and
+  removals and can be accepted or rejected one by one or all at once.
+- **To fix.** A checklist per page, kept in the header under `revision:` (`"[x] …"` for done items), and
+  a list of every page in the world with open comments, changes or notes.
+- **Page versions.** Before a page is edited, a copy of it is kept by itself, at most once every 30
+  minutes and only when the text changed; a page keeps at most 20 of these, thinned out evenly over
+  time. Named versions (**Save version…**) are never removed by themselves. **Compare** shows the
+  changes word by word between a version and the current text or two versions, with the number of
+  words added and removed; **Restore** brings a version back after keeping the current text as a
+  version. Versions are plain Markdown files in `.exomyth/versions/<page path>/`, follow their page
+  on rename, move and trash, and are part of the world's .zip.
+- Two switches in Settings, **Editing: comments and notes** and **Page versions**; the Game master
+  profile leaves comments off, Just notes leaves both off. The demo scene **The Market** has comments,
+  a change, notes and a first draft to compare.
+
+### Changed
+
+- Word counts, previews, cards, the book view and book exports leave comments out and show
+  suggested changes as not yet made.
+- Opening and refreshing a world never reads saved versions, so many versions do not slow it down.
+- The panel titles keep the space before “· page name”.
+
 ## 0.23.0 — 2026-10-24
 
 ### Added

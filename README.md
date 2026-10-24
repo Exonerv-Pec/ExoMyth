@@ -78,6 +78,8 @@ The secret: ||Eva Crow is her half-sister||.
 | `tags:` and `#tag` | Tags (header or inline) |
 | `pinned:` | Links shown first in their group in the relations panel |
 | `\|\|secret\|\|` | Spoiler, hidden in reading view until clicked |
+| `{==passage==}{>>comment<<}`, `{++add++}`, `{--remove--}`, `{~~old~>new~~}` | Comments and suggested changes (CriticMarkup), see Editing below |
+| `revision:` | Notes on what to fix on the page |
 | `![[map.png]]`, `![[map.png\|400]]`, `![[intro.mp4]]`, `![[theme.mp3]]` | Image, video or audio file of the world (optional width, or a caption after `\|`) |
 | other header fields | Shown as facts in the page's infobox |
 
@@ -101,6 +103,8 @@ slot per folder). Delete that file to get a fresh layout, or use "Lay out again"
 
 Writing stats are saved in `.exomyth/writing.json`: one line per day with the words written and the
 seconds spent, and the daily goal. It is plain JSON, so you can read it or delete it.
+
+Saved versions of pages are plain copies in `.exomyth/versions/<page path>/<date time>[ name].md`.
 
 ## Relations graph
 
@@ -258,6 +262,46 @@ overwritten: asking again for the same story only adds pages that are missing.
   focus mode too. With the look-up switched off in Settings, **Ctrl+K** goes to the search field in the
   sidebar instead.
 
+## Editing: comments, notes and versions
+
+The speech-bubble button in the top bar opens the **Editing** panel in place of the relations panel.
+It holds everything for the next pass over a page:
+
+- **Comments.** Select a passage in the editor and press **Ctrl+Alt+M** (or **+ Comment** in the
+  panel). The comment is written into the text with the open CriticMarkup notation, so it stays with
+  its passage when the text is edited or copied, and other Markdown editors show it as plain text:
+
+  ```markdown
+  Arn drew {==his old sword==}{>>Which sword? Name it.<<} and waited.{>>Slow here<<}
+  ```
+
+  The reading view highlights the passage and shows a numbered marker; point at it (or tap it) to
+  read the comment. In the panel, click a comment to jump to it, ✎ to change it and ✓ to resolve it
+  (the passage stays, the comment goes).
+- **Suggested changes.** `{++added++}`, `{--removed--}` and `{~~old~>new~~}` show as additions and
+  removals. **Accept** or **Reject** them one by one or all at once. Until a change is accepted it is
+  not part of the text: word counts, previews, the book view and exports show the text as it was,
+  without comments.
+- **To fix.** A checklist of what to change on the page, kept in its header. **In the whole world**
+  lists every page with open comments, changes or notes.
+
+  ```yaml
+  revision:
+    - Raise the stakes before the duel
+    - "[x] Check the year of the flood"
+  ```
+
+- **Versions.** Before you edit a page, Exomyth keeps a copy of it, at most once every 30 minutes and
+  only when the text has changed. A page keeps no more than 20 of these; older ones are thinned out
+  evenly, so early drafts stay too. **Save version…** keeps a named copy that is never removed by
+  itself (☆ gives a name to one saved by itself). **Compare** shows word by word what changed between
+  a version and the current text, or between two versions, and **Restore “Before”** brings a version
+  back after keeping the current text as a version. Versions are plain Markdown files in
+  `.exomyth/versions/<page path>/`, named by date and time, so any editor can open them. They move
+  with their page when it is renamed, moved or put in the trash.
+
+Both parts can be switched off in Settings: **Editing: comments and notes** and **Page versions**.
+
 ## Page templates
 
 **+ New page** lets you start from a template: Character, Place, Organization, Event, Scene, Playlist or Mood board. Each
@@ -300,10 +344,10 @@ A new, empty world asks **What are you making?**
 
 | Profile | On | Off |
 | --- | --- | --- |
-| ✍️ Writer | Book, cards, timeline, family trees, focus mode, word count, writing stats, story projects, story structures | Graph, maps |
+| ✍️ Writer | Book, cards, timeline, family trees, focus mode, word count, writing stats, story projects, story structures, comments and versions | Graph, maps |
 | 🗺️ Worldbuilder | Graph, cards, maps, timeline, family trees | Book, focus mode, word count, writing stats, story projects, story structures |
-| 🎲 Game master | Graph, cards, maps, timeline, family trees, quick notes; a Session template | Book, focus mode, word count, writing stats, story projects, story structures |
-| 🗒️ Just notes | Graph, cards, links | Timeline, years, maps, family trees, Book, focus mode, playlists, mood boards, writing stats, story projects, story structures |
+| 🎲 Game master | Graph, cards, maps, timeline, family trees, quick notes, page versions; a Session template | Book, focus mode, word count, writing stats, story projects, story structures, comments |
+| 🗒️ Just notes | Graph, cards, links | Timeline, years, maps, family trees, Book, focus mode, playlists, mood boards, writing stats, story projects, story structures, comments, page versions |
 | ✨ Everything | All of it, like the demo world | — |
 
 A profile only switches parts on and off and adds a few starting pages (a "Start here" page; for a
@@ -314,7 +358,7 @@ or switch single parts there. Each world keeps its own choice.
 
 The gear at the bottom of the sidebar (or **Ctrl+,**) opens the settings. Turn off what you do not
 use and the app gets simpler: the Graph, Cards and Timeline views, family trees, interactive maps,
-years, playlists, mood boards, the quick look-up, the relations panel, previews on hover, the word count, writing stats, story projects, story structures, quick
+years, playlists, mood boards, the quick look-up, the relations panel, previews on hover, the word count, writing stats, story projects, story structures, comments and notes, page versions, quick
 notes, focus mode (and its typewriter scrolling) and spell check. Theme and language are there too. Under a switch, Settings say how many pages of the open
 world use that part (maps, years, family trees) and list them, so you know what would be hidden. Everything is on to begin with; settings are kept in the
 browser, never in your worlds, and "Turn everything back on" restores them in one click.
@@ -323,13 +367,13 @@ browser, never in your worlds, and "Turn everything back on" restores them in on
 
 Press **Ctrl+/** (or **?** outside a text field), or the keyboard button at the bottom of the sidebar,
 for the list of all shortcuts. The most useful: **Ctrl+K** quick look-up, **Alt+I** quick note,
-**Ctrl+click** on a `[[link]]` in the editor to follow it. On a Mac, use ⌘ instead of Ctrl and ⌥
+**Ctrl+Alt+M** a comment on the selection, **Ctrl+click** on a `[[link]]` in the editor to follow it. On a Mac, use ⌘ instead of Ctrl and ⌥
 instead of Alt.
 
 ## Backups: a world as a .zip
 
 The arrow button at the top of the sidebar downloads the whole world (pages, settings, pictures,
-sounds) as one .zip file. Inside is a normal world folder, so it can be unpacked and opened as a
+sounds, saved versions) as one .zip file. Inside is a normal world folder, so it can be unpacked and opened as a
 folder, or opened again with **Open a world from a .zip** on the start screen, which adds it as a
 new world in the browser. Nothing is uploaded anywhere; the file is made on your device.
 

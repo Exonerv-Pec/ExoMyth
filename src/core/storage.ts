@@ -8,7 +8,10 @@ export interface VaultStorage {
   readonly kind: 'folder' | 'browser' | 'memory';
   /** Human readable name (folder name or browser vault name). */
   readonly label: string;
+  /** Every file, except saved versions of pages (see `listDir`). */
   list(): Promise<FileEntry[]>;
+  /** Every file under the folder `dir` (and its subfolders); empty when the folder does not exist. */
+  listDir(dir: string): Promise<FileEntry[]>;
   /** Metadata for one file, or undefined when it does not exist. Cheap compared to `list`. */
   stat(path: string): Promise<FileEntry | undefined>;
   readText(path: string): Promise<string>;
@@ -24,6 +27,21 @@ const IGNORED_DIRS = new Set(['.git', '.trash', 'node_modules', '.obsidian', '.D
 
 export function isIgnoredPath(path: string): boolean {
   return path.split('/').some((seg) => IGNORED_DIRS.has(seg));
+}
+
+/**
+ * Saved versions of pages. They can be many, and are only read when someone looks at a page's
+ * history, so `list()` leaves them out and the world opens and refreshes as fast as before.
+ */
+export const VERSIONS_DIR = '.exomyth/versions';
+
+export function isVersionPath(path: string): boolean {
+  return path.startsWith(VERSIONS_DIR + '/');
+}
+
+function under(dir: string, path: string): boolean {
+  const d = dir.replace(/\/+$/, '');
+  return d === '' || path.startsWith(d + '/');
 }
 
 /* --------------------------------------------------------------------- memory */
@@ -42,7 +60,10 @@ export class MemoryStorage implements VaultStorage {
   }
 
   async list(): Promise<FileEntry[]> {
-    return [...this.files.entries()].map(([path, f]) => ({ path, mtime: f.mtime, size: f.data.byteLength }));
+    return [...this.files.entries()].filter(([path]) => !isVersionPath(path)).map(([path, f]) => ({ path, mtime: f.mtime, size: f.data.byteLength }));
+  }
+  async listDir(dir: string): Promise<FileEntry[]> {
+    return [...this.files.entries()].filter(([path]) => under(dir, path)).map(([path, f]) => ({ path, mtime: f.mtime, size: f.data.byteLength }));
   }
   async stat(path: string): Promise<FileEntry | undefined> {
     const f = this.files.get(path);
@@ -80,21 +101,36 @@ export class FolderStorage implements VaultStorage {
     this.label = root.name;
   }
 
+  private async walk(dir: FileSystemDirectoryHandle, prefix: string, out: FileEntry[], skipVersions: boolean): Promise<void> {
+    for await (const [name, handle] of dir.entries()) {
+      if (IGNORED_DIRS.has(name)) continue;
+      const path = prefix ? `${prefix}/${name}` : name;
+      if (handle.kind === 'directory') {
+        if (skipVersions && path === VERSIONS_DIR) continue;
+        await this.walk(handle as FileSystemDirectoryHandle, path, out, skipVersions);
+      } else {
+        const file = await (handle as FileSystemFileHandle).getFile();
+        out.push({ path, mtime: file.lastModified, size: file.size });
+      }
+    }
+  }
+
   async list(): Promise<FileEntry[]> {
     const out: FileEntry[] = [];
-    const walk = async (dir: FileSystemDirectoryHandle, prefix: string): Promise<void> => {
-      for await (const [name, handle] of dir.entries()) {
-        if (IGNORED_DIRS.has(name)) continue;
-        const path = prefix ? `${prefix}/${name}` : name;
-        if (handle.kind === 'directory') {
-          await walk(handle as FileSystemDirectoryHandle, path);
-        } else {
-          const file = await (handle as FileSystemFileHandle).getFile();
-          out.push({ path, mtime: file.lastModified, size: file.size });
-        }
-      }
-    };
-    await walk(this.root, '');
+    await this.walk(this.root, '', out, true);
+    return out;
+  }
+
+  async listDir(dir: string): Promise<FileEntry[]> {
+    const parts = dir.split('/').filter(Boolean);
+    let handle = this.root;
+    try {
+      for (const part of parts) handle = await handle.getDirectoryHandle(part);
+    } catch {
+      return [];
+    }
+    const out: FileEntry[] = [];
+    await this.walk(handle, parts.join('/'), out, false);
     return out;
   }
 
@@ -197,6 +233,13 @@ export class BrowserStorage implements VaultStorage {
 
   async list(): Promise<FileEntry[]> {
     const all = (await wrap((await this.store('readonly')).getAll())) as IdbRecord[];
+    return all.filter((r) => !isVersionPath(r.path)).map((r) => ({ path: r.path, mtime: r.mtime, size: r.data.byteLength }));
+  }
+  async listDir(dir: string): Promise<FileEntry[]> {
+    const d = dir.replace(/\/+$/, '');
+    // Paths are the keys, so the folder is one key range: from "dir/" up to "dir0" ("0" follows "/").
+    const range = d ? IDBKeyRange.bound(d + '/', d + '0', false, true) : undefined;
+    const all = (await wrap((await this.store('readonly')).getAll(range))) as IdbRecord[];
     return all.map((r) => ({ path: r.path, mtime: r.mtime, size: r.data.byteLength }));
   }
   async stat(path: string): Promise<FileEntry | undefined> {

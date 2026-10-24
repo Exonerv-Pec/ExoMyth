@@ -80,7 +80,7 @@
 
   <header class="panel-head">
     <div class="panel-title-row">
-      <h2 class="panel-title">{t('panel.title')}{#if pageTitle}<span class="panel-page"> · {pageTitle}</span>{/if}</h2>
+      <h2 class="panel-title">{t('panel.title')}{#if pageTitle}<span class="panel-page">{' · '}{pageTitle}</span>{/if}</h2>
       {#if path && inFamily && app.on('family') && app.on('cards')}
         <button class="icon-btn" title={t('family.show')} aria-label={t('family.show')} onclick={() => path && app.showFamily(path)}>
           <Icon name="tree" />

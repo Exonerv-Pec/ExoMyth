@@ -12,7 +12,7 @@ import { DEMO_FILES } from '../src/demo';
 const demo = () =>
   new VaultIndex(
     Object.entries(DEMO_FILES)
-      .filter(([p]) => p.endsWith('.md'))
+      .filter(([p]) => p.endsWith('.md') && !p.startsWith('.exomyth/'))
       .map(([p, t]) => parsePage(p, t, 1)),
     { relationTypes: JSON.parse(DEMO_FILES['.exomyth/settings.json']!).relationTypes },
   );

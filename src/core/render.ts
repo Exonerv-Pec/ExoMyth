@@ -3,6 +3,7 @@ import DOMPurify from 'dompurify';
 import type { VaultIndex } from './index';
 import { parseLinkText } from './parse';
 import { isExternal, mediaKind, parseEmbedOptions } from './media';
+import { cleanText } from './critic';
 
 import { headingSlug } from './slug';
 export { headingSlug };
@@ -42,11 +43,46 @@ interface SpoilerToken extends Tokens.Generic {
   text: string;
 }
 
+/** A comment or suggested change written with CriticMarkup (see `core/critic.ts`). */
+interface CriticToken extends Tokens.Generic {
+  type: 'critic';
+  raw: string;
+  kind: 'comment' | 'insert' | 'delete' | 'replace';
+  comment: string;
+  /** The marked passage, the added or removed words, or the old words of a replacement. */
+  tokens: Tokens.Generic[];
+  /** The new words of a replacement. */
+  afterTokens: Tokens.Generic[];
+}
+
+/** Any character except the start of an empty line, as in `core/critic.ts`. */
+const CC = String.raw`(?:(?!\n[ \t]*\n)[\s\S])`;
+const CRITIC_RE = new RegExp(
+  '^(?:' +
+    [
+      String.raw`\{==(${CC}+?)==\}(?:\{>>(${CC}*?)<<\})?`,
+      String.raw`\{>>(${CC}*?)<<\}`,
+      String.raw`\{\+\+(${CC}+?)\+\+\}`,
+      String.raw`\{--(${CC}+?)--\}`,
+      String.raw`\{~~(${CC}*?)~>(${CC}*?)~~\}`,
+    ].join('|') +
+    ')',
+);
+
+export interface RenderOptions {
+  /** Show comments and suggested changes (true), or the text without them (false). */
+  comments?: boolean;
+}
+
 /**
  * Renders Markdown to sanitised HTML. Wiki links become `<a class="wikilink" data-target>`
  * elements (`broken` when the page does not exist) so the UI can handle navigation itself.
  */
-export function renderMarkdown(markdown: string, index: VaultIndex): string {
+export function renderMarkdown(markdown: string, index: VaultIndex, options: RenderOptions = {}): string {
+  if (options.comments === false) markdown = cleanText(markdown);
+  // Comments are numbered in reading order, as in the editing panel.
+  let commentNo = 0;
+  let changeNo = 0;
   const marked = new Marked({ gfm: true, breaks: false });
   marked.use({
     renderer: {
@@ -132,12 +168,45 @@ export function renderMarkdown(markdown: string, index: VaultIndex): string {
           return `<span class="spoiler" tabindex="0">${escapeHtml((token as SpoilerToken).text)}</span>`;
         },
       },
+      {
+        name: 'critic',
+        level: 'inline',
+        start: (src: string) => {
+          const i = src.search(/\{(==|>>|\+\+|--|~~)/);
+          return i === -1 ? undefined : i;
+        },
+        tokenizer(src: string): CriticToken | undefined {
+          const m = CRITIC_RE.exec(src);
+          if (!m) return undefined;
+          const inline = (s: string) => this.lexer.inlineTokens(s) as Tokens.Generic[];
+          const base = { type: 'critic' as const, raw: m[0], comment: '', tokens: [] as Tokens.Generic[], afterTokens: [] as Tokens.Generic[] };
+          if (m[1] !== undefined) return { ...base, kind: 'comment', tokens: inline(m[1]), comment: (m[2] ?? '').trim() };
+          if (m[3] !== undefined) return { ...base, kind: 'comment', comment: m[3].trim() };
+          if (m[4] !== undefined) return { ...base, kind: 'insert', tokens: inline(m[4]) };
+          if (m[5] !== undefined) return { ...base, kind: 'delete', tokens: inline(m[5]) };
+          return { ...base, kind: 'replace', tokens: inline(m[6] ?? ''), afterTokens: inline(m[7] ?? '') };
+        },
+        renderer(token) {
+          const t = token as CriticToken;
+          const inner = this.parser.parseInline(t.tokens);
+          if (t.kind !== 'comment') {
+            const k = ++changeNo;
+            if (t.kind === 'insert') return `<ins class="critic-ins" data-change="${k}">${inner}</ins>`;
+            if (t.kind === 'delete') return `<del class="critic-del" data-change="${k}">${inner}</del>`;
+            return `<del class="critic-del" data-change="${k}">${inner}</del><ins class="critic-ins" data-change="${k}">${this.parser.parseInline(t.afterTokens)}</ins>`;
+          }
+          const n = ++commentNo;
+          const passage = t.tokens.length ? `<mark class="critic-mark" data-critic="${n}">${inner}</mark>` : '';
+          if (!t.comment) return passage;
+          return `${passage}<span class="critic-note" data-critic="${n}" tabindex="0"><span class="critic-num">${n}</span><span class="critic-tip">${escapeHtml(t.comment)}</span></span>`;
+        },
+      },
     ],
   });
 
   const html = marked.parse(markdown, { async: false });
   return purifier().sanitize(html, {
-    ADD_ATTR: ['data-target', 'data-path', 'data-heading', 'data-embed', 'data-kind', 'data-alt', 'data-width', 'data-height'],
+    ADD_ATTR: ['data-critic', 'data-change', 'data-target', 'data-path', 'data-heading', 'data-embed', 'data-kind', 'data-alt', 'data-width', 'data-height'],
     // Only inert content: no scripts, forms, frames or media that would load from elsewhere.
     // Video and audio are added with ![[file]], which plays the world's own files.
     FORBID_TAGS: [
@@ -155,7 +224,7 @@ export function renderMarkdown(markdown: string, index: VaultIndex): string {
  * else is dropped, so text from a world someone shared cannot borrow the app's own styles
  * (for example to imitate one of its dialogs).
  */
-const SAFE_CLASS = /^(wikilink|broken|spoiler|embed|embed-(image|video|audio)|external-media|language-[\w-]+)$/;
+const SAFE_CLASS = /^(wikilink|broken|spoiler|critic-(mark|note|num|tip|ins|del)|embed|embed-(image|video|audio)|external-media|language-[\w-]+)$/;
 
 let instance: ReturnType<typeof DOMPurify> | undefined;
 

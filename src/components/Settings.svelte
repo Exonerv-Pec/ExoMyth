@@ -20,7 +20,7 @@
     { title: 'settings.group.world', items: [{ feature: 'family', needs: 'cards' }, { feature: 'maps' }, { feature: 'years' }, { feature: 'playlists' }, { feature: 'moodBoards' }] },
     {
       title: 'settings.group.writing',
-      items: [{ feature: 'wordCount' }, { feature: 'writingStats' }, { feature: 'storyProjects' }, { feature: 'storyStructures' }, { feature: 'quickNotes' }, { feature: 'focusMode' }, { feature: 'typewriter', needs: 'focusMode' }],
+      items: [{ feature: 'wordCount' }, { feature: 'writingStats' }, { feature: 'storyProjects' }, { feature: 'storyStructures' }, { feature: 'revision' }, { feature: 'versions' }, { feature: 'quickNotes' }, { feature: 'focusMode' }, { feature: 'typewriter', needs: 'focusMode' }],
     },
     { title: 'settings.group.interface', items: [{ feature: 'quickLookup' }, { feature: 'relationsPanel' }, { feature: 'hoverPreviews' }] },
   ];

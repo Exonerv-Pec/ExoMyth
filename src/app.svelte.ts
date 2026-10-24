@@ -13,6 +13,21 @@ import { profileById, starterFiles, type ProfileId } from './core/profiles';
 import { projectFiles, projectName } from './core/project';
 import { addItem, changeItem, itemCount, nextSpot, removeItem, splitQuote, type BoardData } from './core/board';
 import {
+  acceptChange,
+  addComment,
+  addNote,
+  changeNote,
+  clearDoneNotes,
+  editComment,
+  rejectChange,
+  removeNote,
+  resolveComment,
+  setNoteDone,
+  settleAll,
+  type CriticMark,
+} from './core/critic';
+import { dueForVersion, type PageVersion } from './core/versions';
+import {
   addChapterToText,
   addSceneToText,
   bookMarkdown,
@@ -23,7 +38,7 @@ import {
   renameChapterInText,
   type SceneStatus,
 } from './core/manuscript';
-import { detectLang, translate, type Key, type Lang } from './i18n';
+import { detectLang, formatTime, translate, type Key, type Lang } from './i18n';
 
 export type ViewMode = 'edit' | 'split' | 'preview' | 'graph' | 'cards' | 'timeline' | 'book';
 export type TextMode = Exclude<ViewMode, 'graph' | 'cards' | 'timeline' | 'book'>;
@@ -54,6 +69,8 @@ export const FEATURES = [
   'storyProjects',
   'storyStructures',
   'moodBoards',
+  'revision',
+  'versions',
 ] as const;
 export type Feature = (typeof FEATURES)[number];
 
@@ -126,6 +143,17 @@ export type DialogState =
       danger?: boolean;
       onConfirm: () => void | Promise<void>;
     };
+
+/** What the open editor lets the rest of the app do with its text. */
+export interface EditorApi {
+  path: string;
+  /** The selected range (equal ends: the cursor). */
+  selection(): { from: number; to: number };
+  /** Changes the text with `fn` as one step the writer can undo; it is saved like typing. */
+  apply(fn: (text: string) => string): void;
+  /** Selects a range and scrolls it into view. */
+  reveal(from: number, to: number): void;
+}
 
 function load<T extends string>(key: string, allowed: readonly T[], fallback: T): T {
   try {
@@ -247,6 +275,21 @@ class App {
   private flushers = new Set<() => Promise<void>>();
   /** Inserts text at the cursor of the open editor (set while an editor is shown). */
   private inserter: ((text: string) => void) | null = null;
+  private editor: EditorApi | null = null;
+  /** The page whose text is open in the editor, if any. */
+  editorPath = $state<string | null>(null);
+  /** The editing panel (comments, notes, versions) is shown instead of the relations panel. */
+  revisionOpen = $state(false);
+  /** A comment clicked in the reading view, to point out in the editing panel. */
+  revisionFocus = $state<{ n: number; seq: number } | null>(null);
+  /** Versions being compared: `to` null is the page's current text. */
+  compare = $state<{ path: string; from: string; to: string | null } | null>(null);
+  /** Bumped whenever versions of a page are saved, renamed or deleted, so lists load again. */
+  versionsSeq = $state(0);
+  /** Per page: when its last version was saved (or found), so most saves need no look at the disk. */
+  private versionSeen = new Map<string, number>();
+  /** Pages whose next save should not count as written words (a restored version). */
+  private uncounted = new Set<string>();
   private backStack: string[] = [];
   private toastTimer: ReturnType<typeof setTimeout> | undefined;
   private showTimer: ReturnType<typeof setTimeout> | undefined;
@@ -497,6 +540,8 @@ class App {
     this.layout = null;
     this.hoverClose();
     this.flushers.clear();
+    this.compare = null;
+    this.versionSeen.clear();
   }
 
   /** Per-world preference stored in this browser (view position of the graph, etc.). */
@@ -920,7 +965,8 @@ class App {
   }
 
   /** Counts words added to a page when it is saved from the editor. Words taken away never subtract. */
-  recordWords(words: number): void {
+  recordWords(words: number, path?: string): void {
+    if (path && this.uncounted.delete(path)) return;
     if (!this.vault || !this.on('writingStats') || !(words > 0)) return;
     this.stats = addWords(this.stats, dayKey(), words);
     this.touchStats();
@@ -1267,6 +1313,269 @@ class App {
       confirmLabel: this.t('dialog.confirm'),
       onSubmit: (v) => void this.changeBoardItem(path, index, { caption: v || undefined }),
     };
+  }
+
+  /* ------------------------------------------------------- editing: comments */
+
+  registerEditor(api: EditorApi): () => void {
+    this.editor = api;
+    this.editorPath = api.path;
+    return () => {
+      if (this.editor !== api) return;
+      this.editor = null;
+      this.editorPath = null;
+    };
+  }
+
+  /**
+   * Changes a page's text. When the page is open in the editor the change goes through it (one step
+   * to undo, saved like typing, nothing unsaved is overwritten); otherwise straight to the file.
+   */
+  async changeText(path: string, fn: (text: string) => string): Promise<boolean> {
+    const ed = this.editor;
+    if (ed && ed.path === path) {
+      ed.apply(fn);
+      // Saved at once, so lists that read the page (the editing panel) catch up.
+      await this.flush();
+      return true;
+    }
+    return this.editMap(path, fn);
+  }
+
+  /** Shows a range of the page in the editor. Returns false when the page is not open there. */
+  revealInEditor(path: string, from: number, to: number): boolean {
+    const ed = this.editor;
+    if (!ed || ed.path !== path) return false;
+    ed.reveal(from, to);
+    return true;
+  }
+
+  /** Opens the editing panel (and, on narrow screens, the drawer that holds it), or closes it. */
+  toggleRevision(): void {
+    const narrow = typeof window !== 'undefined' && !!window.matchMedia?.('(max-width: 1100px)').matches;
+    if (this.revisionOpen && (!narrow || this.panelOpen)) {
+      this.revisionOpen = false;
+      this.panelOpen = false;
+    } else {
+      this.revisionOpen = true;
+      this.panelOpen = true;
+    }
+  }
+
+  /** Asks for a comment on the selection in the editor (or at the cursor). */
+  askComment(): void {
+    const ed = this.editor;
+    const path = this.current;
+    if (!this.on('revision')) return;
+    if (!ed || !path || ed.path !== path) return void this.notify(this.t('rev.comment.needEditor'));
+    const sel = ed.selection();
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('rev.comment.title'),
+      label: sel.from === sel.to ? this.t('rev.comment.point') : this.t('rev.comment.label'),
+      value: '',
+      multiline: true,
+      confirmLabel: this.t('rev.comment.confirm'),
+      onSubmit: async (v) => {
+        if (v.trim()) await this.changeText(path, (text) => addComment(text, sel.from, sel.to, v).text);
+      },
+    };
+  }
+
+  askEditComment(path: string, mark: CriticMark, raw: string): void {
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('rev.comment.edit'),
+      label: this.t('rev.comment.title'),
+      value: mark.comment,
+      multiline: true,
+      allowEmpty: true,
+      confirmLabel: this.t('dialog.confirm'),
+      onSubmit: (v) => void this.changeText(path, (text) => editComment(text, mark, raw, v)),
+    };
+  }
+
+  resolveComment(path: string, mark: CriticMark, raw: string): Promise<boolean> {
+    return this.changeText(path, (text) => resolveComment(text, mark, raw));
+  }
+
+  /** Accepts or rejects one suggested change. */
+  settleChange(path: string, mark: CriticMark, raw: string, accept: boolean): Promise<boolean> {
+    return this.changeText(path, (text) => (accept ? acceptChange(text, mark, raw) : rejectChange(text, mark, raw)));
+  }
+
+  /** Accepts or rejects every suggested change on a page (comments stay). */
+  settleAllChanges(path: string, accept: boolean): Promise<boolean> {
+    return this.changeText(path, (text) => settleAll(text, accept ? 'accept' : 'reject', ['insert', 'delete', 'replace']));
+  }
+
+  /* ------------------------------------------------------ editing: notes */
+
+  addRevisionNote(path: string, note: string): Promise<boolean> {
+    return this.changeText(path, (text) => addNote(text, note));
+  }
+
+  setRevisionNoteDone(path: string, index: number, done: boolean): Promise<boolean> {
+    return this.changeText(path, (text) => setNoteDone(text, index, done));
+  }
+
+  removeRevisionNote(path: string, index: number): Promise<boolean> {
+    return this.changeText(path, (text) => removeNote(text, index));
+  }
+
+  clearDoneRevisionNotes(path: string): Promise<boolean> {
+    return this.changeText(path, (text) => clearDoneNotes(text));
+  }
+
+  askEditRevisionNote(path: string, index: number, current: string): void {
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('rev.notes.edit'),
+      label: this.t('rev.notes.editLabel'),
+      value: current,
+      allowEmpty: true,
+      confirmLabel: this.t('dialog.confirm'),
+      onSubmit: (v) => void this.changeText(path, (text) => changeNote(text, index, v)),
+    };
+  }
+
+  /* ---------------------------------------------------- editing: versions */
+
+  /**
+   * Called by the editor before it saves a page: keeps a copy of the text as it is on disk, if the
+   * last version is old enough and differs. Never stops the save.
+   */
+  async autoVersion(path: string): Promise<void> {
+    const vault = this.vault;
+    if (!vault || !this.on('versions')) return;
+    const now = Date.now();
+    const seen = this.versionSeen.get(path);
+    if (seen !== undefined && !dueForVersion(seen, now)) return;
+    this.versionSeen.set(path, now); // one look per pause, even while the look below runs
+    try {
+      const page = vault.getPage(path);
+      if (!page?.raw.trim()) return;
+      const latest = (await vault.versions(path))[0];
+      if (latest && !dueForVersion(latest.time, now)) return void this.versionSeen.set(path, latest.time);
+      if (latest && (await vault.readVersion(latest.file)) === page.raw) return;
+      await vault.saveVersion(path, page.raw);
+      this.versionsSeq++;
+    } catch {
+      /* A version that cannot be written must not stop the page from being saved. */
+    }
+  }
+
+  /** Asks for a name and saves the page's current text as a version. */
+  askSaveVersion(path: string): void {
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('rev.versions.saveTitle'),
+      label: this.t('rev.versions.nameLabel'),
+      value: '',
+      hint: this.t('rev.versions.nameHint'),
+      allowEmpty: true,
+      confirmLabel: this.t('dialog.confirm'),
+      onSubmit: async (v) => {
+        const vault = this.vault;
+        if (!vault) return;
+        try {
+          await this.flush();
+          const page = vault.getPage(path);
+          if (!page) return;
+          await vault.saveVersion(path, page.raw, v.trim() || undefined);
+          this.versionSeen.set(path, Date.now());
+          this.versionsSeq++;
+          this.notify(this.t('rev.versions.saved'));
+        } catch (e) {
+          this.fail(e);
+        }
+      },
+    };
+  }
+
+  askNameVersion(path: string, version: PageVersion): void {
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('rev.versions.rename'),
+      label: this.t('rev.versions.nameLabel'),
+      value: version.name ?? '',
+      hint: this.t('rev.versions.nameHint'),
+      allowEmpty: true,
+      confirmLabel: this.t('dialog.confirm'),
+      onSubmit: async (v) => {
+        try {
+          await this.vault?.renameVersion(version, path, v);
+          this.versionsSeq++;
+        } catch (e) {
+          this.fail(e);
+        }
+      },
+    };
+  }
+
+  askDeleteVersion(version: PageVersion): void {
+    this.dialog = {
+      kind: 'confirm',
+      title: this.t('rev.versions.deleteTitle'),
+      message: this.t('rev.versions.deleteText', formatTime(this.lang, version.time)),
+      confirmLabel: this.t('rev.versions.delete'),
+      danger: true,
+      onConfirm: async () => {
+        try {
+          await this.vault?.deleteVersion(version.file);
+          if (this.compare && (this.compare.from === version.file || this.compare.to === version.file)) this.compare = null;
+          this.versionsSeq++;
+        } catch (e) {
+          this.fail(e);
+        }
+      },
+    };
+  }
+
+  /** Opens the comparison of a version with the page's current text. */
+  compareVersion(path: string, file: string): void {
+    this.compare = { path, from: file, to: null };
+  }
+
+  askRestoreVersion(path: string, version: PageVersion): void {
+    this.dialog = {
+      kind: 'confirm',
+      title: this.t('cmp.restoreTitle'),
+      message: this.t('cmp.restoreText', formatTime(this.lang, version.time)),
+      confirmLabel: this.t('cmp.restore'),
+      onConfirm: () => this.restoreVersion(path, version.file),
+    };
+  }
+
+  /** Makes a version the page's text again. The current text is kept as a version first. */
+  async restoreVersion(path: string, file: string): Promise<void> {
+    const vault = this.vault;
+    if (!vault) return;
+    try {
+      await this.flush();
+      const text = await vault.readVersion(file);
+      const current = vault.getPage(path)?.raw;
+      if (current === undefined) return;
+      if (current !== text) {
+        if (current.trim()) await vault.saveVersion(path, current);
+        this.versionSeen.set(path, Date.now());
+        // Words that come back with an old version were not written today.
+        this.uncounted.add(path);
+        const ed = this.editor;
+        if (ed && ed.path === path) {
+          ed.apply(() => text);
+          await this.flush();
+        } else {
+          this.uncounted.delete(path);
+          await vault.savePage(path, text);
+        }
+      }
+      this.versionsSeq++;
+      this.compare = null;
+      this.notify(this.t('cmp.restored'));
+    } catch (e) {
+      this.fail(e);
+    }
   }
 
   fail(e: unknown): void {

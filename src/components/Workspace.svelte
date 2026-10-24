@@ -4,6 +4,7 @@
   import Editor from './Editor.svelte';
   import Preview from './Preview.svelte';
   import RelationsPanel from './RelationsPanel.svelte';
+  import RevisionPanel from './RevisionPanel.svelte';
   import GraphView from './GraphView.svelte';
   import CardsView from './CardsView.svelte';
   import TimelineView from './TimelineView.svelte';
@@ -24,6 +25,9 @@
     return app.current ? app.vault?.getPage(app.current) : undefined;
   });
   const statusText = $derived(t(`save.${app.saveStatus}` as 'save.saved'));
+  /** The editing panel (comments, notes, versions) takes the place of the relations panel. */
+  const revisionOn = $derived(app.on('revision') || app.on('versions'));
+  const showRevision = $derived(app.revisionOpen && revisionOn);
   const modes = ['edit', 'split', 'preview', 'graph', 'cards', 'timeline', 'book'] as const;
   /** Graph, cards and the timeline show the whole world, not one page's text. */
   const inGraph = $derived(WORLD_MODES.includes(app.mode));
@@ -48,7 +52,7 @@
   });
 </script>
 
-<div class="workspace" class:focus={app.focus} class:typewriter={app.focus && app.on('typewriter')} class:no-panel={!app.on('relationsPanel')} style:--sidebar-w="{app.sidebarW}px" style:--panel-w="{app.panelW}px">
+<div class="workspace" class:focus={app.focus} class:typewriter={app.focus && app.on('typewriter')} class:no-panel={!app.on('relationsPanel') && !showRevision} style:--sidebar-w="{app.sidebarW}px" style:--panel-w="{app.panelW}px">
   <Sidebar bind:searchInput />
 
   <main class="center">
@@ -76,6 +80,11 @@
       {#if app.on('writingStats')}
         <button class="icon-btn" title={t('stats.title')} aria-label={t('stats.title')} onclick={() => (app.statsOpen = true)}>
           <Icon name="chart" />
+        </button>
+      {/if}
+      {#if page && revisionOn}
+        <button class="icon-btn" class:on={showRevision} title={t('rev.open')} aria-label={t('rev.title')} aria-pressed={showRevision} onclick={() => app.toggleRevision()}>
+          <Icon name="review" />
         </button>
       {/if}
       {#if page && app.canInsert}
@@ -134,7 +143,18 @@
         </div>
       {/if}
       {#if app.on('relationsPanel')}
-        <button class="icon-btn mobile-only" aria-label={t('nav.panel')} title={t('nav.panel')} onclick={() => (app.panelOpen = !app.panelOpen)}>
+        <button
+          class="icon-btn mobile-only"
+          aria-label={t('nav.panel')}
+          title={t('nav.panel')}
+          onclick={() => {
+            // From the editing panel straight to the relations; otherwise open or close the drawer.
+            if (showRevision) {
+              app.revisionOpen = false;
+              app.panelOpen = true;
+            } else app.panelOpen = !app.panelOpen;
+          }}
+        >
           <Icon name="relations" />
         </button>
       {/if}
@@ -173,7 +193,7 @@
     {/if}
   </main>
 
-  {#if app.on('relationsPanel')}<RelationsPanel path={app.current} />{/if}
+  {#if showRevision}<RevisionPanel path={app.current} />{:else if app.on('relationsPanel')}<RelationsPanel path={app.current} />{/if}
 
   {#if app.focus}
     <button class="focus-exit btn ghost" onclick={() => app.setFocus(false)} title="{t('focus.exit')} (Esc)">

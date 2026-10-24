@@ -15,7 +15,7 @@ const page = (path: string, text: string) => parsePage(path, text, 1);
 const demoIndex = () =>
   new VaultIndex(
     Object.entries(DEMO_FILES)
-      .filter(([p]) => p.endsWith('.md'))
+      .filter(([p]) => p.endsWith('.md') && !p.startsWith('.exomyth/'))
       .map(([p, t]) => page(p, t)),
     JSON.parse(DEMO_FILES['.exomyth/settings.json']!),
   );

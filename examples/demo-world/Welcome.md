@@ -21,5 +21,6 @@ Open [[Kira Vale]] and look at the **Relations** panel on the right: it always s
 - Drop an image, video or audio file into the editor to add it to a page (see the map of [[Rivertown]])
 - Pin a mood board: open [[The Look of Rivertown]], choose **Edit board**, and drag pictures, colours, quotes and pages around
 - Give a page `playlist: true` and a list of audio files to get a player with its own tracks: open [[Rivertown Evening]]
+- Edit like an editor: open [[The Market]] and press the speech bubble at the top for the **Editing** panel, with comments, suggested changes to accept or reject, a to-fix list, and saved versions to compare. Select text and press **Ctrl+Alt+M** to comment
 
 Start here: [[Kira Vale]], [[Arn Vale]], [[Rivertown]], [[Order of the Silver River]].

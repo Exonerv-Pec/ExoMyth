@@ -40,8 +40,10 @@
     try {
       // Writing stats count the words this save adds to the page.
       const before = wordCount(app.vault.getPage(path)?.body ?? '');
+      // Before the file changes: keep a copy of it as a version, when one is due.
+      await app.autoVersion(path);
       await app.vault.savePage(path, text);
-      app.recordWords(wordCount(app.vault.getPage(path)?.body ?? '') - before);
+      app.recordWords(wordCount(app.vault.getPage(path)?.body ?? '') - before, path);
       if (view && view.state.doc.toString() === text) {
         dirty = false;
         app.saveStatus = 'saved';
@@ -96,6 +98,31 @@
     regexp: /\|\|[^|\n]+\|\|/g,
     decoration: Decoration.mark({ class: 'cm-spoiler' }),
   });
+  /** Comments and suggested changes (CriticMarkup): marked passages, comments, additions and removals. */
+  const criticDeco = {
+    hl: Decoration.mark({ class: 'cm-critic-hl' }),
+    note: Decoration.mark({ class: 'cm-critic-note' }),
+    ins: Decoration.mark({ class: 'cm-critic-ins' }),
+    del: Decoration.mark({ class: 'cm-critic-del' }),
+  };
+  const criticMatcher = new MatchDecorator({
+    regexp: /\{==(.+?)==\}(\{>>.*?<<\})?|\{>>.*?<<\}|\{\+\+.+?\+\+\}|\{--.+?--\}|\{~~(.*?)~>(.*?)~~\}/g,
+    decorate(add, from, to, m) {
+      const s = m[0];
+      if (s.startsWith('{==')) {
+        const hlEnd = from + 3 + m[1]!.length + 3;
+        add(from, hlEnd, criticDeco.hl);
+        if (m[2]) add(hlEnd, to, criticDeco.note);
+      } else if (s.startsWith('{>>')) add(from, to, criticDeco.note);
+      else if (s.startsWith('{++')) add(from, to, criticDeco.ins);
+      else if (s.startsWith('{--')) add(from, to, criticDeco.del);
+      else {
+        const mid = from + 3 + m[3]!.length;
+        add(from, mid, criticDeco.del);
+        add(mid, to, criticDeco.ins);
+      }
+    },
+  });
 
   const matchPlugin = ViewPlugin.fromClass(
     class {
@@ -104,7 +131,7 @@
         this.decorations = this.build(v);
       }
       build(v: EditorView): DecorationSet {
-        return mergeDecos(linkMatcher.createDeco(v), spoilerMatcher.createDeco(v));
+        return mergeDecos(linkMatcher.createDeco(v), spoilerMatcher.createDeco(v), app.on('revision') ? criticMatcher.createDeco(v) : Decoration.none);
       }
       update(u: ViewUpdate) {
         if (u.docChanged || u.viewportChanged) this.decorations = this.build(u.view);
@@ -113,9 +140,9 @@
     { decorations: (v) => v.decorations },
   );
 
-  function mergeDecos(a: DecorationSet, b: DecorationSet): DecorationSet {
+  function mergeDecos(...sets: DecorationSet[]): DecorationSet {
     const ranges: Range<Decoration>[] = [];
-    for (const set of [a, b]) {
+    for (const set of sets) {
       const cursor = set.iter();
       while (cursor.value) {
         ranges.push(cursor.value.range(cursor.from, cursor.to));
@@ -262,6 +289,10 @@
     '.cm-selectionBackground, &.cm-focused .cm-selectionBackground': { backgroundColor: 'var(--selection) !important' },
     '.cm-wikilink': { color: 'var(--accent)', textDecoration: 'underline', textDecorationColor: 'color-mix(in srgb, var(--accent) 45%, transparent)' },
     '.cm-spoiler': { backgroundColor: 'var(--accent-soft)', borderRadius: '3px' },
+    '.cm-critic-hl': { backgroundColor: 'var(--critic-mark)', borderRadius: '2px' },
+    '.cm-critic-note': { color: 'var(--ink-faint)', fontFamily: 'var(--font-ui)', fontSize: '0.86em', backgroundColor: 'var(--critic-note)', borderRadius: '3px' },
+    '.cm-critic-ins': { color: 'var(--critic-ins)', textDecoration: 'underline', textDecorationColor: 'color-mix(in srgb, var(--critic-ins) 50%, transparent)' },
+    '.cm-critic-del': { color: 'var(--critic-del)', textDecoration: 'line-through' },
     '.cm-fm': { fontFamily: 'var(--font-mono)', fontSize: '0.86rem', color: 'var(--ink-soft)', lineHeight: '1.6' },
     '.cm-tooltip': {
       backgroundColor: 'var(--surface)',
@@ -306,6 +337,8 @@
           drawSelection(),
           EditorView.lineWrapping,
           markdown(),
+          // Ctrl+Alt+M: a comment on the selection (the editing panel lists it).
+          keymap.of([{ key: 'Mod-Alt-m', run: () => (app.on('revision') ? (app.askComment(), true) : false) }]),
           keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
           autocompletion({ override: [wikiCompletion], icons: false }),
           matchPlugin,
@@ -331,6 +364,31 @@
 
     const unregister = app.registerFlusher(save);
     const unregisterInserter = app.registerInserter((text) => insertAt(text));
+    const unregisterEditor = app.registerEditor({
+      path,
+      selection: () => {
+        const sel = view!.state.selection.main;
+        return { from: sel.from, to: sel.to };
+      },
+      apply: (fn) => {
+        if (!view) return;
+        const cur = view.state.doc.toString();
+        const next = fn(cur);
+        if (next === cur) return;
+        // Only the part that changed is replaced, so the cursor and the undo history stay sensible.
+        let a = 0;
+        while (a < cur.length && a < next.length && cur[a] === next[a]) a++;
+        let b = 0;
+        while (b < cur.length - a && b < next.length - a && cur[cur.length - 1 - b] === next[next.length - 1 - b]) b++;
+        view.dispatch({ changes: { from: a, to: cur.length - b, insert: next.slice(a, next.length - b) }, userEvent: 'input' });
+      },
+      reveal: (from, to) => {
+        if (!view) return;
+        const len = view.state.doc.length;
+        view.dispatch({ selection: { anchor: Math.min(from, len), head: Math.min(to, len) }, effects: EditorView.scrollIntoView(Math.min(from, len), { y: 'center' }) });
+        view.focus();
+      },
+    });
     if (app.pendingHeading) {
       jumpToHeading(app.pendingHeading);
       app.pendingHeading = null;
@@ -339,6 +397,7 @@
     return () => {
       unregister();
       unregisterInserter();
+      unregisterEditor();
       clearTimeout(saveTimer);
       // The caller flushes before navigating, so nothing unsaved is dropped here.
       view?.destroy();

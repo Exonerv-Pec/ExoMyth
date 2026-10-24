@@ -40,7 +40,7 @@
     app.version;
     if (!page || !app.vault) return '';
     const body = playlist ? withoutTracks(page.body) : page.body;
-    return renderMarkdown(withoutTitleHeading(body, page.title), app.vault.index);
+    return renderMarkdown(withoutTitleHeading(body, page.title), app.vault.index, { comments: app.on('revision') });
   });
 
   /** Facts for the infobox: every non-structural field with a simple value. */
@@ -62,6 +62,7 @@
       spoiler.classList.toggle('revealed');
       return;
     }
+    if (showComment(el)) return;
     const link = el.closest<HTMLAnchorElement>('a');
     if (!link) return;
     if (link.classList.contains('wikilink')) {
@@ -75,8 +76,46 @@
     }
   }
 
+  let placed: HTMLElement | null = null;
+  /** Keeps a comment's words inside the window: near an edge they are moved sideways. */
+  function placeTip(e: Event) {
+    const note = (e.target as HTMLElement | null)?.closest?.<HTMLElement>('.critic-note');
+    const tip = note?.querySelector<HTMLElement>('.critic-tip');
+    if (!tip || (e.type === 'mouseover' && note === placed)) return;
+    placed = note!;
+    tip.style.transform = '';
+    requestAnimationFrame(() => {
+      const r = tip.getBoundingClientRect();
+      if (!r.width) return;
+      const margin = 8;
+      const dx = r.left < margin ? margin - r.left : r.right > window.innerWidth - margin ? window.innerWidth - margin - r.right : 0;
+      if (dx) tip.style.transform = `translateX(calc(-50% + ${Math.round(dx)}px))`;
+    });
+  }
+
+  /** A comment in the text: its words open on touch, and the editing panel points to it. */
+  function showComment(el: HTMLElement): boolean {
+    const hit = el.closest<HTMLElement>('.critic-note, .critic-mark');
+    if (!hit) return false;
+    const n = Number(hit.dataset.critic);
+    const note = hit.classList.contains('critic-note') ? hit : (hit.nextElementSibling as HTMLElement | null);
+    for (const open of container?.querySelectorAll('.critic-note.open') ?? []) if (open !== note) open.classList.remove('open');
+    if (note?.classList.contains('critic-note')) {
+      note.classList.toggle('open');
+      placeTip({ target: note } as unknown as Event);
+    }
+    // An open editing panel points out the same comment.
+    if (n > 0) app.revisionFocus = { n, seq: (app.revisionFocus?.seq ?? 0) + 1 };
+    return true;
+  }
+
   function onkeydown(e: KeyboardEvent) {
     const el = e.target as HTMLElement | null;
+    if ((e.key === 'Enter' || e.key === ' ') && el?.classList.contains('critic-note')) {
+      e.preventDefault();
+      showComment(el);
+      return;
+    }
     if ((e.key === 'Enter' || e.key === ' ') && el?.classList.contains('spoiler')) {
       e.preventDefault();
       el.classList.toggle('revealed');
@@ -99,7 +138,7 @@
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
-<article class="reading" bind:this={container} {onclick} {onkeydown} use:previewLinks use:embeds={[html, facts]}>
+<article class="reading" bind:this={container} {onclick} {onkeydown} onmouseover={placeTip} onfocusin={placeTip} use:previewLinks use:embeds={[html, facts]}>
   {#if page}
     <div class="reading-inner">
       <h1 class="page-title">{page.title}</h1>

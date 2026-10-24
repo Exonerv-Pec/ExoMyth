@@ -22,6 +22,7 @@ import { parseLinkText } from './parse';
 import { compareText } from './names';
 import { excerpt } from './preview';
 import { wordCount } from './writing';
+import { cleanText } from './critic';
 
 export interface BookScene {
   /** Link target as written. */
@@ -175,7 +176,8 @@ function plain(value: unknown): string | undefined {
 /** The text of a scene without its header and without a first heading that repeats its title. */
 export function sceneText(page: Page): string {
   const m = /^\s*#[ \t]+(.+?)[ \t]*#*[ \t]*(\r?\n|$)/.exec(page.body);
-  return (m && m[1]!.trim().toLocaleLowerCase() === page.title.trim().toLocaleLowerCase() ? page.body.slice(m[0].length) : page.body).trim();
+  // Comments are notes for the writer: the book view and exports show the text without them.
+  return cleanText(m && m[1]!.trim().toLocaleLowerCase() === page.title.trim().toLocaleLowerCase() ? page.body.slice(m[0].length) : page.body).trim();
 }
 
 export function sceneInfo(page: Page): SceneInfo {

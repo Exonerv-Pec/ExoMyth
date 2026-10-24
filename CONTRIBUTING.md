@@ -42,6 +42,11 @@ If you are unsure whether something is allowed, ask in an issue before writing i
 - **Hover previews** (`src/core/preview.ts`, `src/components/HoverPreview.svelte`): written from a
   plain description of the behaviour (show the opening of the linked page, or the linked section).
 - **Hashing** uses 32-bit FNV-1a, a public-domain algorithm.
+- **Comparing versions** (`src/core/diff.ts`): our own implementation of the greedy method from
+  Eugene Myers' paper "An O(ND) Difference Algorithm and Its Variations" (1986), run on lines and then
+  on the words of changed lines.
+- **Comments** (`src/core/critic.ts`) use the CriticMarkup notation, an open plain-text convention;
+  the parser and the interface are our own.
 
 ## Working on the code
 

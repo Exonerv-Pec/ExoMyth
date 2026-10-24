@@ -1,8 +1,9 @@
 /** Small helpers for writers: counting words and catching ideas in an inbox page. */
+import { cleanText } from './critic';
 
 /** Markdown syntax that is not part of the text a reader sees. */
 function readableText(markdown: string): string {
-  return markdown
+  return cleanText(markdown)
     .replace(/^(```|~~~).*$/gm, ' ')
     .replace(/!\[\[[^\]\n]*\]\]/g, ' ') // embedded files
     .replace(/!\[[^\]\n]*\]\([^)\n]*\)/g, ' ') // images

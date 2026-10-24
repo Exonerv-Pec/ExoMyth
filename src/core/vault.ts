@@ -14,6 +14,7 @@ import { baseName, dirName, joinPath, normalizeName, sanitizePageName, stripMd }
 import { emptyLayout, parseLayout, serializeLayout, type StoredLayout } from './layout';
 import { ATTACHMENTS_DIR, extensionOf } from './media';
 import { emptyStats, parseStats, serializeStats, type WritingStats } from './stats';
+import { cleanVersionName, movedVersionPath, pageVersions, versionFile, versionFolder, versionsToThin, AUTO_LIMIT, type PageVersion } from './versions';
 
 export const META_DIR = '.exomyth';
 const SETTINGS_PATH = `${META_DIR}/settings.json`;
@@ -363,6 +364,7 @@ export class Vault {
     for (const [p, text] of updates) if (p !== path) await this.storage.writeText(p, text);
     if (!caseOnly) await this.storage.remove(path);
     await this.moveLayoutKey(path, newPath).catch(() => undefined);
+    await this.moveVersions(path, newPath).catch(() => undefined);
     await this._refresh();
     return newPath;
   }
@@ -420,6 +422,7 @@ export class Vault {
     for (const [p, text] of updates) if (p !== path) await this.storage.writeText(p, text);
     await this.storage.remove(path);
     await this.moveLayoutKey(path, newPath).catch(() => undefined);
+    await this.moveVersions(path, newPath).catch(() => undefined);
     await this._refresh();
     return newPath;
   }
@@ -442,8 +445,69 @@ export class Vault {
       for (let n = 2; await this.storage.exists(target); n++) target = `${TRASH_DIR}/${stripMd(path)} (${n}).md`;
       await this.storage.writeText(target, content);
       await this.storage.remove(path);
+      // The page's versions go to the trash with it, so they can come back together.
+      await this.moveVersions(path, path, (file) => `${TRASH_DIR}/${file}`).catch(() => undefined);
       await this._refresh();
     });
+  }
+
+  /* ------------------------------------------------------------------ versions */
+
+  /** Moves a page's saved versions along with it; `place` can send them somewhere else (the trash). */
+  private async moveVersions(from: string, to: string, place = (file: string) => movedVersionPath(file, from, to)): Promise<void> {
+    const files = await this.storage.listDir(versionFolder(from));
+    for (const f of files) {
+      const target = place(f.path);
+      if (target === f.path) continue;
+      await this.storage.writeBytes(target, await this.storage.readBytes(f.path));
+      await this.storage.remove(f.path);
+    }
+  }
+
+  /** The saved versions of a page, newest first. */
+  async versions(pagePath: string): Promise<PageVersion[]> {
+    return pageVersions(pagePath, await this.storage.listDir(versionFolder(pagePath)));
+  }
+
+  readVersion(file: string): Promise<string> {
+    return this.storage.readText(file);
+  }
+
+  /**
+   * Saves `content` as a version of a page. Versions saved by themselves (no `name`) are then
+   * thinned out to `limit`. Returns the new version.
+   */
+  saveVersion(pagePath: string, content: string, name?: string, time = Date.now(), limit = AUTO_LIMIT): Promise<PageVersion> {
+    return this.exclusive(async () => {
+      let t = Math.floor(time / 1000) * 1000;
+      let file = versionFile(pagePath, t, name);
+      // Two versions in the same second: the later one is filed a second on.
+      while (await this.storage.exists(file)) file = versionFile(pagePath, (t += 1000), name);
+      await this.storage.writeText(file, content);
+      const all = await this.versions(pagePath);
+      if (!name) for (const v of versionsToThin(all, limit)) await this.storage.remove(v.file).catch(() => undefined);
+      return all.find((v) => v.file === file) ?? { file, time: t, size: content.length, ...(name ? { name } : {}) };
+    });
+  }
+
+  /** Gives a version a name (a named version is kept for good), or takes the name away. */
+  renameVersion(version: PageVersion, pagePath: string, name: string): Promise<PageVersion> {
+    return this.exclusive(async () => {
+      const clean = cleanVersionName(name);
+      const file = versionFile(pagePath, version.time, clean || undefined);
+      if (file !== version.file) {
+        if (await this.storage.exists(file)) throw new Error('A version with this name already exists');
+        await this.storage.writeBytes(file, await this.storage.readBytes(version.file));
+        await this.storage.remove(version.file);
+      }
+      const next: PageVersion = { file, time: version.time, size: version.size };
+      if (clean) next.name = clean;
+      return next;
+    });
+  }
+
+  deleteVersion(file: string): Promise<void> {
+    return this.exclusive(() => this.storage.remove(file));
   }
 
   /* ----------------------------------------------------------------- relations */
