@@ -45,7 +45,7 @@ describe('templates', () => {
   it('ships a built-in set in both languages that makes valid pages', () => {
     for (const lang of ['en', 'ru'] as const) {
       const set = builtInTemplates(lang);
-      expect(set.length).toBe(6);
+      expect(set.length).toBe(7);
       for (const tpl of set) {
         expect(tpl.folder).toBeTruthy();
         const page = parsePage(`${tpl.folder}/New.md`, applyTemplate(tpl.text, { title: 'New', date: when }), 1);
@@ -56,8 +56,9 @@ describe('templates', () => {
         expect(pageYears(page)).toBeUndefined();
       }
     }
-    expect(builtInTemplates('en').map((t) => t.name)).toEqual(['Character', 'Place', 'Organization', 'Event', 'Scene', 'Playlist']);
-    expect(builtInTemplates('ru').at(-1)).toMatchObject({ name: 'Плейлист', folder: 'Музыка', feature: 'playlists' });
+    expect(builtInTemplates('en').map((t) => t.name)).toEqual(['Character', 'Place', 'Organization', 'Event', 'Scene', 'Playlist', 'Mood board']);
+    expect(builtInTemplates('ru').find((t) => t.name === 'Плейлист')).toMatchObject({ folder: 'Музыка', feature: 'playlists' });
+    expect(builtInTemplates('ru').find((t) => t.name === 'Мудборд')).toMatchObject({ folder: 'Доски', feature: 'moodBoards' });
     expect(builtInTemplateFiles('ru')[0]!.path).toBe('Шаблоны/Персонаж.md');
   });
 

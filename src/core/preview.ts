@@ -3,7 +3,7 @@ import type { Page } from './types';
 import { headingSlug } from './slug';
 
 /** Frontmatter keys that describe the page's structure rather than its subject. */
-export const STRUCTURAL_KEYS = new Set(['title', 'aliases', 'tags', 'relations', 'pinned', 'image', 'map', 'pins', 'playlist']);
+export const STRUCTURAL_KEYS = new Set(['title', 'aliases', 'tags', 'relations', 'pinned', 'image', 'map', 'pins', 'playlist', 'moodboard', 'board']);
 
 export interface Fact {
   key: string;

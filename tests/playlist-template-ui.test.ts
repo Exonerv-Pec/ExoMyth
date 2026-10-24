@@ -55,7 +55,7 @@ describe('the Playlist template', () => {
     await boot();
     app.askNewPage();
     flushSync();
-    expect(chips()).toEqual(['Blank page', 'Character', 'Place', 'Organization', 'Event', 'Scene', 'Playlist']);
+    expect(chips()).toEqual(['Blank page', 'Character', 'Place', 'Organization', 'Event', 'Scene', 'Playlist', 'Mood board']);
     app.dialog = null;
     app.setFeature('playlists', false);
     flushSync();
@@ -83,7 +83,7 @@ describe('the Playlist template', () => {
     await boot('ru');
     app.askNewPage();
     flushSync();
-    expect(chips().at(-1)).toBe('Плейлист');
+    expect(chips()).toContain('Плейлист');
     const tpl = builtInTemplates('ru').find((t) => t.name === 'Плейлист')!;
     expect(await app.createPage('Таверна', tpl.folder, tpl)).toBe('Музыка/Таверна.md');
   });

@@ -58,7 +58,7 @@ const DEMO_HISTORY: Record<string, string[]> = {
   'Maps/Silver Coast.md': ['jw-aa184c42'],
   'Organizations/Order of the Silver River.md': ['50-fc67a0b8'],
   'Places/Rivertown.md': ['5k-99396e61', '6c-d6c4526e', '71-7d01481b'],
-  'Welcome.md': ['1kq-ce16be2f', 'iq-8864ffcc', 'ir-a0430db9', 'lm-e11e2110', 'ln-31dd7d01', 'q0-bf260e99', 'q1-6bd26b98', 'tc-52e44f6f', '127-6683dd3b', '18o-51165fba', '1ci-819efe5c', '1gh-30f2f325'],
+  'Welcome.md': ['1o3-7a142736', '1kq-ce16be2f', 'iq-8864ffcc', 'ir-a0430db9', 'lm-e11e2110', 'ln-31dd7d01', 'q0-bf260e99', 'q1-6bd26b98', 'tc-52e44f6f', '127-6683dd3b', '18o-51165fba', '1ci-819efe5c', '1gh-30f2f325'],
 };
 
 /**

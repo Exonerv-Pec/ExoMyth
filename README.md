@@ -260,9 +260,9 @@ overwritten: asking again for the same story only adds pages that are missing.
 
 ## Page templates
 
-**+ New page** lets you start from a template: Character, Place, Organization, Event, Scene or Playlist. Each
+**+ New page** lets you start from a template: Character, Place, Organization, Event, Scene, Playlist or Mood board. Each
 fills in the usual header fields (years, relations to fill) and section headings, and suggests the
-folder the page goes to. (Playlist is left out while playlists are switched off in Settings.)
+folder the page goes to. (Playlist and Mood board are left out while playlists or mood boards are switched off in Settings.)
 
 Templates are ordinary pages in the world's `Templates/` folder, so you can change them or write your
 own. Until a world has its own, the built-in set is offered; "Add them to the world" in the dialog
@@ -303,7 +303,7 @@ A new, empty world asks **What are you making?**
 | ✍️ Writer | Book, cards, timeline, family trees, focus mode, word count, writing stats, story projects, story structures | Graph, maps |
 | 🗺️ Worldbuilder | Graph, cards, maps, timeline, family trees | Book, focus mode, word count, writing stats, story projects, story structures |
 | 🎲 Game master | Graph, cards, maps, timeline, family trees, quick notes; a Session template | Book, focus mode, word count, writing stats, story projects, story structures |
-| 🗒️ Just notes | Graph, cards, links | Timeline, years, maps, family trees, Book, focus mode, playlists, writing stats, story projects, story structures |
+| 🗒️ Just notes | Graph, cards, links | Timeline, years, maps, family trees, Book, focus mode, playlists, mood boards, writing stats, story projects, story structures |
 | ✨ Everything | All of it, like the demo world | — |
 
 A profile only switches parts on and off and adds a few starting pages (a "Start here" page; for a
@@ -314,7 +314,7 @@ or switch single parts there. Each world keeps its own choice.
 
 The gear at the bottom of the sidebar (or **Ctrl+,**) opens the settings. Turn off what you do not
 use and the app gets simpler: the Graph, Cards and Timeline views, family trees, interactive maps,
-years, playlists, the quick look-up, the relations panel, previews on hover, the word count, writing stats, story projects, story structures, quick
+years, playlists, mood boards, the quick look-up, the relations panel, previews on hover, the word count, writing stats, story projects, story structures, quick
 notes, focus mode (and its typewriter scrolling) and spell check. Theme and language are there too. Under a switch, Settings say how many pages of the open
 world use that part (maps, years, family trees) and list them, so you know what would be hidden. Everything is on to begin with; settings are kept in the
 browser, never in your worlds, and "Turn everything back on" restores them in one click.
@@ -356,6 +356,54 @@ WebP, AVIF, SVG, BMP; MP4, WebM, OGV, MOV; MP3, WAV, OGG, Opus, M4A, AAC, FLAC. 
 own storage; images from web addresses are shown as links and never loaded automatically.
 In **Text** mode the pictures and players appear right under the lines that embed them; in **Side by
 side** they are shown in the reading pane.
+
+## Mood boards
+
+A free board for a character, a place, a scene or a whole story: pictures, colours, quotes and cards
+of other pages, placed where you like. A page with `moodboard: true` in its header shows its board
+above its text. Make one with the **Mood board** template (**+ New page**), open it in **Reading** or
+**Side by side**, and choose **Edit board**:
+
+- **+ Picture** saves pictures from your device into the world and pins them; **+ From the world**
+  pins a picture the world already has.
+- **+ Colour** pins a swatch (change it with the round button on it); **+ Quote** pins words, with the
+  source on a last line that starts with a dash; **+ Page** pins a card of another page, which opens
+  that page when you click it outside editing.
+- Drag an item to move it and its corner to resize it. Moving an item puts it on top. With the keyboard,
+  tab to an item's move button: arrow keys move it (Shift for bigger steps), **+** and **−** resize it,
+  **Delete** removes it. The pencil changes a quote or a caption.
+
+Everything is kept in the page's header, as a plain list, so the board is an ordinary file that you can
+read, edit and keep. Positions and sizes are fractions of the board's width:
+
+```yaml
+moodboard: true
+board:
+  - image: storm coast.jpg
+    caption: Where it starts
+    x: 0.05          # from the left edge
+    y: 0.04          # from the top, in board widths
+    w: 0.4           # width; the height follows the picture
+  - color: "#a86214"
+    x: 0.5
+    y: 0.04
+    w: 0.12
+    h: 0.12          # only colours have a height
+  - quote: The sea keeps what it is given.
+    source: Old saying
+    x: 0.5
+    y: 0.25
+    w: 0.3
+  - page: "[[Kira Vale]]"
+    x: 0.1
+    y: 0.5
+    w: 0.2
+```
+
+Items later in the list lie on top of earlier ones. A pinned page is a link like any other, so it shows
+in the relations panel and on the graph. The demo world has a board, **The Look of Rivertown**. On a
+narrow screen the board scrolls sideways inside its frame, so pictures and words keep their size. Switch
+boards off in Settings and such a page is an ordinary page.
 
 ## Playlists
 

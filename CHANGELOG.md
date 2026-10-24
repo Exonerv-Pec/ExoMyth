@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.23.0 — 2026-10-24
+
+### Added
+
+- **Mood boards.** A page with `moodboard: true` shows a free board above its text: pictures,
+  colours, quotes and cards of other pages. **Edit board** (in Reading or Side by side) adds them
+  (a picture from your device or from the world, a colour, a quote, a page), moves them by dragging,
+  resizes them from the corner, and removes them. The keyboard works too: arrow keys move the chosen
+  item, **+** and **−** resize it, **Delete** removes it. A moved item goes on top.
+- The board is kept in the page header as a plain `board:` list, with positions and sizes as fractions
+  of the board's width, so it looks the same on any screen and the file stays readable. Colours
+  are checked and only plain hex values are used. A pinned page is an ordinary link, so it shows in the
+  relations panel and on the graph.
+- A built-in **Mood board** template (in `Boards/`), a switch in Settings (with the pages that use it),
+  off for the Just notes profile, and a board in the demo world, **The Look of Rivertown**.
+
+### Changed
+
+- The `moodboard` and `board` header fields are not shown as facts in a page's infobox.
+
 ## 0.22.0 — 2026-10-24
 
 ### Added

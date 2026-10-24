@@ -5,6 +5,7 @@ import { DEMO_FILES, DEMO_MEDIA } from '../src/demo';
 import { MemoryStorage } from '../src/core/storage';
 import { Vault } from '../src/core/vault';
 import { isPlaylist, parsePlaylist } from '../src/core/playlist';
+import { boardOf } from '../src/core/board';
 
 function walk(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
@@ -39,9 +40,19 @@ describe('demo world', () => {
     for (const t of tracks) expect(vault.resolveFile(t.target)).toBeTruthy();
   });
 
+  it('has a mood board whose pictures and pages all exist', async () => {
+    const vault = await Vault.open(new MemoryStorage('demo-board', DEMO_FILES));
+    const board = boardOf(vault.getPage('Boards/The Look of Rivertown.md')!)!;
+    expect(board.items.map((i) => i.kind).sort()).toEqual(['color', 'color', 'color', 'color', 'image', 'image', 'image', 'page', 'page', 'page', 'quote']);
+    for (const i of board.items) {
+      if (i.image) expect(vault.resolveFile(i.image), i.image).toBeTruthy();
+      if (i.page) expect(vault.index.resolve(i.page), i.page).toBeTruthy();
+    }
+  });
+
   it('is in English and has no broken links or header errors', async () => {
     const vault = await Vault.open(new MemoryStorage('demo', DEMO_FILES));
-    expect(vault.pages.length).toBe(22);
+    expect(vault.pages.length).toBe(23);
     expect(vault.resolveFile("rivertown map.svg")?.path).toBe("attachments/rivertown map.svg");
     expect(vault.index.brokenLinks()).toEqual([]);
     expect(vault.pages.filter((p) => p.parseError)).toEqual([]);

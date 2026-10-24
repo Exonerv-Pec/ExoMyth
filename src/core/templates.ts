@@ -277,6 +277,20 @@ What this music is for: a scene, a place, a mood.
 Add tracks as list items, one audio file each, like \`- ![[Name of a file.mp3]]\`. Drop audio files into the editor to add them to the world. A name after \`|\` is shown in the list: \`- ![[Name of a file.mp3|Slow version]]\`.
 `,
   },
+  {
+    file: 'Mood board',
+    feature: 'moodBoards',
+    text: `---
+template:
+  folder: Boards
+moodboard: true
+tags: [moodboard]
+---
+# {{title}}
+
+What this board is for: a character, a place, a scene, a whole story. Open this page in Reading mode (or Side by side) and choose **Edit board** to pin pictures, colours, quotes and pages. Words written here appear under the board.
+`,
+  },
 ];
 
 const RU: BuiltIn[] = [
@@ -417,6 +431,20 @@ tags: [музыка]
 Для чего эта музыка: сцена, место, настроение.
 
 Добавляйте треки пунктами списка, по одному аудиофайлу в каждом, например \`- ![[Название файла.mp3]]\`. Перетащите аудиофайлы в редактор, чтобы добавить их в мир. Текст после \`|\` покажется в списке: \`- ![[Название файла.mp3|Медленная версия]]\`.
+`,
+  },
+  {
+    file: 'Мудборд',
+    feature: 'moodBoards',
+    text: `---
+template:
+  folder: Доски
+moodboard: true
+tags: [мудборд]
+---
+# {{title}}
+
+Для чего эта доска: персонаж, место, сцена или вся история. Откройте страницу в режиме чтения (или «Рядом») и нажмите **«Править доску»**, чтобы прикрепить картинки, цвета, цитаты и страницы. Слова, написанные здесь, появятся под доской.
 `,
   },
 ];

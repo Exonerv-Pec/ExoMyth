@@ -11,6 +11,7 @@ import { addSeconds, addWords, cleanGoal, dayKey, emptyStats, IDLE_SECONDS, merg
 import { applyTemplate, builtInTemplateFiles, builtInTemplates, worldTemplates, type TemplateChoice } from './core/templates';
 import { profileById, starterFiles, type ProfileId } from './core/profiles';
 import { projectFiles, projectName } from './core/project';
+import { addItem, changeItem, itemCount, nextSpot, removeItem, splitQuote, type BoardData } from './core/board';
 import {
   addChapterToText,
   addSceneToText,
@@ -52,6 +53,7 @@ export const FEATURES = [
   'writingStats',
   'storyProjects',
   'storyStructures',
+  'moodBoards',
 ] as const;
 export type Feature = (typeof FEATURES)[number];
 
@@ -1169,6 +1171,102 @@ class App {
 
   removeRegion(path: string, index: number): Promise<boolean> {
     return this.editMap(path, (t) => removeRegion(t, index));
+  }
+
+  /* ------------------------------------------------------------ mood boards */
+
+  addBoardItem(path: string, data: BoardData): Promise<boolean> {
+    return this.editMap(path, (t) => addItem(t, data));
+  }
+
+  /** Changes one pinned item; `raise` also lifts it on top of the others. */
+  changeBoardItem(path: string, index: number, patch: Partial<BoardData>, raise = false): Promise<boolean> {
+    return this.editMap(path, (t) => changeItem(t, index, patch, raise));
+  }
+
+  removeBoardItem(path: string, index: number): Promise<boolean> {
+    return this.editMap(path, (t) => removeItem(t, index));
+  }
+
+  /** Saves picture files into the world and pins them on a board, each a step further down and right. */
+  async addBoardPictures(path: string, files: File[]): Promise<void> {
+    const pictures = files.filter((f) => /^image\//i.test(f.type) || mediaKind(f.name) === 'image');
+    if (pictures.length < files.length) this.notify(this.t('media.unsupported', files.filter((f) => !pictures.includes(f)).map((f) => f.name).join(', ')), true);
+    if (!pictures.length) return;
+    const names = [...(await this.addMedia(pictures)).matchAll(/!\[\[([^\]]+)\]\]/g)].map((m) => m[1]!);
+    const page = this.vault?.getPage(path);
+    if (!page || !names.length) return;
+    const first = itemCount(page);
+    await this.editMap(path, (t) => names.reduce((text, image, i) => addItem(text, { kind: 'image', image, w: 0.3, ...nextSpot(first + i) }), t));
+  }
+
+  /** Asks for a picture that is already in the world. */
+  askBoardPicture(path: string): void {
+    const vault = this.vault;
+    if (!vault) return;
+    const pictures = vault.allFiles.filter((f) => mediaKind(f.path) === 'image').map((f) => f.path.slice(f.path.lastIndexOf('/') + 1));
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('board.picture.title'),
+      label: this.t('board.picture.label'),
+      value: '',
+      confirmLabel: this.t('board.pin'),
+      suggestions: [...new Set(pictures)].sort(),
+      onSubmit: (v) => {
+        if (!vault.resolveFile(v)) return void this.notify(this.t('board.picture.missing', v), true);
+        const page = vault.getPage(path);
+        if (page) void this.addBoardItem(path, { kind: 'image', image: v, w: 0.3, ...nextSpot(itemCount(page)) });
+      },
+    };
+  }
+
+  /** Asks for a quote to pin (or new words for one already there). A last line starting with a dash is the source. */
+  askBoardQuote(path: string, index?: number, current?: { quote: string; source?: string }): void {
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('board.quote.new'),
+      label: this.t('board.quote.label'),
+      value: current ? (current.source ? `${current.quote}\n— ${current.source}` : current.quote) : '',
+      multiline: true,
+      hint: this.t('board.quote.hint'),
+      confirmLabel: index === undefined ? this.t('board.pin') : this.t('dialog.confirm'),
+      onSubmit: (v) => {
+        const { quote, source } = splitQuote(v);
+        if (!quote) return;
+        if (index !== undefined) return void this.changeBoardItem(path, index, { quote, source });
+        const page = this.vault?.getPage(path);
+        if (page) void this.addBoardItem(path, { kind: 'quote', quote, ...(source ? { source } : {}), w: 0.3, ...nextSpot(itemCount(page)) });
+      },
+    };
+  }
+
+  /** Asks for a page to pin as a card. */
+  askBoardPage(path: string): void {
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('board.page.new'),
+      label: this.t('board.page.label'),
+      value: '',
+      confirmLabel: this.t('board.pin'),
+      suggestions: (this.vault?.index.worldPages ?? []).filter((p) => p.path !== path).map((p) => p.name),
+      onSubmit: (v) => {
+        const page = this.vault?.getPage(path);
+        if (page) void this.addBoardItem(path, { kind: 'page', page: v, w: 0.2, ...nextSpot(itemCount(page)) });
+      },
+    };
+  }
+
+  /** Asks for the line under a picture or a colour; empty removes it. */
+  askBoardCaption(path: string, index: number, current = ''): void {
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('board.caption.title'),
+      label: this.t('board.caption.label'),
+      value: current,
+      allowEmpty: true,
+      confirmLabel: this.t('dialog.confirm'),
+      onSubmit: (v) => void this.changeBoardItem(path, index, { caption: v || undefined }),
+    };
   }
 
   fail(e: unknown): void {

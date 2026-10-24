@@ -59,7 +59,7 @@ describe('story structure templates', () => {
     expect(templateGroup('---\ntemplate:\n  folder: X\n---\n')).toBeUndefined();
     expect(templateGroup('---\ngroup: structure\n---\n')).toBeUndefined();
     const files = builtInTemplateFiles('en');
-    expect(files).toHaveLength(6 + 5);
+    expect(files).toHaveLength(7 + 5);
     expect(new Set(files.map((f) => f.path)).size).toBe(files.length);
     const own = worldTemplates(files.map((f) => parsePage(f.path, f.text, 1)));
     expect(own.filter((t) => t.group === STRUCTURE_GROUP).map((t) => t.name).sort()).toEqual(['Five acts', "Hero's journey", 'Kishōtenketsu', 'Seven points', 'Three acts']);
