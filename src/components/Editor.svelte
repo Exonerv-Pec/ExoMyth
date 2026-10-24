@@ -18,6 +18,7 @@
   import { dirName } from '../core/names';
   import { headingSlug } from '../core/render';
   import { parseLinkText } from '../core/parse';
+  import { wordCount } from '../core/writing';
   import { inlineMedia, mediaCompartment, refreshMedia } from '../editorMedia';
   import { centerCursor, typewriter, typewriterCompartment } from '../editorTypewriter';
 
@@ -37,7 +38,10 @@
     const text = view.state.doc.toString();
     app.saveStatus = 'saving';
     try {
+      // Writing stats count the words this save adds to the page.
+      const before = wordCount(app.vault.getPage(path)?.body ?? '');
       await app.vault.savePage(path, text);
+      app.recordWords(wordCount(app.vault.getPage(path)?.body ?? '') - before);
       if (view && view.state.doc.toString() === text) {
         dirty = false;
         app.saveStatus = 'saved';
@@ -316,6 +320,7 @@
           typewriterCompartment.of(app.focus && app.on('typewriter') ? typewriter() : []),
           EditorView.updateListener.of((u) => {
             if (!u.docChanged || applyingExternal) return;
+            app.noteTyping();
             dirty = true;
             app.saveStatus = 'dirty';
             schedule();

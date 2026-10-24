@@ -58,7 +58,7 @@ describe('settings', () => {
     flushSync();
     expect(document.querySelector('.dialog.settings')).toBeTruthy();
     const switches = [...document.querySelectorAll<HTMLInputElement>('.settings input[role="switch"]')];
-    expect(switches.length).toBe(16);
+    expect(switches.length).toBe(17);
     expect(switches.every((s) => s.checked)).toBe(true);
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     flushSync();

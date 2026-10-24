@@ -13,10 +13,13 @@ import {
 import { baseName, dirName, joinPath, normalizeName, sanitizePageName, stripMd } from './names';
 import { emptyLayout, parseLayout, serializeLayout, type StoredLayout } from './layout';
 import { ATTACHMENTS_DIR, extensionOf } from './media';
+import { emptyStats, parseStats, serializeStats, type WritingStats } from './stats';
 
 export const META_DIR = '.exomyth';
 const SETTINGS_PATH = `${META_DIR}/settings.json`;
 export const LAYOUT_PATH = `${META_DIR}/graph.json`;
+/** Writing stats: words and time per day. */
+export const WRITING_PATH = `${META_DIR}/writing.json`;
 /** Folder used by versions before the rename to Exomyth. Read as a fallback, never written or deleted. */
 const LEGACY_META_DIR = '.mythloom';
 const legacy = (path: string) => LEGACY_META_DIR + path.slice(META_DIR.length);
@@ -181,6 +184,22 @@ export class Vault {
 
   saveLayout(layout: StoredLayout): Promise<void> {
     return this.exclusive(() => this.storage.writeText(LAYOUT_PATH, serializeLayout(layout)));
+  }
+
+  /* ------------------------------------------------------------- writing stats */
+
+  /** The world's writing stats. A missing or broken file gives empty stats. */
+  async loadStats(): Promise<WritingStats> {
+    try {
+      if (await this.storage.exists(WRITING_PATH)) return parseStats(await this.storage.readText(WRITING_PATH));
+    } catch {
+      /* Unreadable: start again from nothing rather than blocking the world. */
+    }
+    return emptyStats();
+  }
+
+  saveStats(stats: WritingStats): Promise<void> {
+    return this.exclusive(() => this.storage.writeText(WRITING_PATH, serializeStats(stats)));
   }
 
   /** Keeps a page's graph position when the page is renamed. */

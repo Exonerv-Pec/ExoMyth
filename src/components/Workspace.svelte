@@ -12,6 +12,7 @@
   import { MEDIA_ACCEPT } from '../core/media';
   import { wordCount } from '../core/writing';
   import { countWords } from '../i18n';
+  import { dayKey } from '../core/stats';
   import type { Page } from '../core/types';
 
   const t = app.t;
@@ -35,6 +36,15 @@
   const worldWords = $derived.by(() => {
     app.version;
     return page ? (app.vault?.index.worldPages ?? []).reduce((n, p) => n + wordsOf(p), 0) : 0;
+  });
+  /** "+120 today", or "120 of 500 today" with a goal; nothing until there is something to say. */
+  const todayText = $derived.by(() => {
+    if (!app.on('writingStats')) return '';
+    const words = app.stats.days[dayKey()]?.words ?? 0;
+    const goal = app.stats.goal;
+    const num = (n: number) => n.toLocaleString(app.lang === 'ru' ? 'ru-RU' : 'en-US');
+    if (goal) return t('stats.chip.goal', num(words), num(goal));
+    return words > 0 ? t('stats.chip.today', num(words)) : '';
   });
 </script>
 
@@ -61,6 +71,11 @@
       {#if app.on('quickLookup')}
         <button class="icon-btn" title="{t('lookup.title')} (Ctrl+K)" aria-label={t('lookup.title')} onclick={() => (app.lookupOpen = true)}>
           <Icon name="search" />
+        </button>
+      {/if}
+      {#if app.on('writingStats')}
+        <button class="icon-btn" title={t('stats.title')} aria-label={t('stats.title')} onclick={() => (app.statsOpen = true)}>
+          <Icon name="chart" />
         </button>
       {/if}
       {#if page && app.canInsert}
@@ -99,9 +114,14 @@
       {#if page && !inGraph}
         <span class="page-meta">
           <span class="status" class:error={app.saveStatus === 'error'} role="status">{statusText}</span>
-          {#if app.on('wordCount')}
-            <span class="words" title={t('words.world', countWords(app.lang, worldWords))}>{countWords(app.lang, pageWords)}</span>
-          {/if}
+          <span class="meta-line">
+            {#if app.on('wordCount')}
+              <span class="words" title={t('words.world', countWords(app.lang, worldWords))}>{countWords(app.lang, pageWords)}</span>
+            {/if}
+            {#if todayText}
+              <button class="stats-chip" title={t('stats.chip.title')} onclick={() => (app.statsOpen = true)}>{todayText}</button>
+            {/if}
+          </span>
         </span>
       {/if}
       {#if page || inGraph}
@@ -156,6 +176,10 @@
     <button class="focus-exit btn ghost" onclick={() => app.setFocus(false)} title="{t('focus.exit')} (Esc)">
       <Icon name="focus" /> {t('focus.exit')}
     </button>
-    {#if page && app.on('wordCount')}<span class="focus-words" aria-live="polite">{countWords(app.lang, pageWords)}</span>{/if}
+    {#if page && (app.on('wordCount') || todayText)}
+      <span class="focus-words" aria-live="polite">
+        {#if app.on('wordCount')}{countWords(app.lang, pageWords)}{/if}{#if app.on('wordCount') && todayText}{' · '}{/if}{todayText}
+      </span>
+    {/if}
   {/if}
 </div>

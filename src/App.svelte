@@ -9,6 +9,7 @@
   import Settings from './components/Settings.svelte';
   import ProfilePicker from './components/ProfilePicker.svelte';
   import QuickLookup from './components/QuickLookup.svelte';
+  import WritingStats from './components/WritingStats.svelte';
 
   let searchInput = $state<HTMLInputElement>();
 
@@ -108,6 +109,7 @@
   <Welcome />
 {/if}
 
+<WritingStats />
 <Dialog />
 <HoverPreview />
 <Shortcuts />

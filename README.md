@@ -99,6 +99,9 @@ to `.trash/` inside the world, never erased.
 Graph positions are saved in `.exomyth/graph.json` (`[x, y, onShelf]` per page, plus a fixed colour
 slot per folder). Delete that file to get a fresh layout, or use "Lay out again" in the graph.
 
+Writing stats are saved in `.exomyth/writing.json`: one line per day with the words written and the
+seconds spent, and the daily goal. It is plain JSON, so you can read it or delete it.
+
 ## Relations graph
 
 Switch to **Graph** in the top bar (or press the graph button in the relations panel).
@@ -221,6 +224,13 @@ put them on the graph.
 
 - **Word count.** The top bar shows how many words the open page has; hover it for the whole world.
   Only the text a reader sees counts: links count as their shown text, the header and files do not.
+- **Writing stats.** The chart button in the top bar opens your writing: words and time today and in
+  the last 7 days, the streak of days in a row, the total, and the last 30 days as a chart. Set a
+  **daily goal** and the top bar shows `120 of 500 today`; the streak then counts the days you
+  reached it (without a goal, any day you wrote). A word counts when a page is saved from the editor
+  and adds to its text, so deleting never takes words away; time is the time you spend typing, and a
+  pause longer than a minute does not count. The stats are kept in your world, in
+  `.exomyth/writing.json`, and never sent anywhere. **Clear stats** starts again from zero.
 - **Focus mode.** **Ctrl+.** (or the corners button in the top bar) hides everything but the text you
   are writing, with the word count in the corner. **Esc** brings the rest back. With **typewriter
   scrolling** the line you are writing stays in the middle of the screen and the other paragraphs are
@@ -270,10 +280,10 @@ A new, empty world asks **What are you making?**
 
 | Profile | On | Off |
 | --- | --- | --- |
-| ✍️ Writer | Book, cards, timeline, family trees, focus mode, word count | Graph, maps |
-| 🗺️ Worldbuilder | Graph, cards, maps, timeline, family trees | Book, focus mode, word count |
-| 🎲 Game master | Graph, cards, maps, timeline, family trees, quick notes; a Session template | Book, focus mode, word count |
-| 🗒️ Just notes | Graph, cards, links | Timeline, years, maps, family trees, Book, focus mode, playlists |
+| ✍️ Writer | Book, cards, timeline, family trees, focus mode, word count, writing stats | Graph, maps |
+| 🗺️ Worldbuilder | Graph, cards, maps, timeline, family trees | Book, focus mode, word count, writing stats |
+| 🎲 Game master | Graph, cards, maps, timeline, family trees, quick notes; a Session template | Book, focus mode, word count, writing stats |
+| 🗒️ Just notes | Graph, cards, links | Timeline, years, maps, family trees, Book, focus mode, playlists, writing stats |
 | ✨ Everything | All of it, like the demo world | — |
 
 A profile only switches parts on and off and adds a few starting pages (a "Start here" page; for a
@@ -284,7 +294,7 @@ or switch single parts there. Each world keeps its own choice.
 
 The gear at the bottom of the sidebar (or **Ctrl+,**) opens the settings. Turn off what you do not
 use and the app gets simpler: the Graph, Cards and Timeline views, family trees, interactive maps,
-years, playlists, the quick look-up, the relations panel, previews on hover, the word count, quick
+years, playlists, the quick look-up, the relations panel, previews on hover, the word count, writing stats, quick
 notes, focus mode (and its typewriter scrolling) and spell check. Theme and language are there too. Under a switch, Settings say how many pages of the open
 world use that part (maps, years, family trees) and list them, so you know what would be hidden. Everything is on to begin with; settings are kept in the
 browser, never in your worlds, and "Turn everything back on" restores them in one click.

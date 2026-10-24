@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 21 releases, latest 0.18.0 (2026-10-24)</summary>
+<summary><b>✅ Done</b> · 22 releases, latest 0.19.0 (2026-10-24)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.19.0** | 2026-10-24 | 📊 Writing stats: words and time per day, streaks, a daily goal, a 30-day chart; kept in the world 💬 |
 | **0.18.0** | 2026-10-24 | 🔎 Quick look-up: Ctrl+K over any view, with a preview 💬; ⌨️ typewriter scrolling in focus mode; 🎵 playlists: a page of tracks that plays in order 💬 |
 | **0.17.0** | 2026-10-24 | 🎭 Start profiles: Writer, Worldbuilder, Game master, Just notes; settings per world 💬 |
 | **0.16.0** | 2026-10-24 | 📖 Books: chapters and scenes on a board, reading straight through, download; scene navigation 💬 |
@@ -46,7 +47,7 @@ Click a section to open it.
 
 💬 Tester ideas that are already in: a web version, a story bible / wiki, fast search across the
 world, a timeline, art and music in pages, separate worlds for separate stories, an ideas inbox,
-a word count, a spell checker, a quick look-up, playlists and
+a word count, a spell checker, a quick look-up, playlists, writing stats and
 story planning templates.
 
 Every change in detail: [CHANGELOG.md](CHANGELOG.md).
@@ -66,7 +67,7 @@ Every change in detail: [CHANGELOG.md](CHANGELOG.md).
 </details>
 
 <details>
-<summary><b>📝 Writing tools</b> · 6 ideas</summary>
+<summary><b>📝 Writing tools</b> · 5 ideas</summary>
 
 <br>
 
@@ -75,7 +76,6 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
 | ⬜ | Story structure templates 💬 | M | Three acts, the hero's journey and other well-known shapes, in our own words, to plan a story or check a draft |
-| ⬜ | Writing stats 💬 | M | Words per day, time spent writing, streaks; stored in the world, never sent anywhere |
 | ⬜ | Dangerous drafting mode 💬 | M | An optional sprint: new text fades if you stop typing, until a goal is reached, then it goes to the draft. Never touches existing text |
 | ⬜ | Mood boards and collages 💬 | M | Pictures, colours and quotes arranged freely for a character, place or scene |
 | ⬜ | Editing workspace 💬 | L | Comments, revision notes, comparing versions |

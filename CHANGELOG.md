@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.19.0 — 2026-10-24
+
+### Added
+
+- **Writing stats.** The chart button in the top bar opens a window with the words and the time you
+  wrote today and over the last 7 days, the streak of days in a row, the total, and the last 30 days
+  as a chart. A **daily goal** is optional: with one, the top bar (and focus mode) show
+  `120 of 500 today` and the streak counts the days you reached it; without one, any day you wrote
+  counts. A word is counted when a page is saved from the editor and its text grew, so deleting
+  never subtracts; time is the time between keystrokes, and a pause of over a minute is not counted.
+  The stats live in the world, in `.exomyth/writing.json` (plain JSON, one line per day), and are
+  never sent anywhere. **Clear stats** starts again from zero, after a confirmation. A switch in
+  Settings, off by default for the Worldbuilder, Game master and Just notes profiles.
+
+### Fixed
+
+- Saving the open world's pending changes (`flush`) now writes the stats after the editors have
+  saved, so the words of the last edit are not left out.
+
 ## 0.18.0 — 2026-10-24
 
 ### Added

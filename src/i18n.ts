@@ -155,6 +155,8 @@ const ru = {
   'settings.quickLookup.about': 'Ctrl+K открывает поиск поверх любой страницы или вида, с предпросмотром найденного.',
   'settings.playlists': 'Плейлисты',
   'settings.playlists.about': 'Страница с playlist: true проигрывает свои треки по порядку.',
+  'settings.writingStats': 'Статистика письма',
+  'settings.writingStats.about': 'Сколько слов вы добавляете за день, время за набором текста и серии дней. Хранится в мире, в файле .exomyth/writing.json.',
   'settings.spell.about': 'Встроенная проверка браузера в редакторе.',
   'settings.relationsPanel': 'Панель связей',
   'settings.relationsPanel.about': 'Колонка справа со связями страницы.',
@@ -209,6 +211,29 @@ const ru = {
   'playlist.repeat': 'Повторять плейлист',
   'playlist.position': 'Трек {0} из {1}',
   'playlist.empty': 'В плейлисте пока нет треков. Добавьте строки вида - ![[трек.mp3]].',
+  'stats.title': 'Статистика письма',
+  'stats.note': 'Считаются слова, которые вы добавляете в редакторе при каждом сохранении страницы (удалённые не вычитаются), и время за набором текста: пауза дольше минуты не засчитывается. Всё хранится в вашем мире, в файле .exomyth/writing.json, и никуда не отправляется.',
+  'stats.today': 'Сегодня',
+  'stats.week': 'Последние 7 дней',
+  'stats.streak': 'Серия',
+  'stats.longest': 'Рекорд: {0}',
+  'stats.total': 'Всего',
+  'stats.over': 'за {0}',
+  'stats.goal': 'Дневная цель, слов',
+  'stats.goal.about': 'Пусто — без цели. Серия считает дни, когда цель достигнута (а без цели — любые дни, когда вы писали).',
+  'stats.goal.progress': '{0} из {1}',
+  'stats.goal.reached': 'Цель на сегодня достигнута',
+  'stats.chart': 'Последние 30 дней',
+  'stats.bar': '{0}: {1}, {2}',
+  'stats.empty': 'Пока ничего не написано. Начните печатать, и первый день появится здесь.',
+  'stats.reset': 'Очистить статистику',
+  'stats.reset.title': 'Очистить статистику письма?',
+  'stats.reset.text': 'Счётчики по дням и серии этого мира начнутся с нуля. Страницы не затрагиваются. Это нельзя отменить.',
+  'stats.reset.confirm': 'Очистить',
+  'stats.cleared': 'Статистика очищена',
+  'stats.chip.today': '+{0} сегодня',
+  'stats.chip.goal': '{0} из {1} сегодня',
+  'stats.chip.title': 'Слов за сегодня: {0}. Нажмите, чтобы открыть статистику письма.',
   'side.move': 'Перенести в другую папку',
   'dialog.move': 'Перенести «{0}»',
   'dialog.move.label': 'Папка',
@@ -564,6 +589,8 @@ const en: Record<Key, string> = {
   'settings.quickLookup.about': 'Ctrl+K opens a search over any page or view, with a preview of what it finds.',
   'settings.playlists': 'Playlists',
   'settings.playlists.about': 'A page with playlist: true plays its tracks in order.',
+  'settings.writingStats': 'Writing stats',
+  'settings.writingStats.about': 'How many words you add each day, time spent typing and streaks of days. Kept in the world, in the file .exomyth/writing.json.',
   'settings.spell.about': 'The browser’s own spell checker in the editor.',
   'settings.relationsPanel': 'Relations panel',
   'settings.relationsPanel.about': 'The column on the right with the page’s relations.',
@@ -618,6 +645,29 @@ const en: Record<Key, string> = {
   'playlist.repeat': 'Repeat the playlist',
   'playlist.position': 'Track {0} of {1}',
   'playlist.empty': 'No tracks yet. Add lines like - ![[track.mp3]].',
+  'stats.title': 'Writing stats',
+  'stats.note': 'Counts the words you add in the editor each time a page is saved (deleted words are not subtracted) and the time you spend typing; a pause of over a minute does not count. Everything is kept in your world, in the file .exomyth/writing.json, and never sent anywhere.',
+  'stats.today': 'Today',
+  'stats.week': 'Last 7 days',
+  'stats.streak': 'Streak',
+  'stats.longest': 'Longest: {0}',
+  'stats.total': 'Total',
+  'stats.over': 'over {0}',
+  'stats.goal': 'Daily goal (words)',
+  'stats.goal.about': 'Empty means no goal. The streak counts the days you reached it (or, with no goal, any day you wrote).',
+  'stats.goal.progress': '{0} of {1}',
+  'stats.goal.reached': 'Goal reached today',
+  'stats.chart': 'Last 30 days',
+  'stats.bar': '{0}: {1}, {2}',
+  'stats.empty': 'Nothing written yet. Start typing and your first day appears here.',
+  'stats.reset': 'Clear stats',
+  'stats.reset.title': 'Clear the writing stats?',
+  'stats.reset.text': 'The daily counts and streaks of this world start again from zero. Pages are not touched. This cannot be undone.',
+  'stats.reset.confirm': 'Clear',
+  'stats.cleared': 'Stats cleared',
+  'stats.chip.today': '+{0} today',
+  'stats.chip.goal': '{0} of {1} today',
+  'stats.chip.title': 'Words written today: {0}. Click for your writing stats.',
   'side.move': 'Move to another folder',
   'dialog.move': 'Move “{0}”',
   'dialog.move.label': 'Folder',
@@ -838,6 +888,30 @@ export function countWords(lang: Lang, n: number): string {
   const d100 = n % 100;
   const form = d10 === 1 && d100 !== 11 ? 'слово' : d10 >= 2 && d10 <= 4 && (d100 < 12 || d100 > 14) ? 'слова' : 'слов';
   return `${num} ${form}`;
+}
+
+/** "1 day", "12 days"; "1 день", "2 дня", "5 дней". */
+export function countDays(lang: Lang, n: number): string {
+  if (lang === 'en') return `${n} ${n === 1 ? 'day' : 'days'}`;
+  const d10 = n % 10;
+  const d100 = n % 100;
+  const form = d10 === 1 && d100 !== 11 ? 'день' : d10 >= 2 && d10 <= 4 && (d100 < 12 || d100 > 14) ? 'дня' : 'дней';
+  return `${n} ${form}`;
+}
+
+/** Time spent writing: "under a minute", "42 min", "1 h 5 min"; "меньше минуты", "42 мин", "1 ч 5 мин". */
+export function formatDuration(lang: Lang, seconds: number): string {
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 1) return lang === 'ru' ? 'меньше минуты' : 'under a minute';
+  const [h, m] = [Math.floor(minutes / 60), minutes % 60];
+  const [hu, mu] = lang === 'ru' ? ['ч', 'мин'] : ['h', 'min'];
+  return h > 0 ? `${h} ${hu}${m > 0 ? ` ${m} ${mu}` : ''}` : `${m} ${mu}`;
+}
+
+/** A calendar day (`2026-10-24`) as people write it: "Oct 24", "24 окт.". */
+export function formatDay(lang: Lang, day: string): string {
+  const [y, m, d] = day.split('-').map(Number) as [number, number, number];
+  return new Date(y, m - 1, d).toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'en-US', { month: 'short', day: 'numeric' });
 }
 
 export function detectLang(): Lang {

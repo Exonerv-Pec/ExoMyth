@@ -7,6 +7,7 @@ import { addPin, addRegion, changePin, changeRegion, removePin, removeRegion, ty
 import { existsIn, pageYears, setYearsInText, worldYearSpan } from './core/years';
 import { worldToZip, zipFolderName } from './core/archive';
 import { appendIdea } from './core/writing';
+import { addSeconds, addWords, cleanGoal, dayKey, emptyStats, IDLE_SECONDS, mergeStats, setGoal, type WritingStats } from './core/stats';
 import { applyTemplate, builtInTemplateFiles, builtInTemplates, worldTemplates, type TemplateChoice } from './core/templates';
 import { profileById, starterFiles, type ProfileId } from './core/profiles';
 import {
@@ -47,6 +48,7 @@ export const FEATURES = [
   'typewriter',
   'quickLookup',
   'playlists',
+  'writingStats',
 ] as const;
 export type Feature = (typeof FEATURES)[number];
 
@@ -200,6 +202,10 @@ class App {
   focus = $state(false);
   /** The quick look-up (search over the current view, with a preview) is open. */
   lookupOpen = $state(false);
+  /** The writing stats window is open. */
+  statsOpen = $state(false);
+  /** Words and time per day of the open world (kept in the world, in `.exomyth/writing.json`). */
+  stats = $state.raw<WritingStats>(emptyStats());
   /** The browser's spell checker underlines words in the editor. */
   spellcheck = $state(read('exomyth:spellcheck') !== '0');
   private modeBeforeFocus: ViewMode | null = null;
@@ -241,6 +247,11 @@ class App {
   private showTimer: ReturnType<typeof setTimeout> | undefined;
   private hideTimer: ReturnType<typeof setTimeout> | undefined;
   private layoutTimer: ReturnType<typeof setTimeout> | undefined;
+  private statsTimer: ReturnType<typeof setTimeout> | undefined;
+  /** Stats changed since they were last written to the world. */
+  private statsDirty = false;
+  /** When a key was last typed in the editor, to time the writing between keystrokes. */
+  private lastTyped = 0;
 
   /* ----------------------------------------------------------------- i18n/prefs */
 
@@ -353,6 +364,7 @@ class App {
     if (!this.on('years') && this.byYear) this.byYear = false;
     if (!this.on('focusMode') && this.focus) this.setFocus(false);
     if (!this.on('quickLookup')) this.lookupOpen = false;
+    if (!this.on('writingStats')) this.statsOpen = false;
     if (!this.on('relationsPanel')) this.panelOpen = false;
     if (!this.on('family')) this.cardsTab = 'dossier';
     if (!this.on('hoverPreviews')) this.hoverClose();
@@ -437,6 +449,7 @@ class App {
       this.collapsed = {};
     }
     this.layout = null;
+    this.loadStats(vault);
     if (vault.storage.kind === 'browser') void this.keepStorage();
     this.bookPath = read(this.prefKey('book'));
     this.features = loadFeatures(this.prefKey('features'));
@@ -466,6 +479,11 @@ class App {
     this.profile = null;
     this.focus = false;
     this.lookupOpen = false;
+    this.statsOpen = false;
+    clearTimeout(this.statsTimer);
+    this.statsDirty = false;
+    this.stats = emptyStats();
+    this.lastTyped = 0;
     this.modeBeforeFocus = null;
     this.unsubscribe?.();
     this.unsubscribe = null;
@@ -858,6 +876,75 @@ class App {
   /** Writes any pending editor changes to disk. Call before operations that read files. */
   async flush(): Promise<void> {
     await Promise.all([...this.flushers].map((f) => f()));
+    // After the editors: saving a page is what adds its words to today.
+    await this.flushStats();
+  }
+
+  /* ------------------------------------------------------------ writing stats */
+
+  /** Reads the world's stats. Anything written while they loaded is added on top. */
+  private loadStats(vault: Vault): void {
+    clearTimeout(this.statsTimer);
+    this.statsDirty = false;
+    this.stats = emptyStats();
+    this.lastTyped = 0;
+    void vault.loadStats().then((saved) => {
+      if (this.vault !== vault) return;
+      this.stats = this.statsDirty ? mergeStats(saved, this.stats) : saved;
+    });
+  }
+
+  private touchStats(): void {
+    this.statsDirty = true;
+    clearTimeout(this.statsTimer);
+    this.statsTimer = setTimeout(() => void this.flushStats(), 4000);
+  }
+
+  /** Writes changed stats to the world now. */
+  async flushStats(): Promise<void> {
+    const vault = this.vault;
+    if (!vault || !this.statsDirty) return;
+    clearTimeout(this.statsTimer);
+    this.statsDirty = false;
+    try {
+      await vault.saveStats(this.stats);
+    } catch (e) {
+      this.statsDirty = true;
+      this.fail(e);
+    }
+  }
+
+  /** Counts words added to a page when it is saved from the editor. Words taken away never subtract. */
+  recordWords(words: number): void {
+    if (!this.vault || !this.on('writingStats') || !(words > 0)) return;
+    this.stats = addWords(this.stats, dayKey(), words);
+    this.touchStats();
+  }
+
+  /** Counts the time between keystrokes in the editor, unless the pause was long. */
+  noteTyping(): void {
+    if (!this.vault || !this.on('writingStats')) return;
+    const now = Date.now();
+    const gap = (now - this.lastTyped) / 1000;
+    this.lastTyped = now;
+    if (gap > 0 && gap <= IDLE_SECONDS) {
+      this.stats = addSeconds(this.stats, dayKey(), gap);
+      this.touchStats();
+    }
+  }
+
+  /** Sets the daily word goal; empty or zero removes it. */
+  setGoal(value: unknown): void {
+    this.stats = setGoal(this.stats, cleanGoal(value));
+    this.touchStats();
+  }
+
+  /** Starts the stats again from zero. */
+  async clearStats(): Promise<void> {
+    this.stats = emptyStats();
+    this.statsDirty = true;
+    await this.flushStats();
+    this.notify(this.t('stats.cleared'));
   }
 
   /* -------------------------------------------------------------- navigation */
