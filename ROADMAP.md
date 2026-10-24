@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 23 releases, latest 0.20.0 (2026-10-24)</summary>
+<summary><b>✅ Done</b> · 24 releases, latest 0.21.0 (2026-10-24)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.21.0** | 2026-10-24 | 🎵 A Playlist page template, and three short tracks of our own in the demo world |
 | **0.20.0** | 2026-10-24 | 📁 Story projects: a ready set of folders for a new story 💬 |
 | **0.19.0** | 2026-10-24 | 📊 Writing stats: words and time per day, streaks, a daily goal, a 30-day chart; kept in the world 💬 |
 | **0.18.0** | 2026-10-24 | 🔎 Quick look-up: Ctrl+K over any view, with a preview 💬; ⌨️ typewriter scrolling in focus mode; 🎵 playlists: a page of tracks that plays in order 💬 |
@@ -56,13 +57,12 @@ Every change in detail: [CHANGELOG.md](CHANGELOG.md).
 </details>
 
 <details open>
-<summary><b>🔜 Next: small and useful</b> · 2 ideas</summary>
+<summary><b>🔜 Next: small and useful</b> · 1 idea</summary>
 
 <br>
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
-| ⬜ | Playlist template and demo tracks | S | A built-in "Playlist" page template, and a few short tracks of our own in the demo world. The demo holds only text files today, so it would have to ship small audio files |
 | ⬜ | Music that keeps playing while you browse | M | A small player that stays on screen when you open another page, so a session's music does not stop. Needs one player kept outside the page view |
 
 </details>

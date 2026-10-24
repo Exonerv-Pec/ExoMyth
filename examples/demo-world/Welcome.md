@@ -19,5 +19,6 @@ Open [[Kira Vale]] and look at the **Relations** panel on the right: it always s
 - Catch an idea from anywhere with **Alt+I** (or the light bulb at the top left): it lands on an Inbox page with the date
 - Save the whole world as one **.zip** with the arrow button at the top left, for a backup or another computer
 - Drop an image, video or audio file into the editor to add it to a page (see the map of [[Rivertown]])
+- Give a page `playlist: true` and a list of audio files to get a player with its own tracks: open [[Rivertown Evening]]
 
 Start here: [[Kira Vale]], [[Arn Vale]], [[Rivertown]], [[Order of the Silver River]].

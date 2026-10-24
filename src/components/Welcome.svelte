@@ -13,7 +13,7 @@
   } from '../core/storage';
   import { sanitizePageName } from '../core/names';
   import { ensureReadWrite, forgetFolder, listFolders, rememberFolder, type SavedFolder } from '../handles';
-  import { DEMO_FILES, DEMO_WORLD_NAME, updateDemoWorld } from '../demo';
+  import { DEMO_FILES, DEMO_MEDIA, DEMO_WORLD_NAME, updateDemoWorld } from '../demo';
 
   const t = app.t;
   // Browsers refuse the folder picker inside an embedded frame, so say so instead of failing on click.
@@ -140,6 +140,7 @@
       const storage = await browserStorage(DEMO_WORLD_NAME);
       if ((await storage.list()).length === 0) {
         for (const [path, text] of Object.entries(DEMO_FILES)) await storage.writeText(path, text);
+        for (const [path, data] of Object.entries(DEMO_MEDIA)) await storage.writeBytes(path, data);
       } else {
         await refreshDemo(storage);
       }

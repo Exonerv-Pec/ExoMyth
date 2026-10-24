@@ -43,6 +43,7 @@ describe('card models', () => {
       { folder: 'Events', count: 2 },
       { folder: 'Manuscript', count: 1 },
       { folder: 'Maps', count: 1 },
+      { folder: 'Music', count: 1 },
       { folder: 'Organizations', count: 1 },
       { folder: 'Places', count: 1 },
       { folder: 'Scenes', count: 4 },

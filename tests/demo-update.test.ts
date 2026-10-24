@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { execSync } from 'node:child_process';
 import { MemoryStorage } from '../src/core/storage';
-import { DEMO_FILES, updateDemoWorld } from '../src/demo';
+import { DEMO_FILES, DEMO_MEDIA, updateDemoWorld } from '../src/demo';
 import { Vault } from '../src/core/vault';
 
 /** The demo as an earlier version shipped it (0.3.0 by default), read from git when available. */
@@ -52,6 +52,17 @@ describe('updating a demo world saved by an earlier version', () => {
   });
 
   it('does nothing to a demo that is already current', async () => {
-    expect(await updateDemoWorld(new MemoryStorage('cur', DEMO_FILES))).toBe(0);
+    const storage = new MemoryStorage('cur', DEMO_FILES);
+    for (const [path, data] of Object.entries(DEMO_MEDIA)) await storage.writeBytes(path, data);
+    expect(await updateDemoWorld(storage)).toBe(0);
+  });
+
+  it('adds the demo tracks to an older demo, and leaves a track the owner replaced alone', async () => {
+    const storage = new MemoryStorage('no-tracks', DEMO_FILES);
+    expect(await updateDemoWorld(storage)).toBe(Object.keys(DEMO_MEDIA).length);
+    expect(Array.from(await storage.readBytes('attachments/Last call.wav'))).toEqual(Array.from(DEMO_MEDIA['attachments/Last call.wav']!));
+    await storage.writeBytes('attachments/Last call.wav', new Uint8Array([1, 2, 3]));
+    expect(await updateDemoWorld(storage)).toBe(0);
+    expect(Array.from(await storage.readBytes('attachments/Last call.wav'))).toEqual([1, 2, 3]);
   });
 });

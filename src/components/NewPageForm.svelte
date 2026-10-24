@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { app, type DialogState } from '../app.svelte';
+  import { app, type DialogState, type Feature } from '../app.svelte';
   import { builtInTemplates, TEMPLATE_DIRS, worldTemplates, type TemplateChoice } from '../core/templates';
 
   let { d, onclose }: { d: Extract<DialogState, { kind: 'newPage' }>; onclose: () => void } = $props();
@@ -21,7 +21,7 @@
     return worldTemplates(app.vault?.pages ?? []);
   });
   /** The world's own templates, or the built-in set until it has some. */
-  const templates = $derived<TemplateChoice[]>(own.length ? own : builtInTemplates(app.lang));
+  const templates = $derived<TemplateChoice[]>(own.length ? own : builtInTemplates(app.lang).filter((t) => !t.feature || app.on(t.feature as Feature)));
   const folders = $derived.by(() => {
     app.version;
     return (app.vault?.folders() ?? []).filter((f) => !TEMPLATE_DIRS.some((dir) => f === dir || f.startsWith(dir + '/')));

@@ -260,9 +260,9 @@ overwritten: asking again for the same story only adds pages that are missing.
 
 ## Page templates
 
-**+ New page** lets you start from a template: Character, Place, Organization, Event or Scene. Each
+**+ New page** lets you start from a template: Character, Place, Organization, Event, Scene or Playlist. Each
 fills in the usual header fields (years, relations to fill) and section headings, and suggests the
-folder the page goes to.
+folder the page goes to. (Playlist is left out while playlists are switched off in Settings.)
 
 Templates are ordinary pages in the world's `Templates/` folder, so you can change them or write your
 own. Until a world has its own, the built-in set is offered; "Add them to the world" in the dialog
@@ -367,7 +367,8 @@ Played while the party rests.
 The reading view shows a player above the text: play, previous and next, repeat, and the list of
 tracks to pick from. Tracks play one after another; a track whose file is missing is marked and
 skipped. The text after `|` names a track, otherwise the file name does. Any page can be a playlist,
-so a scene can carry its own music. The music stops when you leave the page. With playlists switched
+so a scene can carry its own music. The music stops when you leave the page. The **Playlist** template
+starts one in a `Music` folder, and the demo world has a playlist of its own, [Rivertown Evening](examples/demo-world/Music/Rivertown%20Evening.md), with three short tracks made for it. With playlists switched
 off in Settings, such a page is an ordinary page with a player under each line, as before.
 
 ## Page previews

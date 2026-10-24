@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.21.0 — 2026-10-24
+
+### Added
+
+- **Playlist template.** **+ New page** offers a built-in **Playlist** template (a page with
+  `playlist: true`, in a `Music` folder, with a note on how to add tracks). It is left out while
+  playlists are switched off in Settings, and "Add them to the world" copies it with the others.
+- **Music in the demo world.** The demo has a playlist, **Rivertown Evening**, with three short
+  tracks of our own (a jig, a slow waltz and a dawn pad, about 8 seconds each, 8 kHz mono WAV, 216 KB
+  in all). They are made by `scripts/make-demo-tracks.mjs`, so they can be made again, and they are
+  bundled inside the app, never downloaded. A demo saved by an earlier version gets the playlist and
+  the tracks; a track the owner replaced is left alone.
+
+### Changed
+
+- The demo's Welcome page mentions playlists.
+
 ## 0.20.0 — 2026-10-24
 
 ### Added

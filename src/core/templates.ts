@@ -34,6 +34,8 @@ export interface TemplateChoice {
   path?: string;
   /** Folder new pages go to, from `template: folder:`. */
   folder?: string;
+  /** The Settings switch a built-in template belongs to; it is not offered while that is off. */
+  feature?: string;
 }
 
 /** The templates of a world (pages in its templates folder), by name. */
@@ -116,6 +118,7 @@ export function applyTemplate(text: string, values: { title: string; date?: Date
 interface BuiltIn {
   file: string;
   text: string;
+  feature?: string;
 }
 
 const EN: BuiltIn[] = [
@@ -240,6 +243,22 @@ What the point-of-view character wants in this scene.
 
 ## Notes
 Written {{date}}.
+`,
+  },
+  {
+    file: 'Playlist',
+    feature: 'playlists',
+    text: `---
+template:
+  folder: Music
+playlist: true
+tags: [music]
+---
+# {{title}}
+
+What this music is for: a scene, a place, a mood.
+
+Add tracks as list items, one audio file each, like \`- ![[Name of a file.mp3]]\`. Drop audio files into the editor to add them to the world. A name after \`|\` is shown in the list: \`- ![[Name of a file.mp3|Slow version]]\`.
 `,
   },
 ];
@@ -368,6 +387,22 @@ relations:
 Написано {{date}}.
 `,
   },
+  {
+    file: 'Плейлист',
+    feature: 'playlists',
+    text: `---
+template:
+  folder: Музыка
+playlist: true
+tags: [музыка]
+---
+# {{title}}
+
+Для чего эта музыка: сцена, место, настроение.
+
+Добавляйте треки пунктами списка, по одному аудиофайлу в каждом, например \`- ![[Название файла.mp3]]\`. Перетащите аудиофайлы в редактор, чтобы добавить их в мир. Текст после \`|\` покажется в списке: \`- ![[Название файла.mp3|Медленная версия]]\`.
+`,
+  },
 ];
 
 /** The built-in templates in the interface language, as choices. */
@@ -376,6 +411,7 @@ export function builtInTemplates(lang: 'ru' | 'en'): TemplateChoice[] {
     const t: TemplateChoice = { name: b.file, text: b.text };
     const folder = templateFolder(b.text);
     if (folder) t.folder = folder;
+    if (b.feature) t.feature = b.feature;
     return t;
   });
 }
