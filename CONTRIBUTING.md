@@ -63,6 +63,8 @@ npm test        # unit and interface tests
 - The app must never make network requests. The production build ships a Content Security Policy
   that blocks them, so a change that needs the network will not work.
 - Interface text lives in `src/i18n.ts`; add every new string in Russian and English.
+- The guide is `docs/GUIDE.md` and `docs/GUIDE.ru.md`; the app shows the same topics. When a feature
+  changes, update both and run `npm run guide:shots` (needs Playwright with Chromium) for new pictures.
 - The demo world is `examples/demo-world/`. Edit those files directly; the app picks them up.
   When you change an existing demo file, add the fingerprint of its old text (`contentHash` in
   `src/core/hash.ts`) to `DEMO_HISTORY` in `src/demo.ts`, so demos saved by earlier versions are

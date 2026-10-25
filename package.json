@@ -1,6 +1,6 @@
 {
   "name": "exomyth",
-  "version": "0.26.0",
+  "version": "0.27.0",
   "description": "Private, offline-first worldbuilding wiki for writers and game masters. Plain Markdown files, typed relations, stable relations panel.",
   "type": "module",
   "license": "AGPL-3.0-only",
@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "guide:shots": "node scripts/guide-shots.mjs"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.18.0",

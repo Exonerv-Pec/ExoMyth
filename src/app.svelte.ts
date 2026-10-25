@@ -30,6 +30,7 @@ import {
   type CriticMark,
 } from './core/critic';
 import { dueForVersion, type PageVersion } from './core/versions';
+import type { GuideTry } from './core/guide';
 import {
   addChapterToText,
   addSceneToText,
@@ -283,6 +284,9 @@ class App {
   editorPath = $state<string | null>(null);
   /** The editing panel (comments, notes, versions) is shown instead of the relations panel. */
   revisionOpen = $state(false);
+  /** The guide window, and the topic it shows (null: the list, on narrow screens). */
+  guideOpen = $state(false);
+  guideTopic = $state<string | null>(null);
   /** Typing in the editor is written as suggested changes ({++added++}, {--removed--}). Kept per world. */
   suggesting = $state(false);
   /** A comment clicked in the reading view, to point out in the editing panel. */
@@ -1387,6 +1391,66 @@ class App {
     } else {
       this.revisionOpen = true;
       this.panelOpen = true;
+    }
+  }
+
+  /** Opens the guide, at a topic if given. */
+  openGuide(topic?: string): void {
+    this.shortcutsOpen = false;
+    this.settingsOpen = false;
+    if (topic) this.guideTopic = topic;
+    this.guideOpen = true;
+  }
+
+  /** Whether "Try it" of a guide topic can do something in the open world. */
+  canTry(action: GuideTry | undefined): boolean {
+    const vault = this.vault;
+    if (!action || !vault) return false;
+    if (action.kind === 'mode') return this.modeOn(action.mode as ViewMode);
+    if (action.kind === 'open') return !!vault.getPage(action.path);
+    if (action.name === 'focus') return this.on('focusMode') && !!this.current;
+    if (action.name === 'family') return this.on('cards') && this.on('family');
+    if (action.name === 'lookup') return this.on('quickLookup');
+    if (action.name === 'stats') return this.on('writingStats');
+    return true;
+  }
+
+  /** Does what a guide topic's "Try it" says, closing the guide. */
+  async tryGuide(action: GuideTry): Promise<void> {
+    if (!this.canTry(action)) return;
+    this.guideOpen = false;
+    if (action.kind === 'mode') return this.setMode(action.mode as ViewMode);
+    if (action.kind === 'open') {
+      await this.openText(action.path);
+      if (action.panel === 'revision' && !this.revisionOpen) this.toggleRevision();
+      return;
+    }
+    switch (action.name) {
+      case 'lookup':
+        this.lookupOpen = true;
+        break;
+      case 'stats':
+        this.statsOpen = true;
+        break;
+      case 'settings':
+        this.settingsOpen = true;
+        break;
+      case 'shortcuts':
+        this.shortcutsOpen = true;
+        break;
+      case 'newPage':
+        this.askNewPage();
+        break;
+      case 'focus':
+        if (WORLD_MODES.includes(this.mode)) this.setMode(this.textMode);
+        this.setFocus(true);
+        break;
+      case 'family': {
+        const path = this.vault?.getPage('Characters/Kira Vale.md') ? 'Characters/Kira Vale.md' : this.current;
+        if (path) this.showFamily(path);
+        else this.setMode('cards');
+        break;
+      }
     }
   }
 

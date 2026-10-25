@@ -11,6 +11,7 @@
   import QuickLookup from './components/QuickLookup.svelte';
   import WritingStats from './components/WritingStats.svelte';
   import VersionCompare from './components/VersionCompare.svelte';
+  import Guide from './components/Guide.svelte';
 
   let searchInput = $state<HTMLInputElement>();
 
@@ -30,7 +31,13 @@
   }
 
   function keydown(e: KeyboardEvent) {
-    if (((e.ctrlKey || e.metaKey) && (e.code === 'Slash' || e.key === '/')) || (e.key === '?' && !e.ctrlKey && !e.metaKey && !e.altKey && !typing(e.target))) {
+    if (e.key === 'F1' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      // F1: the guide (instead of the browser's own help).
+      e.preventDefault();
+      if (app.dialog) return;
+      if (app.guideOpen) app.guideOpen = false;
+      else app.openGuide();
+    } else if (((e.ctrlKey || e.metaKey) && (e.code === 'Slash' || e.key === '/')) || (e.key === '?' && !e.ctrlKey && !e.metaKey && !e.altKey && !typing(e.target))) {
       // Ctrl+/ (anywhere) or "?" (outside text): the list of shortcuts.
       if (app.dialog) return;
       e.preventDefault();
@@ -115,6 +122,7 @@
 <Dialog />
 <HoverPreview />
 <Shortcuts />
+<Guide />
 <Settings />
 <ProfilePicker />
 <QuickLookup />

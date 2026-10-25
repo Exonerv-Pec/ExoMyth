@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.27.0 — 2026-10-25
+
+### Added
+
+- **Guide.** **F1**, the **?** button at the bottom of the sidebar or **Guide** on the start screen
+  opens a guide to every part of Exomyth: 20 topics, each with a picture of the demo world (in the dark
+  theme), a few lines on what it does and how, and a **Try it** button that opens the right view,
+  page or window. A topic for a part switched off in Settings says so and can switch it on. The
+  guide can be searched, and follows the interface language.
+- The same guide on GitHub: [docs/GUIDE.md](docs/GUIDE.md) and [docs/GUIDE.ru.md](docs/GUIDE.ru.md).
+  The app reads its topics from these files, so there is one text to keep up to date.
+- `npm run guide:shots` makes the pictures again from the demo world in English and Russian (WebP,
+  about 2 MB in all). They are files of the site and load only when a topic is opened; the one-file
+  build shows the guide without them.
+
+### Changed
+
+- The demo world's Welcome page points to the guide.
+
 ## 0.26.0 — 2026-10-25
 
 ### Added

@@ -23,4 +23,6 @@ Open [[Kira Vale]] and look at the **Relations** panel on the right: it always s
 - Give a page `playlist: true` and a list of audio files to get a player with its own tracks: open [[Rivertown Evening]]
 - Edit like an editor: open [[The Market]] and press the speech bubble at the top for the **Editing** panel, with comments, suggested changes to accept or reject, a to-fix list, and saved versions to compare. Select text and press **Ctrl+Alt+M** to comment (or select words in **Reading** and press **Comment**), reply under a comment, and press **Ctrl+Shift+E** to write your edits as suggestions
 
+Press **F1** (or **?** at the bottom of the sidebar) for the guide: every feature with a picture and a **Try it** button.
+
 Start here: [[Kira Vale]], [[Arn Vale]], [[Rivertown]], [[Order of the Silver River]].

@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 29 releases, latest 0.26.0 (2026-10-25)</summary>
+<summary><b>✅ Done</b> · 30 releases, latest 0.27.0 (2026-10-25)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.27.0** | 2026-10-25 | 📖 A guide with pictures: in the app (F1) with a Try it button for every topic, and on GitHub |
 | **0.26.0** | 2026-10-25 | ✍️ Editing extras: suggest changes while typing (Ctrl+Shift+E), replies under comments, comments from the reading view |
 | **0.25.0** | 2026-10-25 | 🖼️ Mood board extras: notes, lining up while dragging, cropping pictures, zoom, saving a board as a PNG |
 | **0.24.0** | 2026-10-24 | ✍️ Editing workspace: comments and suggested changes in the text, a to-fix list, page versions to compare and restore 💬 |

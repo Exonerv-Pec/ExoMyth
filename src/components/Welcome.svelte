@@ -268,6 +268,7 @@
     {#if error}<p class="error" role="alert">{error}</p>{/if}
     <p class="privacy">{t('welcome.privacy')}</p>
     <p class="privacy">
+      <button class="btn ghost" onclick={() => app.openGuide()}>{t('guide.title')}</button>
       <button class="btn ghost" onclick={() => app.toggleLang()}>{t('lang.switch')}</button>
       <button class="btn ghost" onclick={() => app.cycleTheme()}>{t(`theme.${app.theme}` as 'theme.auto')}</button>
     </p>

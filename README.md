@@ -27,6 +27,10 @@ Markdown files on your own device. No account, no server, no tracking.
 **Open the app: https://exonerv-pec.github.io/Exomyth/** — nothing to install. The site only delivers
 the app to your browser; your worlds stay on your device.
 
+**Guide with pictures:** [docs/GUIDE.md](docs/GUIDE.md). The same guide opens inside the app: **F1** or
+the **?** button at the bottom of the sidebar (and **Guide** on the start screen). Every topic has a
+**Try it** button that opens the right place.
+
 ### Run it yourself
 
 Step-by-step guide: [BUILDING.md](BUILDING.md). In short, with Node.js 20+:
@@ -227,7 +231,7 @@ put them on the graph.
 ## Story projects
 
 A ready set of folders for a new story. In the **New page** window (or on the empty screen) choose
-**Set up a whole story project**, give the story a name, and Exomyth creates a folder with that name
+**New story project**, give the story a name, and Exomyth creates a folder with that name
 and eight inside: **1 Brainstorm, 2 Outline, 3 Drafts, 4 Story bible, 5 Art, 6 Research, 7 Notes,
 8 Playlist**. Each holds one page that says what the folder is for, named after the story (so
 several stories can live in one world), and an overview page links them all. The Drafts page is a

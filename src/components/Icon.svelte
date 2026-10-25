@@ -26,7 +26,8 @@
     | 'repeat'
     | 'chart'
     | 'check'
-    | 'review';
+    | 'review'
+    | 'help';
 
   let { name }: { name: Name } = $props();
 </script>
@@ -110,6 +111,9 @@
     <path d="M5 20V11M12 20V5M19 20v-6" />
   {:else if name === 'check'}
     <path d="M5 12.5l4.5 4.5L19 7.5" />
+  {:else if name === 'help'}
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.1-2.4 3.7M12 16.8h.01" />
   {:else if name === 'review'}
     <path d="M5 4.5h14a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5h-7.5L7 20v-3.5H5A1.5 1.5 0 0 1 3.5 15V6A1.5 1.5 0 0 1 5 4.5z" />
     <path d="M8.5 10.5l2.2 2.2 4.6-4.6" />

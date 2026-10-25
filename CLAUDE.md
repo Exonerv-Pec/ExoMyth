@@ -50,6 +50,9 @@ npm run build
   to Done in `ROADMAP.md` and update or remove the idea it came from. Describe new features in
   `README.md` and `README.ru.md`.
 - Keep ideas in `ROADMAP.md` even when they look hard. The notes say what would make them fit.
+- **Guide:** `docs/GUIDE.md` and `docs/GUIDE.ru.md` are the in-app guide too (one `##` topic each, with a
+  `<!-- guide: … -->` comment). When a feature is added or looks different, update both and run
+  `npm run guide:shots` to make the pictures again (dark theme, from the demo world).
 
 ## Repository
 
