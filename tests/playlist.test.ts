@@ -8,6 +8,7 @@ import { isPlaylist, parsePlaylist, withoutTracks } from '../src/core/playlist';
 import { featureUsage } from '../src/core/usage';
 import { parsePage } from '../src/core/parse';
 import { PROFILES, starterFiles } from '../src/core/profiles';
+import { music } from '../src/music.svelte';
 
 const play = vi.fn(() => Promise.resolve());
 const pause = vi.fn();
@@ -98,6 +99,8 @@ describe('the playlist player', () => {
     app.settingsOpen = false;
     app.closeVault();
     app.setMode('split');
+    music.stop();
+    music.repeat = false;
     play.mockClear();
     pause.mockClear();
   });
@@ -124,7 +127,8 @@ describe('the playlist player', () => {
     return { target, vault };
   }
 
-  const audio = () => document.querySelector<HTMLAudioElement>('.playlist audio')!;
+  // One player for the whole app, outside the pages.
+  const audio = () => document.querySelector<HTMLAudioElement>('audio.music-audio')!;
   const rows = () => [...document.querySelectorAll('.pl-tracks li')];
   const current = () => rows().findIndex((r) => r.classList.contains('current'));
   const click = async (el: Element) => {
@@ -210,14 +214,65 @@ describe('the playlist player', () => {
     expect(play).toHaveBeenCalledTimes(2);
   });
 
-  it('stops the music when you leave the page', async () => {
+  it('keeps playing on other pages, with a small player that controls it', async () => {
     await boot();
-    expect(pause).not.toHaveBeenCalled();
+    expect(document.querySelector('.mini-player')).toBeNull();
+    await click(document.querySelector('.pl-controls button[aria-label="Play"]')!);
+    expect(play).toHaveBeenCalledTimes(1);
+    const src = audio().getAttribute('src');
+    // On the playlist page itself there is no small player.
+    expect(document.querySelector('.mini-player')).toBeNull();
+    pause.mockClear();
     app.current = 'Plain.md';
     flushSync();
     await wait();
+    flushSync();
     expect(document.querySelector('.playlist')).toBeNull();
+    expect(pause).not.toHaveBeenCalled();
+    expect(audio().getAttribute('src')).toBe(src);
+    const mini = document.querySelector('.mini-player')!;
+    expect(mini.querySelector('.mp-track')!.textContent).toBe('One');
+    expect(mini.querySelector('.mp-list')!.textContent).toBe('Tavern');
+    await click(mini.querySelector('button[aria-label="Next track"]')!);
+    expect(mini.querySelector('.mp-track')!.textContent).toBe('Second song');
+    // The name opens the playlist again, where the small player goes away.
+    await click(mini.querySelector('.mp-what')!);
+    expect(app.current).toBe('Tavern.md');
+    expect(document.querySelector('.mini-player')).toBeNull();
+    expect(current()).toBe(1);
+    // Stop: the music and the small player go.
+    app.current = 'Plain.md';
+    flushSync();
+    await wait();
+    flushSync();
+    await click(document.querySelector('.mini-player button[aria-label="Stop the music"]')!);
+    expect(document.querySelector('.mini-player')).toBeNull();
+    expect(audio().getAttribute('src')).toBeNull();
+  });
+
+  it('follows its page when it is renamed, and stops when the world closes', async () => {
+    await boot();
+    await click(rows()[0]!.querySelector('button')!);
+    await app.renamePage('Tavern.md', 'Inn');
+    flushSync();
+    expect(music.path).toBe('Inn.md');
+    app.closeVault();
+    flushSync();
+    await wait();
+    expect(music.path).toBeNull();
+  });
+
+  it('stops when you leave the page if "Music keeps playing" is off', async () => {
+    await boot();
+    app.setFeature('musicKeepsPlaying', false);
+    await click(rows()[0]!.querySelector('button')!);
+    pause.mockClear();
+    app.current = 'Plain.md';
+    flushSync();
+    await wait();
+    flushSync();
     expect(pause).toHaveBeenCalled();
+    expect(document.querySelector('.mini-player')).toBeNull();
   });
 
   it('can be switched off in Settings: the page is then plain text with its own players', async () => {
@@ -242,5 +297,18 @@ describe('the playlist player', () => {
     const { target } = await boot([], []);
     expect(target.querySelector('.playlist .pl-empty')!.textContent).toContain('No tracks yet');
     expect(target.querySelector('.playlist audio')).toBeNull();
+  });
+});
+
+describe('the volume', () => {
+  it('is kept between 0 and 1 and remembered in the browser', async () => {
+    const { music } = await import('../src/music.svelte');
+    music.setVolume(0.4);
+    expect(music.volume).toBe(0.4);
+    expect(localStorage.getItem('exomyth:volume')).toBe('0.4');
+    music.setVolume(7);
+    expect(music.volume).toBe(1);
+    music.setVolume(Number.NaN);
+    expect(music.volume).toBe(1);
   });
 });

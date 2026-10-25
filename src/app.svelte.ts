@@ -31,6 +31,7 @@ import {
 } from './core/critic';
 import { dueForVersion, type PageVersion } from './core/versions';
 import type { GuideTry } from './core/guide';
+import { music } from './music.svelte';
 import {
   addChapterToText,
   addSceneToText,
@@ -75,6 +76,7 @@ export const FEATURES = [
   'moodBoards',
   'revision',
   'versions',
+  'musicKeepsPlaying',
 ] as const;
 export type Feature = (typeof FEATURES)[number];
 
@@ -1109,6 +1111,7 @@ class App {
     try {
       await this.flush();
       const newPath = await vault.renamePage(path, newName);
+      music.moved(path, newPath);
       if (this.current === path) this.current = newPath;
       this.backStack = this.backStack.map((p) => (p === path ? newPath : p));
       this.notify(this.t('toast.renamed'));
@@ -1125,6 +1128,7 @@ class App {
       await this.flush();
       const newPath = await vault.movePage(path, folder);
       if (newPath === path) return;
+      music.moved(path, newPath);
       if (this.current === path) {
         this.current = newPath;
         save(this.prefKey('last'), newPath);
@@ -1143,6 +1147,7 @@ class App {
     try {
       await this.flush();
       await vault.trashPage(path);
+      if (music.path === path) music.stop();
       if (this.current === path) {
         this.backStack = this.backStack.filter((p) => p !== path && vault.getPage(p));
         this.current = this.backStack.pop() ?? vault.pages[0]?.path ?? null;

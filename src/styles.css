@@ -4920,3 +4920,148 @@ button.b-card:focus-visible {
     padding: 0.8rem 1rem 1.4rem;
   }
 }
+
+/* ====================================================== music that keeps playing (v0.28) */
+
+.pl-controls {
+  align-items: center;
+}
+.pl-play {
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.pl-play:hover {
+  background: var(--accent);
+  color: var(--accent-ink);
+  filter: brightness(1.08);
+}
+.pl-play svg,
+.mp-play svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+.pl-time {
+  margin-left: auto;
+  color: var(--ink-faint);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+.pl-volume {
+  width: 5.5rem;
+  margin: 0 0 0 0.4rem;
+  accent-color: var(--accent);
+}
+.pl-seek {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--accent);
+}
+.pl-other {
+  margin: 0;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--r-s);
+  background: var(--accent-soft);
+  font-size: 0.85rem;
+}
+.mini-player {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  width: min(22rem, calc(100vw - 2rem));
+  padding: 0.35rem 0.4rem 0.45rem 0.5rem;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-m);
+  box-shadow: var(--shadow);
+}
+.mini-player.in-focus {
+  /* Bottom left in focus mode: the word count is in the other corner. */
+  right: auto;
+  left: 1rem;
+  opacity: 0.55;
+  transition: opacity 0.2s;
+}
+.mini-player.in-focus:hover,
+.mini-player.in-focus:focus-within {
+  opacity: 1;
+}
+.mp-bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--accent);
+  transition: width 0.25s linear;
+}
+.mp-what {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  background: none;
+  padding: 0.15rem 0.2rem;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--r-s);
+}
+.mp-what:hover {
+  background: var(--accent-soft);
+}
+.mp-note {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: var(--r-s);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 1.05rem;
+}
+.mp-text {
+  min-width: 0;
+  display: grid;
+}
+.mp-track,
+.mp-list {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mp-track {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.mp-list {
+  color: var(--ink-faint);
+  font-size: 0.78rem;
+}
+.mp-buttons {
+  flex: none;
+  display: flex;
+  align-items: center;
+}
+.mp-buttons .icon-btn {
+  width: 1.8rem;
+  height: 1.8rem;
+}
+@media (max-width: 640px) {
+  .mini-player {
+    right: 0.5rem;
+    left: 0.5rem;
+    bottom: 0.5rem;
+    width: auto;
+  }
+}

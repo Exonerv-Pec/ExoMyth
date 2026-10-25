@@ -177,7 +177,11 @@ makes one PNG of the whole board.
 ![A playlist page](../public/guide/en/playlists.webp)
 
 A page with `playlist: true` and a list of audio files becomes a player: the tracks play in order,
-with skip, repeat and a list to choose from. Good for a scene's music or a game session.
+with skip, repeat, volume and a list to choose from. Good for a scene's music or a game session.
+
+The music **keeps playing** when you open other pages: a small player in the corner pauses it, skips
+tracks, stops it, and takes you back to the playlist. (Settings → **Music keeps playing** makes it
+stop when you leave the page instead.)
 
 ## Pictures, video and sound
 <!-- guide: media | try: open:Places/Rivertown.md -->

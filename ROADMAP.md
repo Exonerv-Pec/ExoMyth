@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 30 releases, latest 0.27.0 (2026-10-25)</summary>
+<summary><b>✅ Done</b> · 31 releases, latest 0.28.0 (2026-10-25)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.28.0** | 2026-10-25 | 🎵 Music that keeps playing while you browse, with a small player in the corner |
 | **0.27.0** | 2026-10-25 | 📖 A guide with pictures: in the app (F1) with a Try it button for every topic, and on GitHub |
 | **0.26.0** | 2026-10-25 | ✍️ Editing extras: suggest changes while typing (Ctrl+Shift+E), replies under comments, comments from the reading view |
 | **0.25.0** | 2026-10-25 | 🖼️ Mood board extras: notes, lining up while dragging, cropping pictures, zoom, saving a board as a PNG |
@@ -69,7 +70,7 @@ Every change in detail: [CHANGELOG.md](CHANGELOG.md).
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
-| ⬜ | Music that keeps playing while you browse | M | A small player that stays on screen when you open another page, so a session's music does not stop. Needs one player kept outside the page view |
+| ⬜ | A first-run tour | S | Four or five hints over the interface for a new world, pointing to the guide (F1). Easy to skip and never shown again |
 
 </details>
 

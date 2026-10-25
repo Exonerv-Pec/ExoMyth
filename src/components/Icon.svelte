@@ -27,7 +27,9 @@
     | 'chart'
     | 'check'
     | 'review'
-    | 'help';
+    | 'help'
+    | 'play'
+    | 'pause';
 
   let { name }: { name: Name } = $props();
 </script>
@@ -111,6 +113,10 @@
     <path d="M5 20V11M12 20V5M19 20v-6" />
   {:else if name === 'check'}
     <path d="M5 12.5l4.5 4.5L19 7.5" />
+  {:else if name === 'play'}
+    <path fill="currentColor" d="M8 5.5v13l10.5-6.5z" />
+  {:else if name === 'pause'}
+    <path fill="currentColor" d="M7 5.5h3.5v13H7zM13.5 5.5H17v13h-3.5z" />
   {:else if name === 'help'}
     <circle cx="12" cy="12" r="8.5" />
     <path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.1-2.4 3.7M12 16.8h.01" />

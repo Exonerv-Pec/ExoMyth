@@ -12,6 +12,7 @@
   import WritingStats from './components/WritingStats.svelte';
   import VersionCompare from './components/VersionCompare.svelte';
   import Guide from './components/Guide.svelte';
+  import MusicHost from './components/MusicHost.svelte';
 
   let searchInput = $state<HTMLInputElement>();
 
@@ -123,6 +124,7 @@
 <HoverPreview />
 <Shortcuts />
 <Guide />
+<MusicHost />
 <Settings />
 <ProfilePicker />
 <QuickLookup />

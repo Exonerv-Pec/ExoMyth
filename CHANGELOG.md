@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.28.0 — 2026-10-25
+
+### Added
+
+- **Music that keeps playing.** One player for the whole app: a playlist goes on playing while you open
+  other pages. A small player in the corner shows the track and the playlist, with pause, previous,
+  next and stop; its name opens the playlist again (in Reading when you were in Text). In focus mode
+  it sits in the other corner and fades until you point at it. Playing another playlist takes over;
+  renaming or moving the playlist page keeps the music, and putting it in the trash, switching
+  playlists off or closing the world stops it. Media keys and the lock screen can control it where
+  the browser offers them.
+- A switch in Settings, **Music keeps playing** (under Playlists; off for Just notes), to have the
+  music stop when you leave the playlist page, as before.
+- The playlist player has its own buttons now: play and pause, the place in the track with the time,
+  and a volume that is remembered in this browser.
+
+### Changed
+
+- The guide's Playlists topic and its picture describe the new player.
+
 ## 0.27.0 — 2026-10-25
 
 ### Added

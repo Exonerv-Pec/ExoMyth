@@ -358,7 +358,7 @@ A new, empty world asks **What are you making?**
 | ✍️ Writer | Book, cards, timeline, family trees, focus mode, word count, writing stats, story projects, story structures, comments and versions | Graph, maps |
 | 🗺️ Worldbuilder | Graph, cards, maps, timeline, family trees | Book, focus mode, word count, writing stats, story projects, story structures |
 | 🎲 Game master | Graph, cards, maps, timeline, family trees, quick notes, page versions; a Session template | Book, focus mode, word count, writing stats, story projects, story structures, comments |
-| 🗒️ Just notes | Graph, cards, links | Timeline, years, maps, family trees, Book, focus mode, playlists, mood boards, writing stats, story projects, story structures, comments, page versions |
+| 🗒️ Just notes | Graph, cards, links | Timeline, years, maps, family trees, Book, focus mode, playlists and their music, mood boards, writing stats, story projects, story structures, comments, page versions |
 | ✨ Everything | All of it, like the demo world | — |
 
 A profile only switches parts on and off and adds a few starting pages (a "Start here" page; for a
@@ -369,7 +369,7 @@ or switch single parts there. Each world keeps its own choice.
 
 The gear at the bottom of the sidebar (or **Ctrl+,**) opens the settings. Turn off what you do not
 use and the app gets simpler: the Graph, Cards and Timeline views, family trees, interactive maps,
-years, playlists, mood boards, the quick look-up, the relations panel, previews on hover, the word count, writing stats, story projects, story structures, comments and notes, page versions, quick
+years, playlists, music that keeps playing, mood boards, the quick look-up, the relations panel, previews on hover, the word count, writing stats, story projects, story structures, comments and notes, page versions, quick
 notes, focus mode (and its typewriter scrolling) and spell check. Theme and language are there too. Under a switch, Settings say how many pages of the open
 world use that part (maps, years, family trees) and list them, so you know what would be hidden. Everything is on to begin with; settings are kept in the
 browser, never in your worlds, and "Turn everything back on" restores them in one click.
@@ -492,10 +492,17 @@ Played while the party rests.
 - ![[Last call.ogg|Last call, slow]]
 ```
 
-The reading view shows a player above the text: play, previous and next, repeat, and the list of
-tracks to pick from. Tracks play one after another; a track whose file is missing is marked and
+The reading view shows a player above the text: play and pause, previous and next, repeat, volume,
+the place in the track, and the list of tracks to pick from. Tracks play one after another; a track whose file is missing is marked and
 skipped. The text after `|` names a track, otherwise the file name does. Any page can be a playlist,
-so a scene can carry its own music. The music stops when you leave the page. The **Playlist** template
+so a scene can carry its own music.
+
+**The music keeps playing** when you open other pages: a small player in the corner shows the track
+and the playlist, with pause, previous, next and stop, and its name takes you back to the playlist.
+In focus mode it moves to the other corner and fades until you point at it. Playing another playlist
+takes over from the first. The system's media keys and lock screen can control it too, where the
+browser offers them. Switch off **Music keeps playing** in Settings to have the music stop as soon as
+you leave the playlist page. The **Playlist** template
 starts one in a `Music` folder, and the demo world has a playlist of its own, [Rivertown Evening](examples/demo-world/Music/Rivertown%20Evening.md), with three short tracks made for it. With playlists switched
 off in Settings, such a page is an ordinary page with a player under each line, as before.
 

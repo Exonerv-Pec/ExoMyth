@@ -1,124 +1,38 @@
 <script lang="ts">
   import { untrack } from 'svelte';
   import { app } from '../app.svelte';
-  import { mediaUrl } from '../embeds';
-  import { parsePlaylist } from '../core/playlist';
+  import { music } from '../music.svelte';
   import Icon from './Icon.svelte';
 
   let { path }: { path: string } = $props();
   const t = app.t;
 
-  const tracks = $derived.by(() => {
-    app.version;
-    const page = app.vault?.getPage(path);
-    return page ? parsePlaylist(page.body) : [];
+  const tracks = $derived(music.tracksOf(path));
+  /** This page's playlist is the one in the player (another may be playing elsewhere). */
+  const mine = $derived(music.path === path);
+  const cur = $derived(mine && tracks.length ? Math.min(music.index, tracks.length - 1) : tracks.length ? 0 : -1);
+  const playing = $derived(mine && music.playing);
+  const other = $derived(!mine && music.path && music.started ? music.title : '');
+
+  // On screen: the small player hides, and an idle player takes this playlist.
+  $effect(() => {
+    const p = path;
+    const hide = untrack(() => music.show(p));
+    untrack(() => music.offer(p));
+    return () => {
+      hide();
+      untrack(() => music.left(p));
+    };
   });
-  /** The file of each track, when it is in the world. */
-  const files = $derived.by(() => {
-    app.version;
-    return tracks.map((tr) => app.vault?.resolveFile(tr.target));
-  });
-  const keyOf = (i: number) => {
-    const f = files[i];
-    return f ? `${f.path}\u0000${f.mtime}` : '';
+
+  const clock = (s: number) => {
+    const n = Math.max(0, Math.floor(s || 0));
+    return `${Math.floor(n / 60)}:${String(n % 60).padStart(2, '0')}`;
   };
 
-  let index = $state(0);
-  let repeat = $state(false);
-  let playing = $state(false);
-  let audio = $state<HTMLAudioElement>();
-  /** The next loaded track starts by itself: it was picked in the list, or the one before it ended. */
-  let autoplay = false;
-  let token = 0;
-
-  const cur = $derived(tracks.length ? Math.min(index, tracks.length - 1) : -1);
-  const key = $derived(cur >= 0 ? keyOf(cur) : '');
-
-  function start(el: HTMLAudioElement) {
-    const result = el.play?.();
-    if (result && typeof result.catch === 'function') result.catch(() => undefined);
-  }
-
-  /** The nearest track with a file in a direction; it wraps around only while repeating. */
-  function nextIndex(from: number, dir: 1 | -1): number {
-    for (let i = from + dir; i >= 0 && i < tracks.length; i += dir) if (files[i]) return i;
-    if (repeat) {
-      for (let k = 0; k < tracks.length; k++) {
-        const i = dir > 0 ? k : tracks.length - 1 - k;
-        if (files[i]) return i;
-      }
-    }
-    return -1;
-  }
-
-  function go(i: number, play: boolean) {
-    if (i < 0) return;
-    if (i === cur || keyOf(i) === key) {
-      // The same file again: start it over.
-      index = i;
-      autoplay = false;
-      if (audio) {
-        audio.currentTime = 0;
-        if (play) start(audio);
-      }
-      return;
-    }
-    autoplay = play;
-    index = i;
-  }
-
-  async function load() {
-    const el = audio;
-    if (!el) return;
-    const mine = ++token;
-    const track = cur >= 0 ? tracks[cur] : undefined;
-    const url = track && files[cur] ? await mediaUrl(track.target) : undefined;
-    if (mine !== token || el !== audio) return;
-    if (!url) {
-      // No file for this track: leave it, and carry on with the next one if the music was playing.
-      if (el.getAttribute('src')) el.removeAttribute('src');
-      const wasAuto = autoplay;
-      autoplay = false;
-      if (wasAuto) go(nextIndex(cur, 1), true);
-      return;
-    }
-    el.src = url;
-    if (autoplay) {
-      autoplay = false;
-      start(el);
-    }
-  }
-
-  // A different track (or the same file changed) loads into the player.
-  $effect(() => {
-    key;
-    audio;
-    untrack(() => void load());
-  });
-
-  // Leaving the page stops the music: a player taken off the page would otherwise keep playing.
-  $effect(() => () => {
-    token++;
-    if (typeof audio?.pause === 'function') audio.pause();
-  });
-
-  function onEnded() {
-    const n = nextIndex(cur, 1);
-    if (n >= 0) go(n, true);
-    else playing = false;
-  }
-  function next() {
-    go(nextIndex(cur, 1), playing);
-  }
-  function prev() {
-    // Like a music player: a few seconds in, "previous" starts the track over.
-    if (audio && audio.currentTime > 3) {
-      audio.currentTime = 0;
-      return;
-    }
-    const p = nextIndex(cur, -1);
-    if (p >= 0) go(p, playing);
-    else if (audio) audio.currentTime = 0;
+  function play() {
+    if (mine) music.toggle();
+    else music.select(path, Math.max(0, cur), true);
   }
 </script>
 
@@ -130,28 +44,55 @@
       <span class="pl-now">{tracks[cur]?.title}</span>
       <span class="pl-pos">{t('playlist.position', cur + 1, tracks.length)}</span>
     </div>
-    <audio bind:this={audio} controls preload="metadata" onended={onEnded} onplay={() => (playing = true)} onpause={() => (playing = false)}></audio>
+    {#if other}<p class="pl-other">{t('music.other', other)}</p>{/if}
     <div class="pl-controls">
-      <button class="icon-btn" title={t('playlist.prev')} aria-label={t('playlist.prev')} onclick={prev}><Icon name="skip-back" /></button>
-      <button class="icon-btn" title={t('playlist.next')} aria-label={t('playlist.next')} onclick={next}><Icon name="skip-forward" /></button>
+      <button class="icon-btn pl-play" title={playing ? t('music.pause') : t('music.play')} aria-label={playing ? t('music.pause') : t('music.play')} onclick={play}>
+        <Icon name={playing ? 'pause' : 'play'} />
+      </button>
+      <button class="icon-btn" title={t('playlist.prev')} aria-label={t('playlist.prev')} onclick={() => (mine ? music.prev() : music.select(path, 0, false))}><Icon name="skip-back" /></button>
+      <button class="icon-btn" title={t('playlist.next')} aria-label={t('playlist.next')} onclick={() => (mine ? music.next() : music.select(path, Math.min(tracks.length - 1, 1), false))}><Icon name="skip-forward" /></button>
       <button
         class="icon-btn"
-        class:on={repeat}
+        class:on={music.repeat}
         title={t('playlist.repeat')}
         aria-label={t('playlist.repeat')}
-        aria-pressed={repeat}
-        onclick={() => (repeat = !repeat)}
+        aria-pressed={music.repeat}
+        onclick={() => (music.repeat = !music.repeat)}
       >
         <Icon name="repeat" />
       </button>
+      <input
+        class="pl-volume"
+        type="range"
+        min="0"
+        max="1"
+        step="0.05"
+        value={music.volume}
+        aria-label={t('music.volume')}
+        title={t('music.volume')}
+        oninput={(e) => music.setVolume(Number(e.currentTarget.value))}
+      />
+      <span class="pl-time">{mine ? clock(music.time) : '0:00'}{mine && music.duration ? ` / ${clock(music.duration)}` : ''}</span>
     </div>
+    <input
+      class="pl-seek"
+      type="range"
+      min="0"
+      max={mine && music.duration ? music.duration : 1}
+      step="0.1"
+      value={mine ? music.time : 0}
+      disabled={!mine || !music.duration}
+      aria-label={t('music.seek')}
+      oninput={(e) => music.seek(Number(e.currentTarget.value))}
+    />
     <ol class="pl-tracks" aria-label={t('playlist.tracks')}>
       {#each tracks as tr, i (i)}
-        <li class:current={i === cur} class:missing={!files[i]}>
-          <button type="button" aria-current={i === cur ? 'true' : undefined} disabled={!files[i]} onclick={() => go(i, true)}>
+        {@const has = music.hasFile(tr)}
+        <li class:current={i === cur} class:missing={!has}>
+          <button type="button" aria-current={i === cur ? 'true' : undefined} disabled={!has} onclick={() => music.select(path, i, true)}>
             <span class="n">{i + 1}</span>
             <span class="t">{tr.title}</span>
-            {#if !files[i]}<span class="m">{t('media.missing', tr.target)}</span>{/if}
+            {#if !has}<span class="m">{t('media.missing', tr.target)}</span>{/if}
           </button>
         </li>
       {/each}
