@@ -1,6 +1,6 @@
 ---
 tags: [event, war]
-years: 429-430
+years: 28 Leaffall 429 – Thaw 430
 relations:
   place: "[[Rivertown]]"
 ---

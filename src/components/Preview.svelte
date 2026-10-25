@@ -10,6 +10,8 @@
   import MapView from './MapView.svelte';
   import PlaylistPlayer from './PlaylistPlayer.svelte';
   import MoodBoard from './MoodBoard.svelte';
+  import CalendarView from './CalendarView.svelte';
+  import { isCalendar } from '../core/calendar';
   import { isBoard } from '../core/board';
   import { mapOf } from '../core/maps';
   import { isPlaylist, withoutTracks } from '../core/playlist';
@@ -193,6 +195,9 @@
       {/if}
       {#if app.on('moodBoards') && isBoard(page)}
         <MoodBoard {path} />
+      {/if}
+      {#if app.on('years') && isCalendar(page)}
+        <CalendarView {path} />
       {/if}
       {#if mapOf(page)}
         {#if app.on('maps')}<MapView {path} />{/if}

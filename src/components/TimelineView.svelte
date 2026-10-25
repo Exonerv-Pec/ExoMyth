@@ -1,7 +1,8 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
   import { app } from '../app.svelte';
-  import { existsIn, formatYears, timelineModel, yearTicks, type TimelineItem } from '../core/years';
+  import { existsIn, formatYears, timelineModel, type TimelineItem } from '../core/years';
+  import { axisTicks, formatYear } from '../core/calendar';
   import { folderColorSlots } from '../core/layout';
   import { stripMd } from '../core/names';
   import { previewOn } from '../actions';
@@ -41,7 +42,12 @@
   const years = $derived(range ? range.max - range.min + 1 : 1);
   const trackW = $derived(Math.max(1, Math.round(years * ppy)));
   const x = (year: number) => (range ? (year - range.min) * ppy : 0);
-  const axis = $derived(range && ppy > 0 ? yearTicks(range.min, range.max, ppy) : { step: 1, ticks: [] });
+  const axis = $derived.by(() => {
+    app.version;
+    return range && ppy > 0 ? axisTicks(range.min, range.max, ppy) : [];
+  });
+  /** The middle of what a tick labels: a year's cell, or a month's. */
+  const tickX = (tk: { value: number; span: number }) => x(tk.value) + (tk.span * ppy) / 2;
 
   function fitPpy(): number {
     const avail = Math.max(120, (viewW || 800) - LABEL_W - 24);
@@ -62,7 +68,8 @@
     if (!scroller || !range) return;
     const anchorScreen = at ?? (scroller.clientWidth - LABEL_W) / 2;
     const anchorYear = range.min + (scroller.scrollLeft + anchorScreen) / ppy;
-    const next = Math.min(240, Math.max(fitPpy() * 0.5, ppy * factor));
+    // Far enough in to see months and their days.
+    const next = Math.min(4000, Math.max(fitPpy() * 0.5, ppy * factor));
     userZoomed = true;
     ppy = next;
     void tick().then(() => {
@@ -88,10 +95,11 @@
   function barOf(item: TimelineItem): Bar {
     const r = range!;
     const from = item.from ?? r.min;
-    const to = item.to ?? r.max;
+    // Up to the first moment after the end: the next year, month or day.
+    const end = item.end ?? r.max + 1;
     return {
       left: x(from),
-      width: Math.max(8, (to - from + 1) * ppy),
+      width: Math.max(8, (end - from) * ppy),
       openStart: item.from === undefined,
       openEnd: item.to === undefined,
     };
@@ -228,7 +236,7 @@ year: 430</pre>
       <div class="tl-inner" style:width="{LABEL_W + trackW}px">
         <!-- Lines behind the rows at every labelled year. -->
         <div class="tl-grid" aria-hidden="true">
-          {#each axis.ticks as y (y)}<span style:left="{x(y) + ppy / 2}px"></span>{/each}
+          {#each axis as tk (tk.value)}<span class:minor={!tk.major} style:left="{tickX(tk)}px"></span>{/each}
         </div>
         {#if app.byYear}
           <div class="tl-cursor" style:left="{LABEL_W + x(app.year) + ppy / 2}px" aria-hidden="true"></div>
@@ -245,6 +253,7 @@ year: 430</pre>
             aria-valuemin={model.span?.min}
             aria-valuemax={model.span?.max}
             aria-valuenow={app.byYear ? app.year : undefined}
+            aria-valuetext={app.byYear ? (app.version, formatYear(app.year)) : undefined}
             title={t('timeline.axisHint')}
             style:width="{trackW}px"
             onpointerdown={axisDown}
@@ -253,8 +262,8 @@ year: 430</pre>
             onpointercancel={axisUp}
             onkeydown={axisKey}
           >
-            {#each axis.ticks as y (y)}
-              <span class="tl-tick" style:left="{x(y) + ppy / 2}px">{y}</span>
+            {#each axis as tk (tk.value)}
+              <span class="tl-tick" class:minor={!tk.major} style:left="{tickX(tk)}px">{tk.label}</span>
             {/each}
           </div>
         </div>
@@ -273,13 +282,13 @@ year: 430</pre>
                 use:previewOn={{ target: stripMd(item.path) }}
               >
                 <span class="tl-title">{item.title}</span>
-                <span class="tl-years">{formatYears(item)}</span>
+                <span class="tl-years" title={formatYears(item)}>{formatYears(item)}</span>
               </button>
               <div class="tl-track" style:width="{trackW}px">
                 {#if item.point}
                   <button
                     class="tl-point"
-                    style:left="{bar.left + ppy / 2}px"
+                    style:left="{bar.left + bar.width / 2}px"
                     tabindex="-1"
                     aria-label="{item.title}, {formatYears(item)}"
                     onclick={() => choose(item)}

@@ -2378,13 +2378,18 @@ svg.graph:focus-visible {
 }
 .tl-title {
   flex: 1;
-  min-width: 0;
+  min-width: 45%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .tl-years {
-  flex: none;
+  /* Dates can be long; the page name keeps at least half of the label. */
+  flex: 0 1 auto;
+  max-width: 55%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 0.76rem;
   color: var(--ink-faint);
   font-variant-numeric: tabular-nums;
@@ -5135,4 +5140,140 @@ button.b-card:focus-visible {
   .tour-spot {
     transition: none;
   }
+}
+
+/* ======================================================= calendars (v0.30) */
+
+.tl-tick.minor {
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+}
+.tl-grid span.minor {
+  opacity: 0.3;
+}
+.years-field input {
+  /* As wide as the date in it (a date with a month name is longer than a year). */
+  width: auto;
+  min-width: 5.5rem;
+  max-width: 100%;
+}
+.calendar {
+  display: grid;
+  gap: 0.8rem;
+  margin: 0 0 1.4rem;
+}
+.cal-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+.cal-summary {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+.cal-year {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+.cal-year input {
+  width: 6rem;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-s);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+.cal-year-name {
+  font-weight: 600;
+  color: var(--ink);
+}
+.cal-note {
+  margin: 0;
+  padding: 0.45rem 0.7rem;
+  border-radius: var(--r-s);
+  background: var(--accent-soft);
+  font-size: 0.88rem;
+}
+.cal-eras {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.cal-eras li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.5rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-s);
+  background: var(--surface);
+  font-size: 0.88rem;
+}
+.cal-short {
+  padding: 0 0.3rem;
+  border-radius: 3px;
+  background: var(--accent-soft);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.cal-era-years {
+  color: var(--ink-faint);
+  font-size: 0.8rem;
+}
+.cal-months {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+  gap: 0.6rem;
+}
+.cal-month {
+  padding: 0.5rem 0.6rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-m);
+  background: var(--surface);
+}
+.cal-month h3 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0 0 0.35rem;
+  font-family: var(--font-text);
+  font-size: 1rem;
+}
+.cal-days {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--ink-faint);
+}
+.cal-month table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.74rem;
+  font-variant-numeric: tabular-nums;
+}
+.cal-month th {
+  padding: 0 0 0.15rem;
+  color: var(--ink-faint);
+  font-weight: 600;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.cal-month td {
+  padding: 0.12rem 0;
+  text-align: center;
+  color: var(--ink-soft);
 }

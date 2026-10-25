@@ -87,7 +87,7 @@ describe('maps in the reading view', () => {
     setYear(400);
     expect(labels(target)).toEqual(['Rivertown', 'Fortress of the Order', 'Old Watchtower', "Smugglers' Cove"]);
     setYear(405);
-    expect(target.querySelector('.year-value')!.textContent).toBe('405');
+    expect(target.querySelector('.year-value')!.textContent).toBe('405 AR');
     // Switching the year view off shows everything again.
     target.querySelector<HTMLInputElement>('.map-tools input[type="checkbox"]')!.click();
     flushSync();

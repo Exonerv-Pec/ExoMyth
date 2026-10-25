@@ -144,7 +144,8 @@ describe('what switching off affects', () => {
     expect(u.maps.map((p) => p.title)).toEqual(['Silver Coast']);
     expect(u.family.map((p) => p.title)).toEqual(['Arn Vale', 'Eva Crow', 'Kira Vale', 'Liara Vale', 'Oren Vale', 'Ysolde Vale']);
     expect(u.timeline.length).toBe(18);
-    expect(u.years.length).toBe(19); // the map's pins have years too
+    expect(u.years.length).toBe(20); // the map's pins have years too, and the calendar is how they are read
+    expect(u.years.map((p) => p.title)).toContain('Calendar of the Coast');
     expect(u.years.map((p) => p.title)).toContain('Silver Coast');
   });
 

@@ -142,7 +142,7 @@ describe('the family tree view', () => {
       ['Siblings', ['Eva Crow', 'Kira Vale']],
     ]);
     expect(target.querySelector('.family-card.focus .fc-name')!.textContent).toBe('Kira Vale');
-    expect(target.querySelector('.family-card.focus .fc-years')!.textContent).toBe('412 –');
+    expect(target.querySelector('.family-card.focus .fc-years')!.textContent).toBe('412 AR –');
     const arn = [...target.querySelectorAll<HTMLButtonElement>('.family-card')].find((c) => c.textContent?.includes('Arn Vale'))!;
     arn.click();
     await wait();

@@ -48,6 +48,7 @@ describe('card models', () => {
       { folder: 'Organizations', count: 1 },
       { folder: 'Places', count: 1 },
       { folder: 'Scenes', count: 4 },
+      { folder: 'World', count: 1 },
       { folder: '', count: 1 },
     ]);
     expect(folderCards(demoIndex(), 'Characters').map((c) => c.title)).toEqual([

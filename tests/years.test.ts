@@ -27,12 +27,12 @@ describe('page years', () => {
   });
 
   it('understands from/to and the words writers use', () => {
-    expect(pageYears(page('a.md', 'from: 371\nto: 430'))).toEqual({ from: 371, to: 430, fromKey: 'from', toKey: 'to' });
+    expect(pageYears(page('a.md', 'from: 371\nto: 430'))).toMatchObject({ from: 371, to: 430, fromKey: 'from', toKey: 'to' });
     expect(pageYears(page('a.md', 'born: 412\ndied: "455 AE"'))).toMatchObject({ from: 412, to: 455, fromKey: 'born', toKey: 'died' });
     expect(pageYears(page('a.md', 'Founded: 300'))).toMatchObject({ from: 300, fromKey: 'Founded' });
     expect(pageYears(page('a.md', 'родился: 400\nумер: 460'))).toMatchObject({ from: 400, to: 460 });
-    expect(pageYears(page('a.md', 'year: 430'))).toEqual({ from: 430, to: 430, pointKey: 'year' });
-    expect(pageYears(page('a.md', 'years: 429-430'))).toEqual({ from: 429, to: 430, pointKey: 'years' });
+    expect(pageYears(page('a.md', 'year: 430'))).toMatchObject({ from: 430, to: 430, pointKey: 'year' });
+    expect(pageYears(page('a.md', 'years: 429-430'))).toMatchObject({ from: 429, to: 430, pointKey: 'years' });
     expect(pageYears(page('a.md', 'years: "-20 – -5"'))).toMatchObject({ from: -20, to: -5 });
     expect(pageYears(page('a.md', 'from: 500\nto: 400'))).toMatchObject({ from: 400, to: 500 });
   });

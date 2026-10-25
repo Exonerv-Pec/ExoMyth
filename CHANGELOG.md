@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.30.0 — 2026-10-25
+
+### Added
+
+- **Dates with months and days.** Header fields such as `born:`, `year:` and `years:` take dates as
+  well as years: `3 March 412`, `March 412`, `412-03-03`, `5 марта 412`, and spans in one field like
+  `28 Leaffall 429 – Thaw 430`. The **Years** fields of the panel take them too and write them as
+  words. A plain year works as before.
+- **Calendars of your own.** A page with `calendar: true` gives the world its months (with their
+  days), its week and its eras; the world uses its first such page (templates never count). The
+  page shows the calendar: eras, and each month's days in weeks for a chosen year. A built-in
+  **Calendar** template starts one.
+- **Eras.** Years show with their era (`412 AR`, or `318 – 381 AR` when both ends share it) on the
+  timeline, in the panel, on family trees and on the year slider; `112 SA` and `Year 112 of the Second
+  Age` read as the right year.
+- **The timeline** places dates inside their year, ends bars at the end of their last month or day,
+  and names the months once it is zoomed in far enough (it can now zoom much further).
+- The demo world has **Calendar of the Coast**, and the siege and the flood have dates.
+- A guide topic, **Calendars**, with its picture; the other pictures are made again.
+
+### Changed
+
+- A date counts for its whole year when moving through the years.
+- The timeline keeps room for page names when dates are long; the whole date shows on pointing.
+
 ## 0.29.0 — 2026-10-25
 
 ### Added

@@ -8,13 +8,16 @@
  *   year: 430                           (an event on one year)
  *   years: 429-430                      (an event over several years)
  *
- * Only whole years are understood ("412", "412 AE", "-50"); anything else is ignored. A page
- * with a start but no end still exists (it is ongoing); a page without years always exists.
+ * A value is a year ("412", "412 AE", "-50") or a date of the world's calendar ("3 Frostmonth 412",
+ * "412-01-03", "412 AR"; see `calendar.ts`). Inside the app a date is a number of years, so day 1
+ * of 412 is 412 and later days are 412 and a part. A page with a start but no end still exists (it is
+ * ongoing); a page without years always exists.
  */
 import type { Page } from './types';
 import { editFrontmatter } from './parse';
 import { compareText } from './names';
 import { mapOf } from './maps';
+import { activeCalendar, endOf, formatWhen, formatYear, parseSpan, parseWhen, type When } from './calendar';
 
 const START_KEYS = ['from', 'born', 'founded', 'built', 'established', 'formed', 'began', 'start', 'родился', 'родилась', 'основан', 'основана', 'основано', 'построен', 'построена'];
 const END_KEYS = ['to', 'died', 'dissolved', 'destroyed', 'fell', 'abandoned', 'ended', 'end', 'умер', 'умерла', 'погиб', 'погибла', 'распущен', 'распущена', 'разрушен', 'разрушена'];
@@ -28,29 +31,21 @@ export interface PageYears {
   toKey?: string;
   /** The years came from `year:`/`years:`, one field for both ends. */
   pointKey?: string;
+  /** The dates as written (with how precise they are), for showing them. */
+  fromWhen?: When;
+  toWhen?: When;
 }
 
-/** A whole year from a header value, or undefined. */
+/** A date from a header value as a number of years, or undefined. */
 export function parseYear(value: unknown): number | undefined {
-  if (typeof value === 'number') return Number.isFinite(value) ? Math.trunc(value) : undefined;
-  if (typeof value !== 'string') return undefined;
-  const m = /^\s*([-−]?\d{1,7})(?![\d.,])/.exec(value);
-  return m ? Number(m[1]!.replace('−', '-')) : undefined;
+  return parseWhen(value)?.value;
 }
 
-/** "429-430", "429 – 430", "429..430": both ends of a span written in one field. */
-function parseRange(value: unknown): [number, number] | undefined {
-  if (typeof value !== 'string') return undefined;
-  const m = /^\s*([-−]?\d{1,7})\s*(?:-|–|—|\.\.)\s*([-−]?\d{1,7})\b/.exec(value);
-  if (!m) return undefined;
-  return [Number(m[1]!.replace('−', '-')), Number(m[2]!.replace('−', '-'))];
-}
-
-function findKey(fm: Record<string, unknown>, names: readonly string[]): string | undefined {
+function findKey(fm: Record<string, unknown>, names: readonly string[], spans = false): string | undefined {
   const keys = Object.keys(fm);
   for (const name of names) {
     const k = keys.find((key) => key.trim().toLocaleLowerCase() === name);
-    if (k !== undefined && (parseYear(fm[k]) !== undefined || parseRange(fm[k]))) return k;
+    if (k !== undefined && (parseWhen(fm[k]) !== undefined || (spans && parseSpan(fm[k])))) return k;
   }
   return undefined;
 }
@@ -65,38 +60,49 @@ function yearsOf(fm: Record<string, unknown>): PageYears | undefined {
   const fromKey = findKey(fm, START_KEYS);
   const toKey = findKey(fm, END_KEYS);
   if (fromKey !== undefined) {
-    out.from = parseYear(fm[fromKey]);
+    out.fromWhen = parseWhen(fm[fromKey]);
     out.fromKey = fromKey;
   }
   if (toKey !== undefined) {
-    out.to = parseYear(fm[toKey]);
+    out.toWhen = parseWhen(fm[toKey]);
     out.toKey = toKey;
   }
-  if (out.from === undefined && out.to === undefined) {
-    const pointKey = findKey(fm, POINT_KEYS);
+  if (out.fromWhen === undefined && out.toWhen === undefined) {
+    const pointKey = findKey(fm, POINT_KEYS, true);
     if (pointKey === undefined) return undefined;
-    const range = parseRange(fm[pointKey]);
-    const single = parseYear(fm[pointKey]);
-    out.from = range ? range[0] : single;
-    out.to = range ? range[1] : single;
+    const span = parseSpan(fm[pointKey]);
+    const single = span ? undefined : parseWhen(fm[pointKey]);
+    out.fromWhen = span ? span[0] : single;
+    out.toWhen = span ? span[1] : single;
     out.pointKey = pointKey;
   }
-  if (out.from !== undefined && out.to !== undefined && out.from > out.to) [out.from, out.to] = [out.to, out.from];
+  if (out.fromWhen && out.toWhen && out.fromWhen.value > out.toWhen.value) [out.fromWhen, out.toWhen] = [out.toWhen, out.fromWhen];
+  if (out.fromWhen) out.from = out.fromWhen.value;
+  else delete out.fromWhen;
+  if (out.toWhen) out.to = out.toWhen.value;
+  else delete out.toWhen;
   return out;
 }
 
-/** Whether something with these years exists in year `y` (no years: always). */
+/** Whether something with these years exists in year `y` (no years: always). A date counts for its whole year. */
 export function existsIn(span: { from?: number; to?: number } | undefined, y: number): boolean {
   if (!span) return true;
-  return (span.from === undefined || y >= span.from) && (span.to === undefined || y <= span.to);
+  return (span.from === undefined || y >= Math.floor(span.from + 1e-9)) && (span.to === undefined || y <= Math.floor(span.to + 1e-9));
 }
 
-/** "371 – 430", "412 –", "– 405", "430". */
-export function formatYears(span: { from?: number; to?: number }): string {
-  const { from, to } = span;
-  if (from !== undefined && to !== undefined) return from === to ? String(from) : `${from} – ${to}`;
-  if (from !== undefined) return `${from} –`;
-  if (to !== undefined) return `– ${to}`;
+/** "371 – 430", "412 –", "– 405", "430", "3 Frostmonth 412 – 430 AR", in the world's calendar. */
+export function formatYears(span: { from?: number; to?: number; fromWhen?: When; toWhen?: When }): string {
+  const show = (w: When | undefined, v: number | undefined) => (w ? formatWhen(w) : v === undefined ? '' : formatYear(v));
+  let from = show(span.fromWhen, span.from);
+  const to = show(span.toWhen, span.to);
+  if (from && to && from !== to) {
+    // Both ends in the same era: its name once, at the end ("318 – 381 AR").
+    const era = activeCalendar().eras.map((e) => ` ${e.short ?? e.name}`).find((s) => from.endsWith(s) && to.endsWith(s));
+    if (era) from = from.slice(0, -era.length);
+  }
+  if (from && to) return from === to ? from : `${from} – ${to}`;
+  if (from) return `${from} –`;
+  if (to) return `– ${to}`;
   return '';
 }
 
@@ -105,13 +111,15 @@ export function formatYears(span: { from?: number; to?: number }): string {
  * keeps `born:`/`died:`); new years go into `from:`/`to:`, or `year:` for a single year. An
  * undefined end removes that field.
  */
-export function setYearsInText(text: string, span: { from?: number; to?: number }): string {
+export function setYearsInText(text: string, span: { from?: number | string; to?: number | string }): string {
   return editFrontmatter(text, (doc) => {
     const fm = (doc.toJS() ?? {}) as Record<string, unknown>;
     const now = yearsOf(fm);
     let { from, to } = span;
-    if (from !== undefined && to !== undefined && from > to) [from, to] = [to, from];
-    const single = from !== undefined && from === to;
+    // Dates written as words keep their words; years stay numbers.
+    const valueOf = (v: number | string) => (typeof v === 'number' ? v : (parseWhen(v)?.value ?? 0));
+    if (from !== undefined && to !== undefined && valueOf(from) > valueOf(to)) [from, to] = [to, from];
+    const single = from !== undefined && String(from) === String(to);
 
     if (now?.pointKey !== undefined) doc.delete(now.pointKey);
     if (single && (now === undefined || now.pointKey !== undefined)) {
@@ -150,7 +158,7 @@ export function worldYearSpan(pages: readonly Page[]): { min: number; max: numbe
       add(thing.to);
     }
   }
-  return min <= max ? { min, max } : undefined;
+  return min <= max ? { min: Math.floor(min + 1e-9), max: Math.floor(max + 1e-9) } : undefined;
 }
 
 export interface TimelineItem {
@@ -160,8 +168,12 @@ export interface TimelineItem {
   group: string;
   from?: number;
   to?: number;
-  /** One year only (an event). */
+  /** One year (or one month, one day) only: an event. */
   point: boolean;
+  /** Where the bar ends: the first moment after `to` (the next year, month or day). */
+  end?: number;
+  fromWhen?: When;
+  toWhen?: When;
 }
 
 export interface TimelineGroup {
@@ -197,9 +209,15 @@ export function timelineModel(pages: readonly Page[]): TimelineModel {
       undated++;
       continue;
     }
-    const item: TimelineItem = { path: page.path, title: page.title, group: topFolder(page.path), point: y.from !== undefined && y.from === y.to };
+    const point = !!y.fromWhen && !!y.toWhen && y.fromWhen.value === y.toWhen.value && y.fromWhen.precision === y.toWhen.precision;
+    const item: TimelineItem = { path: page.path, title: page.title, group: topFolder(page.path), point };
     if (y.from !== undefined) item.from = y.from;
     if (y.to !== undefined) item.to = y.to;
+    if (y.fromWhen) item.fromWhen = y.fromWhen;
+    if (y.toWhen) {
+      item.toWhen = y.toWhen;
+      item.end = endOf(y.toWhen);
+    }
     for (const v of [y.from, y.to]) {
       if (v === undefined) continue;
       min = Math.min(min, v);

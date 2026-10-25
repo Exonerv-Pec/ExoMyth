@@ -79,7 +79,8 @@ The secret: ||Eva Crow is her half-sister||.
 | `aliases:` | Other names that links can use |
 | `image:` | Picture of the page (portrait, emblem, map), shown in its infobox and on its card |
 | `map:`, `pins:` | Turns the page into an interactive map with pins (see Maps below) |
-| `from:`/`to:`, `born:`/`died:`, `founded:`, `year:` | Years of the page, for the timeline and "Show by year" (see Timeline below) |
+| `from:`/`to:`, `born:`/`died:`, `founded:`, `year:` | Years or dates of the page, for the timeline and "Show by year" (see Timeline below) |
+| `calendar: true`, `months:`, `week:`, `eras:` | Makes the page the world's calendar (see Timeline below) |
 | `tags:` and `#tag` | Tags (header or inline) |
 | `pinned:` | Links shown first in their group in the relations panel |
 | `\|\|secret\|\|` | Spoiler, hidden in reading view until clicked |
@@ -193,8 +194,34 @@ year: 430          # an event on one year
 years: 429-430     # an event over several years
 ```
 
-Only whole years count (`412`, `412 AE`, `-50`). Click a row to select the page, double-click to open it;
-`Ctrl` + wheel zooms.
+A value is a year (`412`, `412 AE`, `-50`) or a date with a month and a day: `3 March 412`,
+`March 412`, `412-03-03`, or a span in one field, `28 Leaffall 429 – Thaw 430`. Click a row to select
+the page, double-click to open it; `Ctrl` + wheel zooms, and far enough in the scale names the months.
+
+**Calendars of your own.** A page with `calendar: true` in its header (the **Calendar** template makes
+one) gives the world its own months, week and eras; the world uses its first such page, and the page
+shows the calendar as months of days in weeks:
+
+```yaml
+calendar: true
+months:
+  - Frostmonth: 30        # a month and how many days it has
+  - name: Thaw
+    days: 28
+  - The Long Night: 5
+week: [Moonday, Tideday, Stoneday, Fireday, Marketday, Restday]
+eras:
+  - name: Age of the River
+    short: AR
+    start: 1              # the year, counted from the start of time, that is year 1 of the era
+```
+
+Dates are then written with these names (`born: 3 Frostmonth 412`), years show with their era
+(`412 AR`, and `318 – 381 AR` when both ends share it), and `112 SA` or `Year 112 of the Second Age`
+read as the right year. A plain number is always counted from the start of time. Inside the app a date
+is a number of years (day 1 of 412 is 412, later days a part more), so everything that works with
+years works with dates, and a date counts for its whole year when you move through the years. The
+demo world has one: **Calendar of the Coast**.
 
 **Moving through the years.** Press on the years scale and drag, or switch on **Show by year** and use
 the slider. The chosen year is shared by the whole world: the timeline draws a line at it, the graph
@@ -316,9 +343,9 @@ Both parts can be switched off in Settings: **Editing: comments and notes** and 
 
 ## Page templates
 
-**+ New page** lets you start from a template: Character, Place, Organization, Event, Scene, Playlist or Mood board. Each
+**+ New page** lets you start from a template: Character, Place, Organization, Event, Scene, Playlist, Mood board or Calendar. Each
 fills in the usual header fields (years, relations to fill) and section headings, and suggests the
-folder the page goes to. (Playlist and Mood board are left out while playlists or mood boards are switched off in Settings.)
+folder the page goes to. (Playlist, Mood board and Calendar are left out while playlists, mood boards or years are switched off in Settings.)
 
 Templates are ordinary pages in the world's `Templates/` folder, so you can change them or write your
 own. Until a world has its own, the built-in set is offered; "Add them to the world" in the dialog

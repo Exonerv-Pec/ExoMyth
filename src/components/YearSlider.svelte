@@ -1,5 +1,6 @@
 <script lang="ts">
   import { app } from '../app.svelte';
+  import { formatYear } from '../core/calendar';
 
   let {
     id,
@@ -37,7 +38,7 @@
         oninput={(e) => app.setYear(Number(e.currentTarget.value))}
       />
       <button class="icon-btn" aria-label={t('year.next')} title={t('year.next')} onclick={() => step(1)}>›</button>
-      <output class="year-value" for="year-{id}">{app.year}</output>
+      <output class="year-value" for="year-{id}">{(app.version, formatYear(app.year))}</output>
       {#if hidden > 0}<span class="year-hidden">{t('map.hidden', hidden)}</span>{/if}
     {/if}
   </div>

@@ -11,6 +11,7 @@ import { hasFamily, kinship } from './family';
 import { isPlaylist } from './playlist';
 import { isBoard } from './board';
 import { revisionCount } from './critic';
+import { isCalendar } from './calendar';
 
 /** Parts of the app whose use shows in pages. */
 export type UsedFeature = 'timeline' | 'years' | 'family' | 'maps' | 'playlists' | 'moodBoards' | 'revision';
@@ -34,7 +35,8 @@ export function featureUsage(index: VaultIndex): Record<UsedFeature, Page[]> {
     if (open.comments + open.changes + open.notes > 0) revision.push(page);
   }
   // "Years" also covers maps whose pins or areas have years of their own.
-  const withYears = [...dated];
+  // A calendar page is how the world's dates are read.
+  const withYears = [...dated, ...index.worldPages.filter((p) => isCalendar(p) && !dated.includes(p))];
   for (const page of maps) {
     const map = mapOf(page)!;
     if (!dated.includes(page) && [...map.pins, ...map.regions].some((x) => x.from !== undefined || x.to !== undefined)) withYears.push(page);

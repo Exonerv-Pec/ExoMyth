@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 32 releases, latest 0.29.0 (2026-10-25)</summary>
+<summary><b>✅ Done</b> · 33 releases, latest 0.30.0 (2026-10-25)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.30.0** | 2026-10-25 | 📅 Calendars of your own: months, weeks and eras, and dates with months and days |
 | **0.29.0** | 2026-10-25 | 👋 A first-run tour of the screen, shown once and easy to skip |
 | **0.28.0** | 2026-10-25 | 🎵 Music that keeps playing while you browse, with a small player in the corner |
 | **0.27.0** | 2026-10-25 | 📖 A guide with pictures: in the app (F1) with a Try it button for every topic, and on GitHub |
@@ -94,7 +95,7 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
-| ⬜ | Months, days, custom calendars and eras | M–L | Beyond whole years: "3rd of Frostmonth, Year 412 of the Second Age" |
+| ⬜ | Calendar extras | M | Dates on map pins and areas, leap years, moons and holidays shown on the calendar page, more than one calendar in a world (one per culture) |
 | ⬜ | Export a world as a static site | M | To share with players or readers, without the editor |
 | ⬜ | Infinite whiteboard / canvas 💬 | L | Cards, images and notes placed freely, linked to pages |
 

@@ -138,6 +138,11 @@ try {
     await wait(800);
     await shot('timeline');
 
+    await mode('preview');
+    await open('Calendar of the Coast');
+    await wait(500);
+    await shot('calendar');
+
     await mode('book');
     await wait(600);
     await shot('book');

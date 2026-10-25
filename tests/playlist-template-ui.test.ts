@@ -55,7 +55,7 @@ describe('the Playlist template', () => {
     await boot();
     app.askNewPage();
     flushSync();
-    expect(chips()).toEqual(['Blank page', 'Character', 'Place', 'Organization', 'Event', 'Scene', 'Playlist', 'Mood board']);
+    expect(chips()).toEqual(['Blank page', 'Character', 'Place', 'Organization', 'Event', 'Scene', 'Playlist', 'Mood board', 'Calendar']);
     app.dialog = null;
     app.setFeature('playlists', false);
     flushSync();

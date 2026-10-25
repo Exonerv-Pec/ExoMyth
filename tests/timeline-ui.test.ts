@@ -76,9 +76,9 @@ describe('the timeline', () => {
     expect(titles).not.toContain('Welcome');
     const flood = target.querySelector('.tl-row[data-path="Events/The Great Flood.md"]')!;
     expect(flood.querySelector('.tl-point')).toBeTruthy();
-    expect(flood.querySelector('.tl-years')!.textContent).toBe('405');
+    expect(flood.querySelector('.tl-years')!.textContent).toBe('Rainmoon 405 AR');
     const arn = target.querySelector('.tl-row[data-path="Characters/Arn Vale.md"]')!;
-    expect(arn.querySelector('.tl-years')!.textContent).toBe('349 – 430');
+    expect(arn.querySelector('.tl-years')!.textContent).toBe('349 – 430 AR');
     // Kira is alive: her bar runs on to the end.
     expect(target.querySelector('.tl-row[data-path="Characters/Kira Vale.md"] .tl-bar.open-end')).toBeTruthy();
     expect(target.querySelector('.tl-note')!.textContent).toContain('Without years');
@@ -90,8 +90,9 @@ describe('the timeline', () => {
     const left = (path: string) => parseFloat(target.querySelector<HTMLElement>(`.tl-row[data-path="${path}"] .tl-bar`)!.style.left);
     const width = (path: string) => parseFloat(target.querySelector<HTMLElement>(`.tl-row[data-path="${path}"] .tl-bar`)!.style.width);
     expect(left('Characters/Arn Vale.md')).toBeLessThan(left('Characters/Kira Vale.md'));
-    // Arn lived 82 years, the siege lasted two: the bars keep that proportion.
-    expect(width('Characters/Arn Vale.md') / width('Events/Siege of Rivertown.md')).toBeCloseTo(82 / 2, 0);
+    // Arn lived 82 years: the bars keep that scale. The siege began on 28 Leaffall 429 (day 298 of 365).
+    const ppy = width('Characters/Arn Vale.md') / 82;
+    expect((left('Events/Siege of Rivertown.md') - left('Characters/Arn Vale.md')) / ppy).toBeCloseTo(429 + 297 / 365 - 349, 1);
   });
 
   it('selects a page with a click and opens it with a double click', async () => {
@@ -121,7 +122,7 @@ describe('the timeline', () => {
     expect(faded('Characters/Kira Vale.md')).toBe(false);
     expect(faded('Events/Siege of Rivertown.md')).toBe(true);
     expect(target.querySelector('.tl-cursor')).toBeTruthy();
-    expect(target.querySelector('.year-bar .year-value')!.textContent).toBe('420');
+    expect(target.querySelector('.year-bar .year-value')!.textContent).toBe('420 AR');
     // Keyboard on the axis moves a year at a time.
     ticks.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
     flushSync();
@@ -208,7 +209,7 @@ describe('editing years in the panel', () => {
     flushSync();
     const inputs = target.querySelectorAll<HTMLInputElement>('.years-edit input');
     expect([...target.querySelectorAll('.years-field > span')].map((s) => s.textContent)).toEqual(['born', 'to']);
-    expect(inputs[0]!.value).toBe('381');
+    expect(inputs[0]!.value).toBe('381 AR');
     inputs[1]!.focus();
     inputs[1]!.value = '452';
     inputs[1]!.dispatchEvent(new Event('input', { bubbles: true }));

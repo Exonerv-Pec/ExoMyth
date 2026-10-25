@@ -1,6 +1,7 @@
 <script lang="ts">
   import { app } from '../app.svelte';
-  import { pageYears, parseYear } from '../core/years';
+  import { pageYears } from '../core/years';
+  import { activeCalendar, formatWhen, parseWhen, type When } from '../core/calendar';
 
   let { path }: { path: string } = $props();
   const t = app.t;
@@ -20,19 +21,31 @@
   $effect(() => {
     const y = years;
     if (focused || error) return;
-    fFrom = y?.from === undefined ? '' : String(y.from);
-    fTo = y?.to === undefined ? '' : String(y.to);
+    fFrom = y?.fromWhen ? formatWhen(y.fromWhen) : '';
+    fTo = y?.toWhen ? formatWhen(y.toWhen) : '';
   });
 
   /** Field names shown above the inputs: the ones the page already uses ("born", "died"…). */
   const fromName = $derived(years?.pointKey ?? years?.fromKey ?? t('years.from'));
   const toName = $derived(years?.pointKey ? t('years.to') : (years?.toKey ?? t('years.to')));
 
-  function read(s: string): number | undefined | null {
+  /** A field's date: undefined when empty, null when it is not a date of the world's calendar. */
+  function read(s: string): When | undefined | null {
     if (!s.trim()) return undefined;
-    const y = parseYear(s.trim());
-    return y === undefined || !/^\s*[-−]?\d+\s*$/.test(s) ? null : y;
+    const w = parseWhen(s.trim());
+    // A year alone must be just a year here (no words after it), so a typo is not taken for one.
+    if (!w || (w.precision === 'year' && !activeCalendar().eras.length && !/^\s*[-−]?\d+\s*$/.test(s))) return null;
+    return w;
   }
+
+  /** How a date is written into the page: a year typed as a number stays a number, other dates are words. */
+  const written = (w: When, typed: string) => (w.precision === 'year' && /^\s*[-−]?\d+\s*$/.test(typed) ? w.value : formatWhen(w));
+  /** What the header says now for a field, to keep an end that did not change exactly as written. */
+  const asWritten = (key: string | undefined) => {
+    const v = key ? app.vault?.getPage(path)?.frontmatter[key] : undefined;
+    return typeof v === 'number' || typeof v === 'string' ? v : undefined;
+  };
+  const same = (a: When | undefined, b: When | undefined) => (!a && !b) || (!!a && !!b && a.value === b.value && a.precision === b.precision);
 
   async function save() {
     const from = read(fFrom);
@@ -42,10 +55,11 @@
       return;
     }
     error = false;
-    if (from === years?.from && to === years?.to) return;
-    const span: { from?: number; to?: number } = {};
-    if (from !== undefined) span.from = from;
-    if (to !== undefined) span.to = to;
+    if (same(from, years?.fromWhen) && same(to, years?.toWhen)) return;
+    const span: { from?: number | string; to?: number | string } = {};
+    const keep = !years?.pointKey;
+    if (from) span.from = (keep && same(from, years?.fromWhen) ? asWritten(years?.fromKey) : undefined) ?? written(from, fFrom);
+    if (to) span.to = (keep && same(to, years?.toWhen) ? asWritten(years?.toKey) : undefined) ?? written(to, fTo);
     await app.setPageYears(path, span);
   }
 
@@ -62,12 +76,12 @@
   <span class="years-title">{t('years.title')}</span>
   <label class="years-field">
     <span>{fromName}</span>
-    <input type="text" inputmode="numeric" bind:value={fFrom} onfocus={() => (focused = true)} onblur={blur} aria-invalid={error} placeholder="—" />
+    <input type="text" size={Math.max(6, fFrom.length + 1)} bind:value={fFrom} onfocus={() => (focused = true)} onblur={blur} aria-invalid={error} placeholder="—" />
   </label>
   <span class="years-dash" aria-hidden="true">–</span>
   <label class="years-field">
     <span>{toName}</span>
-    <input type="text" inputmode="numeric" bind:value={fTo} onfocus={() => (focused = true)} onblur={blur} aria-invalid={error} placeholder="—" />
+    <input type="text" size={Math.max(6, fTo.length + 1)} bind:value={fTo} onfocus={() => (focused = true)} onblur={blur} aria-invalid={error} placeholder="—" />
   </label>
   {#if years && app.on('timeline')}
     <button type="button" class="btn ghost years-go" onclick={() => app.showOnTimeline(path)}>{t('years.onTimeline')}</button>

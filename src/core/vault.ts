@@ -14,6 +14,7 @@ import { baseName, dirName, joinPath, normalizeName, sanitizePageName, stripMd }
 import { emptyLayout, parseLayout, serializeLayout, type StoredLayout } from './layout';
 import { ATTACHMENTS_DIR, extensionOf } from './media';
 import { emptyStats, parseStats, serializeStats, type WritingStats } from './stats';
+import { useCalendar, worldCalendar } from './calendar';
 import { cleanVersionName, movedVersionPath, pageVersions, versionFile, versionFolder, versionsToThin, AUTO_LIMIT, type PageVersion } from './versions';
 
 export const META_DIR = '.exomyth';
@@ -85,6 +86,8 @@ export class Vault {
 
   private rebuild(): void {
     this._index = new VaultIndex(this.pageMap.values(), this._settings);
+    // Dates are read with the world's calendar (a page with `calendar: true`, never a template).
+    useCalendar(worldCalendar(this._index.worldPages));
   }
 
   /** Runs `fn` after every earlier operation has finished. Public methods use it; private `_` methods do not. */

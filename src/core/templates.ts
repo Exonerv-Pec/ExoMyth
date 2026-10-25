@@ -291,6 +291,40 @@ tags: [moodboard]
 What this board is for: a character, a place, a scene, a whole story. Open this page in Reading mode (or Side by side) and choose **Edit board** to pin pictures, colours, quotes and pages. Words written here appear under the board.
 `,
   },
+  {
+    file: 'Calendar',
+    feature: 'years',
+    text: `---
+template:
+  folder: Calendars
+calendar: true
+months:
+  - First month: 30
+  - Second month: 30
+  - Third month: 30
+  - Fourth month: 30
+  - Fifth month: 30
+  - Sixth month: 30
+  - Seventh month: 30
+  - Eighth month: 30
+  - Ninth month: 30
+  - Tenth month: 30
+  - Eleventh month: 30
+  - Twelfth month: 35
+week: [First day, Second day, Third day, Fourth day, Fifth day, Sixth day, Rest day]
+eras:
+  - name: First Age
+    short: FA
+    start: 1
+tags: [calendar]
+---
+# {{title}}
+
+How the world counts time. Rename the months and days, change how long they are, and add eras: each \`start\` is the year (counted from the start of time) that is year 1 of the era. The world uses the first page with \`calendar: true\`.
+
+Pages can then be dated with these names: \`born: 3 First month 412\`, \`year: Second month 430 FA\` or \`founded: 412-01-03\`.
+`,
+  },
 ];
 
 const RU: BuiltIn[] = [
@@ -445,6 +479,40 @@ tags: [мудборд]
 # {{title}}
 
 Для чего эта доска: персонаж, место, сцена или вся история. Откройте страницу в режиме чтения (или «Рядом») и нажмите **«Править доску»**, чтобы прикрепить картинки, цвета, цитаты и страницы. Слова, написанные здесь, появятся под доской.
+`,
+  },
+  {
+    file: 'Календарь',
+    feature: 'years',
+    text: `---
+template:
+  folder: Календари
+calendar: true
+months:
+  - Первый месяц: 30
+  - Второй месяц: 30
+  - Третий месяц: 30
+  - Четвёртый месяц: 30
+  - Пятый месяц: 30
+  - Шестой месяц: 30
+  - Седьмой месяц: 30
+  - Восьмой месяц: 30
+  - Девятый месяц: 30
+  - Десятый месяц: 30
+  - Одиннадцатый месяц: 30
+  - Двенадцатый месяц: 35
+week: [Первый день, Второй день, Третий день, Четвёртый день, Пятый день, Шестой день, День отдыха]
+eras:
+  - name: Первая эпоха
+    short: ПЭ
+    start: 1
+tags: [календарь]
+---
+# {{title}}
+
+Как в мире считают время. Переименуйте месяцы и дни, измените их длину, добавьте эпохи: \`start\` — год (от начала времён), который считается первым годом эпохи. Мир берёт первую страницу с \`calendar: true\`.
+
+После этого страницам можно ставить даты этими словами: \`born: 3 Первый месяц 412\`, \`year: Второй месяц 430 ПЭ\` или \`founded: 412-01-03\`.
 `,
   },
 ];

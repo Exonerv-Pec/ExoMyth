@@ -32,6 +32,7 @@ import {
 import { dueForVersion, type PageVersion } from './core/versions';
 import type { GuideTry } from './core/guide';
 import { TOUR_KEY } from './core/tour';
+import { useCalendar, useCalendarLanguage } from './core/calendar';
 import { music } from './music.svelte';
 import {
   addChapterToText,
@@ -321,6 +322,7 @@ class App {
 
   setLang(lang: Lang): void {
     this.lang = lang;
+    useCalendarLanguage(lang);
     save('exomyth:lang', lang);
   }
   toggleLang(): void {
@@ -537,6 +539,7 @@ class App {
   }
 
   closeVault(): void {
+    useCalendar(undefined);
     this.profilePicker = null;
     this.features = loadFeatures();
     this.profile = null;
@@ -800,7 +803,7 @@ class App {
   }
 
   /** Writes the years of a page into its header (undefined ends are removed). */
-  async setPageYears(path: string, span: { from?: number; to?: number }): Promise<boolean> {
+  async setPageYears(path: string, span: { from?: number | string; to?: number | string }): Promise<boolean> {
     const vault = this.vault;
     if (!vault) return false;
     try {
@@ -1880,3 +1883,5 @@ class App {
 }
 
 export const app = new App();
+// Month names of the common calendar follow the interface language.
+useCalendarLanguage(app.lang);

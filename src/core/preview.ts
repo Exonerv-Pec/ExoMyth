@@ -4,7 +4,7 @@ import { headingSlug } from './slug';
 import { cleanText } from './critic';
 
 /** Frontmatter keys that describe the page's structure rather than its subject. */
-export const STRUCTURAL_KEYS = new Set(['title', 'aliases', 'tags', 'relations', 'pinned', 'image', 'map', 'pins', 'playlist', 'moodboard', 'board', 'revision']);
+export const STRUCTURAL_KEYS = new Set(['title', 'aliases', 'tags', 'relations', 'pinned', 'image', 'map', 'pins', 'playlist', 'moodboard', 'board', 'revision', 'calendar', 'months', 'week', 'eras']);
 
 export interface Fact {
   key: string;

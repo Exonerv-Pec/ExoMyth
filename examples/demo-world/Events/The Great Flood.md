@@ -1,6 +1,6 @@
 ---
 tags: [event]
-year: 405
+year: Rainmoon 405
 relations:
   place: "[[Silver Coast]]"
 ---

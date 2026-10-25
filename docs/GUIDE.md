@@ -116,6 +116,20 @@ draw areas, and keep separate layers. Each pin can link to a page. Pins and area
 Press on the years scale and drag to choose a year: the graph, cards and maps then show the world as
 it was in that year.
 
+## Calendars
+<!-- guide: calendar | feature: years | try: open:World/Calendar of the Coast.md -->
+
+![The calendar of the demo world](../public/guide/en/calendar.webp)
+
+A world can count time its own way. Make a page with the **Calendar** template (or write
+`calendar: true` in a page header) and list the months with their days, the days of the week and the
+eras. The world uses its first calendar page.
+
+Dates can then have months and days: `born: 3 Frostmonth 412`, `years: 28 Leaffall 429 – Thaw 430`,
+`founded: 412-01-03`. With eras, years show as `412 AR`, and `112 SA` or `Year 112 of the Second
+Age` can be written too. The timeline places such dates inside their year and names the months when
+you zoom in far enough. Without a calendar page, the common twelve months work the same way.
+
 ## Writing a book
 <!-- guide: book | feature: manuscript | try: mode:book -->
 
@@ -130,7 +144,7 @@ book straight through. **Download** makes one Markdown file of the book.
 
 ![The new page window with templates](../public/guide/en/projects.webp)
 
-**+ New page** offers templates: Character, Place, Organization, Event, Scene, Playlist, Mood board,
+**+ New page** offers templates: Character, Place, Organization, Event, Scene, Playlist, Mood board, Calendar,
 and **story structures** (three acts, five acts, the hero's journey, seven points, kishōtenketsu).
 A world can have its own templates too: **Add them to the world** copies them into a folder where you
 change them and make new ones.
