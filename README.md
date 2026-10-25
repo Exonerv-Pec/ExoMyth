@@ -403,19 +403,28 @@ side** they are shown in the reading pane.
 
 ## Mood boards
 
-A free board for a character, a place, a scene or a whole story: pictures, colours, quotes and cards
-of other pages, placed where you like. A page with `moodboard: true` in its header shows its board
+A free board for a character, a place, a scene or a whole story: pictures, colours, quotes, notes and
+cards of other pages, placed where you like. A page with `moodboard: true` in its header shows its board
 above its text. Make one with the **Mood board** template (**+ New page**), open it in **Reading** or
 **Side by side**, and choose **Edit board**:
 
 - **+ Picture** saves pictures from your device into the world and pins them; **+ From the world**
   pins a picture the world already has.
 - **+ Colour** pins a swatch (change it with the round button on it); **+ Quote** pins words, with the
-  source on a last line that starts with a dash; **+ Page** pins a card of another page, which opens
-  that page when you click it outside editing.
+  source on a last line that starts with a dash; **+ Note** pins free text on coloured paper (change
+  the colour with the round button on it); **+ Page** pins a card of another page, which opens that
+  page when you click it outside editing.
 - Drag an item to move it and its corner to resize it. Moving an item puts it on top. With the keyboard,
   tab to an item's move button: arrow keys move it (Shift for bigger steps), **+** and **−** resize it,
-  **Delete** removes it. The pencil changes a quote or a caption.
+  **Delete** removes it. The pencil changes a quote, a note or a caption.
+- While you drag, edges and middles line up with the other items and the board (a thin line shows
+  which); hold **Alt** to place an item freely.
+- **Shift** on a picture's corner crops it to a height; after that the picture keeps its shape when
+  resized, and **↺** shows it whole again.
+
+**−** and **+** zoom the board (also **Ctrl + wheel**; click the percentage for 100%), which helps with
+big boards; each board remembers its zoom in this browser. **Save as picture** draws the whole board
+into one PNG file on your device, ready to share.
 
 Everything is kept in the page's header, as a plain list, so the board is an ordinary file that you can
 read, edit and keep. Positions and sizes are fractions of the board's width:
@@ -428,11 +437,12 @@ board:
     x: 0.05          # from the left edge
     y: 0.04          # from the top, in board widths
     w: 0.4           # width; the height follows the picture
+    h: 0.3           # optional: crop the picture to this height
   - color: "#a86214"
     x: 0.5
     y: 0.04
     w: 0.12
-    h: 0.12          # only colours have a height
+    h: 0.12          # colours always have a height
   - quote: The sea keeps what it is given.
     source: Old saying
     x: 0.5
@@ -440,6 +450,11 @@ board:
     w: 0.3
   - page: "[[Kira Vale]]"
     x: 0.1
+    y: 0.5
+    w: 0.2
+  - note: Storms come from the west.
+    tint: "#f3e3a1" # the paper colour
+    x: 0.4
     y: 0.5
     w: 0.2
 ```

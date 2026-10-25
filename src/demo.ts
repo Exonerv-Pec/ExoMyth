@@ -51,6 +51,7 @@ export const DEMO_FILES: Record<string, string> = Object.fromEntries(
  */
 const DEMO_HISTORY: Record<string, string[]> = {
   '.exomyth/settings.json': ['g6-f2c86461', 'hz-23f968d2'],
+  'Boards/The Look of Rivertown.md': ['12w-fa6c7d4b'],
   'Characters/Arn Vale.md': ['6a-cebe2b76', '8g-de0a8f9a'],
   'Characters/Bo Tarn.md': ['41-eb3e58b6'],
   'Characters/Brother Tomas.md': ['6t-8fec7ebc'],

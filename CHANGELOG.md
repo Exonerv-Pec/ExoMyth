@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.25.0 — 2026-10-25
+
+### Added
+
+- **Notes on mood boards.** **+ Note** pins free text on coloured paper (`note:` with a `tint:`);
+  the paper takes pale colours in turn and can be changed with the round button on it, and the text
+  turns light on dark paper.
+- **Lining up.** While an item is dragged or resized, its edges and middle line up with the other
+  items and with the board's edges and middle, and a thin line shows which. Hold **Alt** to place
+  freely.
+- **Cropping pictures.** **Shift** on a picture's corner crops it to a height (`h:` on a picture); a
+  cropped picture keeps its shape when resized, and **↺** shows it whole again.
+- **Zoom.** **−**, **+** and **Ctrl + wheel** zoom a board from 50% to 300%; each board remembers its
+  zoom in this browser.
+- **Save as picture.** Draws the whole board into one PNG on your device (pictures, colours, quotes,
+  notes and page cards, in the board's own colours).
+
+### Changed
+
+- The demo board **The Look of Rivertown** has two notes and a cropped map.
+
 ## 0.24.0 — 2026-10-24
 
 ### Added

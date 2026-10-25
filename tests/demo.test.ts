@@ -43,7 +43,7 @@ describe('demo world', () => {
   it('has a mood board whose pictures and pages all exist', async () => {
     const vault = await Vault.open(new MemoryStorage('demo-board', DEMO_FILES));
     const board = boardOf(vault.getPage('Boards/The Look of Rivertown.md')!)!;
-    expect(board.items.map((i) => i.kind).sort()).toEqual(['color', 'color', 'color', 'color', 'image', 'image', 'image', 'page', 'page', 'page', 'quote']);
+    expect(board.items.map((i) => i.kind).sort()).toEqual(['color', 'color', 'color', 'color', 'image', 'image', 'image', 'note', 'note', 'page', 'page', 'page', 'quote']);
     for (const i of board.items) {
       if (i.image) expect(vault.resolveFile(i.image), i.image).toBeTruthy();
       if (i.page) expect(vault.index.resolve(i.page), i.page).toBeTruthy();

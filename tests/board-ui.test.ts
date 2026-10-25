@@ -123,7 +123,7 @@ describe('mood boards in the app', () => {
     await boot();
     click([...document.querySelectorAll<HTMLButtonElement>('.board-bar button')].find((b) => b.textContent!.includes('Edit board')));
     const bar = [...document.querySelectorAll('.board-bar button')].map((b) => b.textContent);
-    expect(bar).toEqual(['Done', '+ Picture', '+ From the world', '+ Colour', '+ Quote', '+ Page']);
+    expect(bar).toEqual(['Done', '+ Picture', '+ From the world', '+ Colour', '+ Quote', '+ Note', '+ Page', '−', '100%', '+', 'Save as picture']);
     expect(document.querySelectorAll('.b-tools')).toHaveLength(4);
     expect(document.querySelector('.board-hint')).not.toBeNull();
     click(document.querySelector('.board-bar button'));
@@ -177,7 +177,8 @@ describe('mood boards in the app', () => {
     click([...document.querySelectorAll<HTMLButtonElement>('.board-bar button')].find((b) => b.textContent!.includes('Edit board')));
     const swatch = items()[1]!;
     const down = (el: Element, x: number, y: number) => el.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: x, clientY: y, button: 0 }));
-    const move = (x: number, y: number) => window.dispatchEvent(new MouseEvent('pointermove', { clientX: x, clientY: y }));
+    // Alt: placed exactly where it is dropped, without lining up with the others.
+    const move = (x: number, y: number) => window.dispatchEvent(new MouseEvent('pointermove', { clientX: x, clientY: y, altKey: true }));
     down(swatch, 600, 200);
     move(700, 260); // 100 px right, 60 down: a tenth and 6 hundredths of the 1000 px board
     flushSync();
@@ -288,6 +289,98 @@ describe('mood boards in the app', () => {
     app.askNewPage();
     flushSync();
     expect([...document.querySelectorAll('.template-chips button')].map((b) => b.textContent)).not.toContain('Mood board');
+  });
+
+  it('pins a note, edits its words and changes its colour', async () => {
+    const { storage } = await boot();
+    click([...document.querySelectorAll<HTMLButtonElement>('.board-bar button')].find((b) => b.textContent!.includes('Edit board')));
+    click([...document.querySelectorAll<HTMLButtonElement>('.board-bar button')].find((b) => b.textContent === '+ Note'));
+    expect(app.dialog?.kind).toBe('prompt');
+    if (app.dialog?.kind === 'prompt') await app.dialog.onSubmit('Storms come\nfrom the west');
+    await wait();
+    flushSync();
+    let note = (await saved(storage)).at(-1)!;
+    expect(note).toMatchObject({ kind: 'note', note: 'Storms come\nfrom the west', tint: '#f3e3a1', w: 0.22 });
+    const el = items().at(-1)!;
+    expect(el.querySelector('.b-notecard p')!.textContent).toBe('Storms come\nfrom the west');
+    click(el.querySelector('button[aria-label="Edit text"]'));
+    if (app.dialog?.kind === 'prompt') {
+      expect(app.dialog.value).toBe('Storms come\nfrom the west');
+      await app.dialog.onSubmit('Calm sea');
+    }
+    await wait();
+    flushSync();
+    const picker = items().at(-1)!.querySelector<HTMLInputElement>('input[aria-label="Note colour"]')!;
+    picker.value = '#2d3b45';
+    picker.dispatchEvent(new Event('change', { bubbles: true }));
+    await wait();
+    flushSync();
+    note = (await saved(storage)).at(-1)!;
+    expect(note).toMatchObject({ note: 'Calm sea', tint: '#2d3b45' });
+    // Light text on a dark note.
+    expect((items().at(-1)!.querySelector('.b-notecard') as HTMLElement).style.color).toBe('rgb(255, 255, 255)');
+  });
+
+  it('lines a dragged item up with its neighbours and shows the line while it moves', async () => {
+    const { storage } = await boot();
+    click([...document.querySelectorAll<HTMLButtonElement>('.board-bar button')].find((b) => b.textContent!.includes('Edit board')));
+    const swatch = items()[1]!; // the colour at x 0.5
+    swatch.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 500, clientY: 100, button: 0 }));
+    // 95 px left: its left edge comes to 0.405, near the quote's right edge (0.4).
+    window.dispatchEvent(new MouseEvent('pointermove', { clientX: 405, clientY: 100 }));
+    flushSync();
+    expect(swatch.style.left).toBe('calc(40cqw)');
+    expect((document.querySelector('.b-guide-x') as HTMLElement).style.left).toBe('calc(40cqw)');
+    window.dispatchEvent(new MouseEvent('pointerup'));
+    await wait();
+    flushSync();
+    expect(document.querySelector('.b-guide-x')).toBeNull();
+    expect((await saved(storage)).at(-1)).toMatchObject({ kind: 'color', x: 0.4 });
+  });
+
+  it('crops a picture with Shift on its corner, and shows it whole again', async () => {
+    const { storage } = await boot({ 'Boards/Coast.md': '---\nmoodboard: true\nboard:\n  - image: sea.png\n    x: 0.1\n    y: 0.1\n    w: 0.4\n---\n', 'sea.png': 'png' });
+    click([...document.querySelectorAll<HTMLButtonElement>('.board-bar button')].find((b) => b.textContent!.includes('Edit board')));
+    const handle = items()[0]!.querySelector('.b-handle')!;
+    handle.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 0, clientY: 0, button: 0 }));
+    // Shift, 100 px up: the picture (0.3 tall until measured) becomes 0.2 tall.
+    window.dispatchEvent(new MouseEvent('pointermove', { clientX: 0, clientY: -100, shiftKey: true, altKey: true }));
+    window.dispatchEvent(new MouseEvent('pointerup'));
+    await wait();
+    flushSync();
+    let pic = (await saved(storage))[0]!;
+    expect(pic).toMatchObject({ kind: 'image', w: 0.4, h: 0.2 });
+    expect((items()[0]!.querySelector('.b-crop') as HTMLElement).style.height).toBe('calc(20cqw)');
+    // Without Shift a cropped picture keeps its shape.
+    items()[0]!.querySelector('.b-handle')!.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, clientX: 0, clientY: 0, button: 0 }));
+    window.dispatchEvent(new MouseEvent('pointermove', { clientX: 200, clientY: 0, altKey: true }));
+    window.dispatchEvent(new MouseEvent('pointerup'));
+    await wait();
+    flushSync();
+    pic = (await saved(storage))[0]!;
+    expect(pic).toMatchObject({ w: 0.6, h: 0.3 });
+    click(items()[0]!.querySelector('button[aria-label="Show the whole picture"]'));
+    await wait();
+    flushSync();
+    expect((await saved(storage))[0]!.h).toBeUndefined();
+    expect(items()[0]!.querySelector('.b-crop')).toBeNull();
+  });
+
+  it('zooms the board in steps and remembers it for the page', async () => {
+    await boot();
+    const frame = () => document.querySelector<HTMLElement>('.board-frame')!;
+    expect(frame().style.width).toBe('calc(100%)');
+    click(document.querySelector('.board-zoom button[aria-label^="Zoom in"]'));
+    click(document.querySelector('.board-zoom button[aria-label^="Zoom in"]'));
+    expect(frame().style.width).toBe('calc(150%)');
+    expect(document.querySelector('.board-zoom-value')!.textContent).toBe('150%');
+    expect(app.worldPref('boardZoom:Boards/Coast.md')).toBe('1.5');
+    // Ctrl + wheel zooms out.
+    document.querySelector('.board-scroll')!.dispatchEvent(new WheelEvent('wheel', { deltaY: 100, ctrlKey: true, bubbles: true, cancelable: true }));
+    flushSync();
+    expect(document.querySelector('.board-zoom-value')!.textContent).toBe('125%');
+    click(document.querySelector('.board-zoom-value'));
+    expect(frame().style.width).toBe('calc(100%)');
   });
 
   it('is listed in Settings with the pages that use it, and dropped by the Just notes profile', async () => {

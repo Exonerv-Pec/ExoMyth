@@ -12,6 +12,14 @@ import {
   nextSpot,
   removeItem,
   splitQuote,
+  inkOn,
+  snapMove,
+  snapSize,
+  snapDistance,
+  zoomStep,
+  cleanZoom,
+  wrapLines,
+  pictureLayout,
 } from '../src/core/board';
 
 const page = (text: string) => parsePage('Boards/Storm.md', text, 1);
@@ -131,8 +139,9 @@ describe('editing a board', () => {
   });
 
   it('leaves out what an item does not need, and ignores an empty or invalid one', () => {
-    const out = addItem('---\nmoodboard: true\n---\n', { kind: 'image', image: ' sea.png ', x: 0.1, y: 0.1, w: 0.3, caption: '  ', source: 'ignored', h: 0.5 });
+    const out = addItem('---\nmoodboard: true\n---\n', { kind: 'image', image: ' sea.png ', x: 0.1, y: 0.1, w: 0.3, caption: '  ', source: 'ignored', note: 'ignored' });
     expect(out).toContain('image: sea.png');
+    expect(out).not.toContain('note');
     expect(out).not.toMatch(/caption|source|\bh:/);
     const bad = addItem('---\nmoodboard: true\n---\n', { kind: 'color', color: 'red', x: 0, y: 0, w: 0.2 });
     expect(boardOf(page(bad))!.items).toEqual([]);
@@ -200,5 +209,87 @@ describe('quotes typed in one box', () => {
     expect(splitQuote('Line one\nLine two\n-- A. Nonymous')).toEqual({ quote: 'Line one\nLine two', source: 'A. Nonymous' });
     expect(splitQuote('  Just words  ')).toEqual({ quote: 'Just words' });
     expect(splitQuote('- a list item')).toEqual({ quote: '- a list item' });
+  });
+});
+
+describe('notes, cropped pictures and lining up (0.25)', () => {
+  it('read notes with a tint, and pictures cropped to a height', () => {
+    const p = page('---\nmoodboard: true\nboard:\n  - note: Storms come from the west.\n    tint: "#F3E3A1"\n    x: 0.4\n    y: 0.5\n    w: 0.2\n  - note: Bad tint\n    tint: "url(x)"\n  - image: sea.png\n    h: 0.2\n    w: 0.3\n---\n');
+    const items = boardOf(p)!.items;
+    expect(items[0]).toMatchObject({ kind: 'note', note: 'Storms come from the west.', tint: '#f3e3a1', x: 0.4, y: 0.5, w: 0.2 });
+    expect(items[1]!.tint).toBeUndefined();
+    expect(items[2]).toMatchObject({ kind: 'image', h: 0.2 });
+    expect(estimatedHeight(items[2]!)).toBe(0.2);
+  });
+
+  it('pins and edits a note, and uncrops a picture', () => {
+    let t = addItem('---\nmoodboard: true\n---\n', { kind: 'note', note: ' Remember the tide ', tint: '#D7EAD2', x: 0.1, y: 0.1, w: 0.22 });
+    expect(t).toContain('note: Remember the tide');
+    expect(t).toContain('tint: "#d7ead2"');
+    t = changeItem(t, 0, { note: 'Remember the moon', tint: 'not a colour' });
+    expect(boardOf(page(t))!.items[0]).toMatchObject({ note: 'Remember the moon', tint: '#d7ead2' });
+    t = addItem(t, { kind: 'image', image: 'sea.png', x: 0.5, y: 0.1, w: 0.3, h: 0.15 });
+    expect(boardOf(page(t))!.items[1]!.h).toBe(0.15);
+    t = changeItem(t, 1, { h: undefined });
+    expect(boardOf(page(t))!.items[1]!.h).toBeUndefined();
+    // A colour never loses its height.
+    t = addItem(t, { kind: 'color', color: '#000', x: 0, y: 0, w: 0.1, h: 0.2 });
+    t = changeItem(t, 2, { h: undefined });
+    expect(boardOf(page(t))!.items[2]!.h).toBe(0.2);
+  });
+
+  it('picks dark or light text for a note colour', () => {
+    expect(inkOn('#f3e3a1')).toBe('#17262f');
+    expect(inkOn('#2d3b45')).toBe('#ffffff');
+    expect(inkOn('nonsense')).toBe('#17262f');
+  });
+
+  it('lines a moving box up with the edges and middles of the others and the board', () => {
+    const others = [{ x: 0.1, y: 0.1, w: 0.3, h: 0.2 }];
+    // Left edge near the other's right edge (0.4), top near its top (0.1).
+    expect(snapMove({ x: 0.405, y: 0.104, w: 0.2, h: 0.1 }, others, 0.008)).toEqual({ x: 0.4, y: 0.1, guideX: 0.4, guideY: 0.1 });
+    // Middle to the board's middle.
+    expect(snapMove({ x: 0.396, y: 0.6, w: 0.2, h: 0.1 }, others, 0.008)).toMatchObject({ x: 0.4, guideX: 0.4 });
+    expect(snapMove({ x: 0.403, y: 0.6, w: 0.2, h: 0.1 }, [], 0.008)).toMatchObject({ x: 0.4, guideX: 0.5 });
+    // Too far: stays.
+    expect(snapMove({ x: 0.45, y: 0.6, w: 0.2, h: 0.1 }, others, 0.008)).toEqual({ x: 0.45, y: 0.6 });
+    // No distance: never moves.
+    expect(snapMove({ x: 0.405, y: 0.104, w: 0.2, h: 0.1 }, others, 0)).toEqual({ x: 0.405, y: 0.104 });
+    expect(snapDistance(1000)).toBe(0.008);
+  });
+
+  it('lines the right and bottom edges of a resized box up', () => {
+    const others = [{ x: 0.1, y: 0.1, w: 0.3, h: 0.2 }];
+    const s = snapSize({ x: 0, y: 0.05, w: 0.396, h: 0.252 }, others, 0.008, true);
+    expect(s.w).toBeCloseTo(0.4);
+    expect(s.h).toBeCloseTo(0.25);
+    expect(s.guideX).toBeCloseTo(0.4);
+    expect(s.guideY).toBeCloseTo(0.3);
+    expect(snapSize({ x: 0, y: 0.05, w: 0.396, h: 0.252 }, others, 0.008, false)).toMatchObject({ w: 0.4, h: 0.252 });
+  });
+
+  it('zooms in steps and only to known steps', () => {
+    expect(zoomStep(1, 1)).toBe(1.25);
+    expect(zoomStep(1, -1)).toBe(0.75);
+    expect(zoomStep(3, 1)).toBe(3);
+    expect(zoomStep(0.5, -1)).toBe(0.5);
+    expect(cleanZoom('1.5')).toBe(1.5);
+    expect(cleanZoom('7')).toBe(1);
+    expect(cleanZoom(null)).toBe(1);
+  });
+
+  it('wraps text for the picture, cutting words that are too long', () => {
+    const measure = (s: string) => s.length * 10;
+    expect(wrapLines('one two three four', 90, measure)).toEqual(['one two', 'three', 'four']);
+    expect(wrapLines('a\nb c', 100, measure)).toEqual(['a', 'b c']);
+    expect(wrapLines('abcdefghij', 40, measure)).toEqual(['abcd', 'efgh', 'ij']);
+    expect(wrapLines('', 40, measure)).toEqual(['']);
+  });
+
+  it('lays the picture out like the board', () => {
+    const items = boardOf(page(BOARD))!.items;
+    const { height, boxes } = pictureLayout(items, new Map([[0, 0.3]]), 1000);
+    expect(boxes[0]).toMatchObject({ x: 50, y: 40, w: 400, h: 300 });
+    expect(height).toBe(Math.round(boardHeight(items, new Map([[0, 0.3]])) * 1000));
   });
 });

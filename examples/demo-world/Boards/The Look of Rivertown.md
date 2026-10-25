@@ -12,6 +12,7 @@ board:
     x: 0.54
     y: 0.04
     w: 0.42
+    h: 0.3
   - color: "#2f6f73"
     caption: River at dusk
     x: 0.04
@@ -57,9 +58,21 @@ board:
     x: 0.78
     y: 0.64
     w: 0.16
+  - note: |-
+      Wet stone, lamp smoke, gulls.
+      Never sunny for long.
+    tint: "#f3e3a1"
+    x: 0.04
+    y: 1.0
+    w: 0.3
+  - note: Kira only smiles near the water.
+    tint: "#d3e2f2"
+    x: 0.38
+    y: 1.0
+    w: 0.26
 ---
 # The Look of Rivertown
 
-A mood board: what [[Rivertown]] should feel like when you write it. Open this page in **Reading** or **Side by side**, choose **Edit board**, and drag things around. Pictures, colours, quotes and cards of other pages all live in the page header, so the board is a plain file like any other.
+A mood board: what [[Rivertown]] should feel like when you write it. Open this page in **Reading** or **Side by side**, choose **Edit board**, and drag things around: edges line up with their neighbours, and Shift on a picture's corner crops it. Pictures, colours, quotes, notes and cards of other pages all live in the page header, so the board is a plain file like any other. Zoom with **−** and **+** (or Ctrl + wheel), and **Save as picture** makes one PNG of the whole board.
 
 The words under the board are the page's own text, for notes about the look.

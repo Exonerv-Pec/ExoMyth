@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 27 releases, latest 0.24.0 (2026-10-24)</summary>
+<summary><b>✅ Done</b> · 28 releases, latest 0.25.0 (2026-10-25)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.25.0** | 2026-10-25 | 🖼️ Mood board extras: notes, lining up while dragging, cropping pictures, zoom, saving a board as a PNG |
 | **0.24.0** | 2026-10-24 | ✍️ Editing workspace: comments and suggested changes in the text, a to-fix list, page versions to compare and restore 💬 |
 | **0.23.0** | 2026-10-24 | 🖼️ Mood boards: pictures, colours, quotes and page cards placed freely on a page 💬 |
 | **0.22.0** | 2026-10-24 | 🧭 Story structure templates: three acts, five acts, the hero's journey, seven points, kishōtenketsu 💬 |
@@ -71,7 +72,7 @@ Every change in detail: [CHANGELOG.md](CHANGELOG.md).
 </details>
 
 <details>
-<summary><b>📝 Writing tools</b> · 4 ideas</summary>
+<summary><b>📝 Writing tools</b> · 3 ideas</summary>
 
 <br>
 
@@ -80,7 +81,6 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
 | ⬜ | Dangerous drafting mode 💬 | M | An optional sprint: new text fades if you stop typing, until a goal is reached, then it goes to the draft. Never touches existing text |
-| ⬜ | Mood board extras | M | Free text notes on a board, snapping and aligning, zoom for big boards, resizing a picture by its height, and saving a board as one picture (PNG) |
 | ⬜ | Editing extras | M | Suggesting changes from the app (a "track changes" mode that writes `{++ ++}` and `{-- --}` as you type), replies under a comment, and comments in the reading view by selecting text there |
 | ⬜ | Dictionary / thesaurus 💬 | L | Must work offline, so the data has to ship with the app under a suitable licence |
 

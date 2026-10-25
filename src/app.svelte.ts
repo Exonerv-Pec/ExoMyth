@@ -11,7 +11,7 @@ import { addSeconds, addWords, cleanGoal, dayKey, emptyStats, IDLE_SECONDS, merg
 import { applyTemplate, builtInTemplateFiles, builtInTemplates, worldTemplates, type TemplateChoice } from './core/templates';
 import { profileById, starterFiles, type ProfileId } from './core/profiles';
 import { projectFiles, projectName } from './core/project';
-import { addItem, changeItem, itemCount, nextSpot, removeItem, splitQuote, type BoardData } from './core/board';
+import { addItem, boardOf, changeItem, itemCount, nextSpot, NOTE_TINTS, removeItem, splitQuote, type BoardData } from './core/board';
 import {
   acceptChange,
   addComment,
@@ -1282,6 +1282,27 @@ class App {
         if (index !== undefined) return void this.changeBoardItem(path, index, { quote, source });
         const page = this.vault?.getPage(path);
         if (page) void this.addBoardItem(path, { kind: 'quote', quote, ...(source ? { source } : {}), w: 0.3, ...nextSpot(itemCount(page)) });
+      },
+    };
+  }
+
+  /** Asks for the text of a note to pin (or new text for one already there). */
+  askBoardNote(path: string, index?: number, current = ''): void {
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('board.note.new'),
+      label: this.t('board.note.label'),
+      value: current,
+      multiline: true,
+      confirmLabel: index === undefined ? this.t('board.pin') : this.t('dialog.confirm'),
+      onSubmit: async (v) => {
+        if (!v.trim()) return;
+        if (index !== undefined) return void (await this.changeBoardItem(path, index, { note: v }));
+        const page = this.vault?.getPage(path);
+        if (!page) return;
+        // Notes take the paper colours in turn, starting with the first.
+        const notes = boardOf(page)?.items.filter((i) => i.kind === 'note').length ?? 0;
+        await this.addBoardItem(path, { kind: 'note', note: v, tint: NOTE_TINTS[notes % NOTE_TINTS.length]!, w: 0.22, ...nextSpot(itemCount(page)) });
       },
     };
   }
