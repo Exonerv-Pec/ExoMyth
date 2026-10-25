@@ -13,11 +13,44 @@
   import { isBoard } from '../core/board';
   import { mapOf } from '../core/maps';
   import { isPlaylist, withoutTracks } from '../core/playlist';
+  import { occurrences } from '../core/critic';
 
   let { path }: { path: string } = $props();
   const t = app.t;
 
   let container = $state<HTMLElement>();
+  let prose = $state<HTMLElement>();
+  /** Words selected in the text, and where to offer a comment on them. */
+  let picked = $state<{ text: string; nth: number; x: number; y: number } | null>(null);
+
+  /** A piece of the page as a reader sees it: without comment numbers and their words. */
+  function readable(range: Range): string {
+    const frag = range.cloneContents();
+    frag.querySelectorAll('.critic-num, .critic-tip').forEach((e) => e.remove());
+    return frag.textContent ?? '';
+  }
+
+  /** Offers a comment on words selected in the text (and which of the same words, if they repeat). */
+  function checkSelection() {
+    const sel = document.getSelection();
+    if (!app.on('revision') || !prose || !sel || sel.isCollapsed || sel.rangeCount === 0) return void (picked = null);
+    const range = sel.getRangeAt(0);
+    if (!prose.contains(range.commonAncestorContainer)) return void (picked = null);
+    const text = readable(range).replace(/\s+/g, ' ').trim();
+    if (!text || text.length > 2000) return void (picked = null);
+    const before = document.createRange();
+    before.setStart(prose, 0);
+    before.setEnd(range.startContainer, range.startOffset);
+    const rect = range.getBoundingClientRect();
+    picked = { text, nth: occurrences(readable(before), text), x: rect.left + rect.width / 2, y: rect.bottom };
+  }
+
+  function commentPicked() {
+    if (!picked) return;
+    app.askCommentOnText(path, picked.text, picked.nth);
+    picked = null;
+    document.getSelection()?.removeAllRanges();
+  }
 
   const page = $derived.by<Page | undefined>(() => {
     app.version;
@@ -137,8 +170,10 @@
   });
 </script>
 
+<svelte:document onselectionchange={checkSelection} />
+
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
-<article class="reading" bind:this={container} {onclick} {onkeydown} onmouseover={placeTip} onfocusin={placeTip} use:previewLinks use:embeds={[html, facts]}>
+<article class="reading" bind:this={container} {onclick} {onkeydown} onmouseover={placeTip} onfocusin={placeTip} onscroll={() => (picked = null)} use:previewLinks use:embeds={[html, facts]}>
   {#if page}
     <div class="reading-inner">
       <h1 class="page-title">{page.title}</h1>
@@ -175,7 +210,17 @@
           </dl>
         </aside>
       {/if}
-      <div class="prose">{@html html}</div>
+      <div class="prose" bind:this={prose}>{@html html}</div>
     </div>
+  {/if}
+  {#if picked}
+    <!-- Keeps the selection when pressed, so the words stay marked while the comment is written. -->
+    <button
+      class="sel-comment"
+      style:left="{Math.max(8, Math.min(picked.x - 60, window.innerWidth - 150))}px"
+      style:top="{Math.min(picked.y + 8, window.innerHeight - 48)}px"
+      onmousedown={(e) => e.preventDefault()}
+      onclick={commentPicked}
+    >💬 {t('rev.comment.select')}</button>
   {/if}
 </article>

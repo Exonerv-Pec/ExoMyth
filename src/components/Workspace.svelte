@@ -130,6 +130,9 @@
             {#if todayText}
               <button class="stats-chip" title={t('stats.chip.title')} onclick={() => (app.statsOpen = true)}>{todayText}</button>
             {/if}
+            {#if app.suggesting && app.on('revision')}
+              <button class="stats-chip suggest-chip" title={t('rev.suggest.chipTitle')} onclick={() => app.setSuggesting(false)}>✎ {t('rev.suggest.chip')}</button>
+            {/if}
           </span>
         </span>
       {/if}

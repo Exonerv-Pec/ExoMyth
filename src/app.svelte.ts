@@ -15,6 +15,9 @@ import { addItem, boardOf, changeItem, itemCount, nextSpot, NOTE_TINTS, removeIt
 import {
   acceptChange,
   addComment,
+  addReply,
+  editReply,
+  findPassage,
   addNote,
   changeNote,
   clearDoneNotes,
@@ -280,6 +283,8 @@ class App {
   editorPath = $state<string | null>(null);
   /** The editing panel (comments, notes, versions) is shown instead of the relations panel. */
   revisionOpen = $state(false);
+  /** Typing in the editor is written as suggested changes ({++added++}, {--removed--}). Kept per world. */
+  suggesting = $state(false);
   /** A comment clicked in the reading view, to point out in the editing panel. */
   revisionFocus = $state<{ n: number; seq: number } | null>(null);
   /** Versions being compared: `to` null is the page's current text. */
@@ -502,6 +507,7 @@ class App {
     this.bookPath = read(this.prefKey('book'));
     this.features = loadFeatures(this.prefKey('features'));
     this.profile = (read(this.prefKey('profile')) as ProfileId | null) ?? null;
+    this.suggesting = read(this.prefKey('suggesting')) === '1';
     // A brand new, empty world: ask what it is for.
     this.profilePicker = vault.pages.length === 0 ? 'new' : null;
     if (!this.modeOn(this.mode)) this.mode = this.textMode;
@@ -542,6 +548,7 @@ class App {
     this.flushers.clear();
     this.compare = null;
     this.versionSeen.clear();
+    this.suggesting = false;
   }
 
   /** Per-world preference stored in this browser (view position of the graph, etc.). */
@@ -1381,6 +1388,69 @@ class App {
       this.revisionOpen = true;
       this.panelOpen = true;
     }
+  }
+
+  /** Turns suggesting changes on or off (Ctrl+Shift+E). */
+  setSuggesting(on: boolean): void {
+    this.suggesting = on && this.on('revision');
+    if (this.vault) this.setWorldPref('suggesting', this.suggesting ? '1' : '');
+    this.notify(this.t(this.suggesting ? 'rev.suggest.on' : 'rev.suggest.off'));
+  }
+
+  askReply(path: string, mark: CriticMark, raw: string): void {
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('rev.reply.title'),
+      label: this.t('rev.reply.label'),
+      value: '',
+      multiline: true,
+      confirmLabel: this.t('rev.reply.confirm'),
+      onSubmit: async (v) => {
+        if (v.trim()) await this.changeText(path, (text) => addReply(text, mark, raw, v));
+      },
+    };
+  }
+
+  askEditReply(path: string, mark: CriticMark, raw: string, index: number, current: string): void {
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('rev.reply.edit'),
+      label: this.t('rev.reply.editLabel'),
+      value: current,
+      multiline: true,
+      allowEmpty: true,
+      confirmLabel: this.t('dialog.confirm'),
+      onSubmit: async (v) => {
+        await this.changeText(path, (text) => editReply(text, mark, raw, index, v));
+      },
+    };
+  }
+
+  /**
+   * Asks for a comment on words selected in the reading view. `nth` says which of several places
+   * with the same words was selected.
+   */
+  askCommentOnText(path: string, selected: string, nth: number): void {
+    const page = this.vault?.getPage(path);
+    if (!page || !this.on('revision')) return;
+    const place = findPassage(page.raw, selected, nth);
+    if (!place) return void this.notify(this.t('rev.comment.notFound'), true);
+    this.dialog = {
+      kind: 'prompt',
+      title: this.t('rev.comment.title'),
+      label: this.t('rev.comment.on', selected.length > 60 ? selected.slice(0, 59).trimEnd() + '…' : selected),
+      value: '',
+      multiline: true,
+      confirmLabel: this.t('rev.comment.confirm'),
+      onSubmit: async (v) => {
+        if (!v.trim()) return;
+        // The page may have changed while the window was open: find the words again.
+        await this.changeText(path, (text) => {
+          const at = findPassage(text, selected, nth);
+          return at ? addComment(text, at.from, at.to, v).text : text;
+        });
+      },
+    };
   }
 
   /** Asks for a comment on the selection in the editor (or at the cursor). */

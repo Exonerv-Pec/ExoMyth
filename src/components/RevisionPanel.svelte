@@ -145,29 +145,49 @@
         {:else}
           <ol class="rev-list">
             {#each comments as it (it.mark.from)}
-              <li class="rev-item" class:flash={flash === `c${it.n}`} data-item="c{it.n}">
-                <button class="rev-body" title={t('rev.comment.go')} onclick={() => reveal(it)}>
-                  <span class="rev-num" aria-hidden="true">{it.n}</span>
-                  <span class="rev-text">
-                    {#if it.mark.text}<span class="rev-quote">{short(it.mark.text)}</span>{/if}
-                    <span class="rev-comment" class:muted={!it.mark.comment}>{it.mark.comment || t('rev.comment.mark')}</span>
+              <li class="rev-item rev-thread" class:flash={flash === `c${it.n}`} data-item="c{it.n}">
+                <div class="rev-row">
+                  <button class="rev-body" title={t('rev.comment.go')} onclick={() => reveal(it)}>
+                    <span class="rev-num" aria-hidden="true">{it.n}</span>
+                    <span class="rev-text">
+                      {#if it.mark.text}<span class="rev-quote">{short(it.mark.text)}</span>{/if}
+                      <span class="rev-comment" class:muted={!it.mark.comment}>{it.mark.comment || t('rev.comment.mark')}</span>
+                    </span>
+                  </button>
+                  <span class="rev-actions">
+                    <button class="icon-btn" title={t('rev.comment.edit')} aria-label={t('rev.comment.edit')} onclick={() => path && app.askEditComment(path, it.mark, it.raw)}><Icon name="pencil" /></button>
+                    <button class="icon-btn" title={t('rev.comment.resolve')} aria-label={t('rev.comment.resolve')} onclick={() => path && app.resolveComment(path, it.mark, it.raw)}><Icon name="check" /></button>
                   </span>
-                </button>
-                <span class="rev-actions">
-                  <button class="icon-btn" title={t('rev.comment.edit')} aria-label={t('rev.comment.edit')} onclick={() => path && app.askEditComment(path, it.mark, it.raw)}><Icon name="pencil" /></button>
-                  <button class="icon-btn" title={t('rev.comment.resolve')} aria-label={t('rev.comment.resolve')} onclick={() => path && app.resolveComment(path, it.mark, it.raw)}><Icon name="check" /></button>
-                </span>
+                </div>
+                {#if it.mark.replies.length}
+                  <ul class="rev-replies">
+                    {#each it.mark.replies as reply, ri (ri)}
+                      <li>
+                        <span class="rev-reply-text">{reply}</span>
+                        <button class="icon-btn" title={t('rev.reply.edit')} aria-label={t('rev.reply.edit')} onclick={() => path && app.askEditReply(path, it.mark, it.raw, ri, reply)}><Icon name="pencil" /></button>
+                      </li>
+                    {/each}
+                  </ul>
+                {/if}
+                <button class="rev-replybtn" onclick={() => path && app.askReply(path, it.mark, it.raw)}>{t('rev.reply')}</button>
               </li>
             {/each}
           </ol>
         {/if}
       </section>
 
-      {#if changes.length}
-        <section class="rev-section" aria-labelledby="rev-changes">
-          <div class="rev-head">
-            <h3 id="rev-changes">{t('rev.changes')}<span class="rev-count">{changes.length}</span></h3>
-          </div>
+      <section class="rev-section" aria-labelledby="rev-changes">
+        <div class="rev-head">
+          <h3 id="rev-changes">{t('rev.changes')}{#if changes.length}<span class="rev-count">{changes.length}</span>{/if}</h3>
+        </div>
+        <label class="rev-switch">
+          <input type="checkbox" role="switch" checked={app.suggesting} onchange={(e) => app.setSuggesting(e.currentTarget.checked)} />
+          <span>
+            <span class="rev-switch-name">{t('rev.suggest')}</span>
+            <span class="rev-about">{t('rev.suggest.about')}</span>
+          </span>
+        </label>
+        {#if changes.length}
           <ol class="rev-list">
             {#each changes as it (it.mark.from)}
               <li class="rev-item rev-change" data-item="k{it.n}">
@@ -187,8 +207,8 @@
               <button class="btn small ghost" onclick={() => path && app.settleAllChanges(path, false)}>{t('rev.change.rejectAll')}</button>
             </div>
           {/if}
-        </section>
-      {/if}
+        {/if}
+      </section>
 
       <section class="rev-section" aria-labelledby="rev-notes">
         <div class="rev-head">

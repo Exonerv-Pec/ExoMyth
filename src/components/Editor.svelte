@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Compartment, EditorState, type Range } from '@codemirror/state';
+  import { Compartment, EditorState, Transaction, type Range } from '@codemirror/state';
   import {
     EditorView,
     Decoration,
@@ -21,6 +21,7 @@
   import { wordCount } from '../core/writing';
   import { inlineMedia, mediaCompartment, refreshMedia } from '../editorMedia';
   import { centerCursor, typewriter, typewriterCompartment } from '../editorTypewriter';
+  import { suggestEdit } from '../core/critic';
 
   let { path }: { path: string } = $props();
 
@@ -306,6 +307,32 @@
     '.cm-completionDetail': { marginLeft: '0.6em', opacity: '0.7', fontStyle: 'normal' },
   });
 
+  /**
+   * Suggesting changes: what is typed becomes {++added++} and what is removed stays as {--removed--}
+   * (see `suggestEdit`). Only edits made by typing, pasting or removing are turned into marks; undo,
+   * changes from the panel and the rest go through as they are.
+   */
+  const suggestCompartment = new Compartment();
+  const suggestFilter = EditorState.transactionFilter.of((tr) => {
+    if (!tr.docChanged || !(tr.isUserEvent('input') || tr.isUserEvent('delete'))) return tr;
+    const changes: { from: number; to: number; insert: string }[] = [];
+    tr.changes.iterChanges((from, to, _fb, _tb, inserted) => changes.push({ from, to, insert: inserted.toString() }));
+    // Several cursors at once: left as they are.
+    if (changes.length !== 1) return tr;
+    const c = changes[0]!;
+    const direction = tr.isUserEvent('delete.backward') ? 'backward' : tr.isUserEvent('delete.forward') ? 'forward' : 'none';
+    const edit = suggestEdit(tr.startState.doc.toString(), c.from, c.to, c.insert, direction);
+    if (!edit) return tr;
+    return {
+      changes: edit.from === edit.to && !edit.insert ? [] : { from: edit.from, to: edit.to, insert: edit.insert },
+      selection: { anchor: edit.cursor },
+      scrollIntoView: true,
+      annotations: Transaction.userEvent.of(tr.annotation(Transaction.userEvent) ?? 'input'),
+    };
+  });
+  const suggestAttrs = EditorView.editorAttributes.of({ class: 'cm-suggesting' });
+  const suggesting = (on: boolean) => (on ? [suggestFilter, suggestAttrs] : []);
+
   /** The browser's own spell checker (offline, in the languages set up in the browser). */
   const spellCompartment = new Compartment();
   const spellAttrs = (on: boolean) =>
@@ -338,7 +365,12 @@
           EditorView.lineWrapping,
           markdown(),
           // Ctrl+Alt+M: a comment on the selection (the editing panel lists it).
-          keymap.of([{ key: 'Mod-Alt-m', run: () => (app.on('revision') ? (app.askComment(), true) : false) }]),
+          keymap.of([
+            { key: 'Mod-Alt-m', run: () => (app.on('revision') ? (app.askComment(), true) : false) },
+            // Ctrl+Shift+E: suggest changes instead of making them.
+            { key: 'Mod-Shift-e', run: () => (app.on('revision') ? (app.setSuggesting(!app.suggesting), true) : false) },
+          ]),
+          suggestCompartment.of(suggesting(app.suggesting && app.on('revision'))),
           keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
           autocompletion({ override: [wikiCompletion], icons: false }),
           matchPlugin,
@@ -380,7 +412,8 @@
         while (a < cur.length && a < next.length && cur[a] === next[a]) a++;
         let b = 0;
         while (b < cur.length - a && b < next.length - a && cur[cur.length - 1 - b] === next[next.length - 1 - b]) b++;
-        view.dispatch({ changes: { from: a, to: cur.length - b, insert: next.slice(a, next.length - b) }, userEvent: 'input' });
+        // No user event: changes from the panel are never turned into suggestions.
+        view.dispatch({ changes: { from: a, to: cur.length - b, insert: next.slice(a, next.length - b) } });
       },
       reveal: (from, to) => {
         if (!view) return;
@@ -423,6 +456,12 @@
       requestAnimationFrame(() => v === view && centerCursor(v));
     }
     typewriterWas = on;
+  });
+
+  // Suggesting changes on or off.
+  $effect(() => {
+    const on = app.suggesting && app.on('revision');
+    view?.dispatch({ effects: suggestCompartment.reconfigure(suggesting(on)) });
   });
 
   // Switching between "Text" and "Side by side" turns the inline media on or off.

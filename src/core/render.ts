@@ -49,6 +49,8 @@ interface CriticToken extends Tokens.Generic {
   raw: string;
   kind: 'comment' | 'insert' | 'delete' | 'replace';
   comment: string;
+  /** Comments written right after the comment: replies to it. */
+  replies: string[];
   /** The marked passage, the added or removed words, or the old words of a replacement. */
   tokens: Tokens.Generic[];
   /** The new words of a replacement. */
@@ -60,8 +62,8 @@ const CC = String.raw`(?:(?!\n[ \t]*\n)[\s\S])`;
 const CRITIC_RE = new RegExp(
   '^(?:' +
     [
-      String.raw`\{==(${CC}+?)==\}(?:\{>>(${CC}*?)<<\})?`,
-      String.raw`\{>>(${CC}*?)<<\}`,
+      String.raw`\{==(${CC}+?)==\}((?:\{>>${CC}*?<<\})*)`,
+      String.raw`((?:\{>>${CC}*?<<\})+)`,
       String.raw`\{\+\+(${CC}+?)\+\+\}`,
       String.raw`\{--(${CC}+?)--\}`,
       String.raw`\{~~(${CC}*?)~>(${CC}*?)~~\}`,
@@ -179,9 +181,13 @@ export function renderMarkdown(markdown: string, index: VaultIndex, options: Ren
           const m = CRITIC_RE.exec(src);
           if (!m) return undefined;
           const inline = (s: string) => this.lexer.inlineTokens(s) as Tokens.Generic[];
-          const base = { type: 'critic' as const, raw: m[0], comment: '', tokens: [] as Tokens.Generic[], afterTokens: [] as Tokens.Generic[] };
-          if (m[1] !== undefined) return { ...base, kind: 'comment', tokens: inline(m[1]), comment: (m[2] ?? '').trim() };
-          if (m[3] !== undefined) return { ...base, kind: 'comment', comment: m[3].trim() };
+          const base = { type: 'critic' as const, raw: m[0], comment: '', replies: [] as string[], tokens: [] as Tokens.Generic[], afterTokens: [] as Tokens.Generic[] };
+          const thread = (run: string) => {
+            const [comment = '', ...replies] = [...run.matchAll(new RegExp(String.raw`\{>>(${CC}*?)<<\}`, 'g'))].map((c) => (c[1] ?? '').trim());
+            return { comment, replies };
+          };
+          if (m[1] !== undefined) return { ...base, kind: 'comment', tokens: inline(m[1]), ...thread(m[2] ?? '') };
+          if (m[3] !== undefined) return { ...base, kind: 'comment', ...thread(m[3]) };
           if (m[4] !== undefined) return { ...base, kind: 'insert', tokens: inline(m[4]) };
           if (m[5] !== undefined) return { ...base, kind: 'delete', tokens: inline(m[5]) };
           return { ...base, kind: 'replace', tokens: inline(m[6] ?? ''), afterTokens: inline(m[7] ?? '') };
@@ -198,7 +204,9 @@ export function renderMarkdown(markdown: string, index: VaultIndex, options: Ren
           const n = ++commentNo;
           const passage = t.tokens.length ? `<mark class="critic-mark" data-critic="${n}">${inner}</mark>` : '';
           if (!t.comment) return passage;
-          return `${passage}<span class="critic-note" data-critic="${n}" tabindex="0"><span class="critic-num">${n}</span><span class="critic-tip">${escapeHtml(t.comment)}</span></span>`;
+          const replies = t.replies.map((r) => `<span class="critic-reply">${escapeHtml(r)}</span>`).join('');
+          const count = t.replies.length ? `<span class="critic-count">+${t.replies.length}</span>` : '';
+          return `${passage}<span class="critic-note" data-critic="${n}" tabindex="0"><span class="critic-num">${n}${count}</span><span class="critic-tip">${escapeHtml(t.comment)}${replies}</span></span>`;
         },
       },
     ],
@@ -224,7 +232,7 @@ export function renderMarkdown(markdown: string, index: VaultIndex, options: Ren
  * else is dropped, so text from a world someone shared cannot borrow the app's own styles
  * (for example to imitate one of its dialogs).
  */
-const SAFE_CLASS = /^(wikilink|broken|spoiler|critic-(mark|note|num|tip|ins|del)|embed|embed-(image|video|audio)|external-media|language-[\w-]+)$/;
+const SAFE_CLASS = /^(wikilink|broken|spoiler|critic-(mark|note|num|tip|reply|count|ins|del)|embed|embed-(image|video|audio)|external-media|language-[\w-]+)$/;
 
 let instance: ReturnType<typeof DOMPurify> | undefined;
 

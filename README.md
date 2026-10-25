@@ -277,9 +277,16 @@ It holds everything for the next pass over a page:
 
   The reading view highlights the passage and shows a numbered marker; point at it (or tap it) to
   read the comment. In the panel, click a comment to jump to it, ✎ to change it and ✓ to resolve it
-  (the passage stays, the comment goes).
+  (the passage stays, the comment goes). In **Reading** you can also select words and press the
+  **Comment** button that appears under them.
+- **Replies.** **Reply** under a comment adds a reply right after it, `{>>Why?<<}{>>Because.<<}`:
+  comments written one after another are a thread. The reading view shows the replies under the
+  comment, and resolving it takes the whole thread.
 - **Suggested changes.** `{++added++}`, `{--removed--}` and `{~~old~>new~~}` show as additions and
-  removals. **Accept** or **Reject** them one by one or all at once. Until a change is accepted it is
+  removals. **Accept** or **Reject** them one by one or all at once. Switch on **Suggest changes**
+  (or press **Ctrl+Shift+E**) and what you type in the editor is written as an addition and what you
+  erase stays as a removal, like tracked changes; erasing your own new words simply erases them. A
+  green line on top of the editor shows it is on. New paragraphs are not tracked. Until a change is accepted it is
   not part of the text: word counts, previews, the book view and exports show the text as it was,
   without comments.
 - **To fix.** A checklist of what to change on the page, kept in its header. **In the whole world**
@@ -367,7 +374,7 @@ browser, never in your worlds, and "Turn everything back on" restores them in on
 
 Press **Ctrl+/** (or **?** outside a text field), or the keyboard button at the bottom of the sidebar,
 for the list of all shortcuts. The most useful: **Ctrl+K** quick look-up, **Alt+I** quick note,
-**Ctrl+Alt+M** a comment on the selection, **Ctrl+click** on a `[[link]]` in the editor to follow it. On a Mac, use ⌘ instead of Ctrl and ⌥
+**Ctrl+Alt+M** a comment on the selection, **Ctrl+Shift+E** suggest changes, **Ctrl+click** on a `[[link]]` in the editor to follow it. On a Mac, use ⌘ instead of Ctrl and ⌥
 instead of Alt.
 
 ## Backups: a world as a .zip

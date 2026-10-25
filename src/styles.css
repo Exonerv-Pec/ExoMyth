@@ -4664,3 +4664,127 @@ button.b-card:focus-visible {
 .cmp-foot:empty {
   display: none;
 }
+
+/* ======================================================= editing extras (v0.26) */
+
+.rev-thread {
+  display: block;
+  padding: 0.2rem 0.2rem 0.35rem 0;
+}
+.rev-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+.rev-replies {
+  list-style: none;
+  margin: 0.15rem 0 0 2.15rem;
+  padding: 0 0 0 0.6rem;
+  border-left: 2px solid var(--line);
+  display: grid;
+  gap: 0.2rem;
+}
+.rev-replies li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.25rem;
+  font-size: 0.86rem;
+}
+.rev-reply-text {
+  flex: 1;
+  min-width: 0;
+  padding-top: 0.25rem;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.rev-replies .icon-btn {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+.rev-replybtn {
+  margin: 0.15rem 0 0 2.15rem;
+  border: none;
+  background: none;
+  padding: 0.1rem 0;
+  color: var(--accent);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.rev-replybtn:hover {
+  text-decoration: underline;
+}
+.rev-switch {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin: 0 0 0.6rem;
+  cursor: pointer;
+}
+.rev-switch input {
+  margin-top: 0.2rem;
+  accent-color: var(--accent);
+  flex: none;
+}
+.rev-switch > span {
+  display: grid;
+  gap: 0.15rem;
+}
+.rev-switch-name {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+.rev-switch .rev-about {
+  margin: 0;
+}
+.suggest-chip {
+  color: var(--critic-ins);
+  border-color: color-mix(in srgb, var(--critic-ins) 45%, transparent);
+}
+/* While suggesting: a green line along the top of the editor, on every screen size. */
+.cm-editor.cm-suggesting {
+  box-shadow: inset 0 3px 0 var(--critic-ins);
+}
+.cm-suggesting .cm-content {
+  caret-color: var(--critic-ins);
+}
+.cm-suggesting .cm-cursor {
+  border-left-color: var(--critic-ins) !important;
+}
+.prose .critic-num {
+  /* A row, so the count of replies sits next to the number. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+.prose .critic-count {
+  margin-left: 0.15rem;
+  font-weight: 600;
+  opacity: 0.85;
+}
+.prose .critic-reply {
+  display: block;
+  margin-top: 0.35rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid var(--line);
+  color: var(--ink-soft);
+}
+.sel-comment {
+  position: fixed;
+  z-index: 40;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+.sel-comment:hover {
+  background: var(--accent-soft);
+}

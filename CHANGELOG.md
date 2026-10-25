@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.26.0 — 2026-10-25
+
+### Added
+
+- **Suggest changes.** A switch in the Editing panel (and **Ctrl+Shift+E** in the editor): while it is
+  on, what you type is written as `{++addition++}` and what you erase stays as `{--removal--}`, ready to
+  accept or reject. Typing on continues the same addition, Backspace and Delete grow the same removal,
+  typing over a selection marks it removed and adds the new words after it, and erasing your own new
+  words erases them for good. Comments, the page header and new paragraphs are left alone; undo and
+  changes made from the panel are never turned into suggestions. A chip in the top bar and a green
+  line on the editor show the mode; it is remembered per world in this browser.
+- **Replies under comments.** **Reply** adds a comment right after a comment; such comments are its
+  thread (`{>>Why?<<}{>>Because.<<}`). The panel lists replies under their comment and can change or
+  remove each; the reading view shows them in the comment's box and their number on its marker.
+- **Comments from the reading view.** Select words in **Reading** and a **Comment** button appears
+  under them. The words are found in the page text even across emphasis or a `[[link|shown text]]`
+  (a link is kept whole), and the right one is picked when the same words appear more than once.
+
+### Changed
+
+- The demo scene **The Market** has a reply under its first comment.
+
 ## 0.25.0 — 2026-10-25
 
 ### Added

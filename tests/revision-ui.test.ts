@@ -207,7 +207,7 @@ describe('editing workspace', () => {
     flushSync();
     const row = document.querySelector('.rev-versions li')!;
     expect(row.querySelector('.rv-name')!.textContent).toBe('saved by itself');
-    expect(document.querySelector('.revpanel .rev-about')!.textContent).toContain('1 version');
+    expect(document.querySelector('[aria-labelledby="rev-versions"] .rev-about')!.textContent).toContain('1 version');
     click(button('Compare', row));
     await wait();
     flushSync();
@@ -280,6 +280,91 @@ describe('editing workspace', () => {
     expect(versions.map((v) => v.name)).toEqual(['First draft']);
     expect(versions[0]!.file).toBe(versionFile('Scenes/The Market.md', versions[0]!.time, 'First draft'));
     expect(vault.pages.some((p) => p.path.startsWith('.exomyth'))).toBe(false);
+  });
+
+  it('suggests changes while typing when switched on with Ctrl+Shift+E', async () => {
+    const { storage } = await boot('split', { 'Scene.md': 'The old sea.\n' });
+    const view = editor();
+    const key = (k: string, extra: KeyboardEventInit) => view.contentDOM.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true, ...extra }));
+    key('E', { code: 'KeyE', keyCode: 69, ctrlKey: true, shiftKey: true });
+    flushSync();
+    expect(app.suggesting).toBe(true);
+    expect(document.querySelector('.suggest-chip')).toBeTruthy();
+    expect(document.querySelector('.cm-editor.cm-suggesting')).toBeTruthy();
+    // Typing "grey " before "sea", then Backspace over "old".
+    view.dispatch({ selection: { anchor: 8 } });
+    view.dispatch(view.state.update({ changes: { from: 8, insert: 'g' }, selection: { anchor: 9 }, userEvent: 'input.type' }));
+    const at = view.state.selection.main.head;
+    view.dispatch(view.state.update({ changes: { from: at, insert: 'rey ' }, selection: { anchor: at + 4 }, userEvent: 'input.type' }));
+    expect(view.state.doc.toString()).toBe('The old {++grey ++}sea.\n');
+    view.dispatch({ selection: { anchor: 7 } });
+    for (let i = 0; i < 3; i++) {
+      const head = view.state.selection.main.head;
+      view.dispatch(view.state.update({ changes: { from: head - 1, to: head }, selection: { anchor: head - 1 }, userEvent: 'delete.backward' }));
+    }
+    expect(view.state.doc.toString()).toBe('The {--old--} {++grey ++}sea.\n');
+    await app.flush();
+    expect(await file(storage, 'Scene.md')).toBe('The {--old--} {++grey ++}sea.\n');
+    // Undo is never turned into a suggestion, and the panel lists both changes.
+    openPanel();
+    await wait();
+    flushSync();
+    expect([...document.querySelectorAll('.rev-change .rev-comment')].map((c) => c.textContent)).toEqual(['Remove “old”', 'Add “grey”']);
+    // Accepting from the panel while suggesting really changes the text.
+    click(button('Accept all'));
+    await wait();
+    expect(view.state.doc.toString()).toBe('The grey sea.\n');
+    // Off again from the chip; typing is plain.
+    click(document.querySelector('.suggest-chip'));
+    expect(app.suggesting).toBe(false);
+    view.dispatch(view.state.update({ changes: { from: 0, insert: 'X' }, userEvent: 'input.type' }));
+    expect(view.state.doc.toString()).toBe('XThe grey sea.\n');
+  });
+
+  it('replies to a comment, shows the thread, and edits a reply', async () => {
+    const { storage } = await boot();
+    openPanel();
+    const first = () => document.querySelector('[data-item="c1"]')!;
+    click(button('Reply', first()));
+    expect(app.dialog?.kind).toBe('prompt');
+    if (app.dialog?.kind === 'prompt') await app.dialog.onSubmit('The one from his father.');
+    await wait();
+    flushSync();
+    expect(await file(storage)).toContain('{==his old sword==}{>>Which sword? Name it.<<}{>>The one from his father.<<}');
+    expect([...first().querySelectorAll('.rev-replies li')].map((li) => li.textContent?.trim())).toEqual(['The one from his father.']);
+    // The reading view shows the reply under the comment, and how many there are.
+    const note = document.querySelector('.prose .critic-note')!;
+    expect(note.querySelector('.critic-count')!.textContent).toBe('+1');
+    expect(note.querySelector('.critic-reply')!.textContent).toBe('The one from his father.');
+    click(first().querySelector('.rev-replies button[aria-label="Edit reply"]'));
+    if (app.dialog?.kind === 'prompt') await app.dialog.onSubmit('');
+    await wait();
+    expect(await file(storage)).toContain('{==his old sword==}{>>Which sword? Name it.<<} and waited.');
+  });
+
+  it('comments on words selected in the reading view', async () => {
+    const { storage } = await boot('preview', { 'Scene.md': '# Scene\n\nThe river was cold. The **river** was wide.\n' });
+    const prose = document.querySelector('.prose')!;
+    // Select the second "river" (inside the bold text).
+    const strong = prose.querySelector('strong')!;
+    const range = document.createRange();
+    range.selectNodeContents(strong);
+    const sel = document.getSelection()!;
+    sel.removeAllRanges();
+    sel.addRange(range);
+    document.dispatchEvent(new Event('selectionchange'));
+    flushSync();
+    const btn = document.querySelector<HTMLButtonElement>('.sel-comment')!;
+    expect(btn.textContent).toContain('Comment');
+    click(btn);
+    expect(app.dialog?.kind).toBe('prompt');
+    if (app.dialog?.kind === 'prompt') {
+      expect(app.dialog.label).toBe('Comment on “river”');
+      await app.dialog.onSubmit('Which one?');
+    }
+    await wait();
+    expect(await file(storage, 'Scene.md')).toBe('# Scene\n\nThe river was cold. The **{==river==}{>>Which one?<<}** was wide.\n');
+    expect(document.querySelector('.sel-comment')).toBeNull();
   });
 
   it('is in Settings, the profiles and the usage list', async () => {
