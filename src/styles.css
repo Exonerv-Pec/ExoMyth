@@ -5065,3 +5065,74 @@ button.b-card:focus-visible {
     width: auto;
   }
 }
+
+/* ============================================================ first-run tour (v0.29) */
+
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+}
+.tour-dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 16, 20, 0.55);
+}
+.tour-spot {
+  position: fixed;
+  border-radius: var(--r-m);
+  box-shadow:
+    0 0 0 2px var(--accent),
+    0 0 0 9999px rgba(8, 16, 20, 0.55);
+  pointer-events: none;
+  transition:
+    left 0.2s ease,
+    top 0.2s ease,
+    width 0.2s ease,
+    height 0.2s ease;
+}
+.tour-hint {
+  position: fixed;
+  width: min(21rem, calc(100vw - 24px));
+  padding: 0.9rem 1rem 0.8rem;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-m);
+  box-shadow: var(--shadow);
+}
+.tour-hint h2 {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-text);
+  font-size: 1.2rem;
+}
+.tour-hint p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.tour-hint .tour-count {
+  margin: 0 0 0.2rem;
+  color: var(--ink-faint);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.tour-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.8rem;
+}
+.tour-space {
+  flex: 1;
+}
+.guide-head-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tour-spot {
+    transition: none;
+  }
+}

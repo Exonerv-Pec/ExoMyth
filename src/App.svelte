@@ -13,6 +13,7 @@
   import VersionCompare from './components/VersionCompare.svelte';
   import Guide from './components/Guide.svelte';
   import MusicHost from './components/MusicHost.svelte';
+  import Tour from './components/Tour.svelte';
 
   let searchInput = $state<HTMLInputElement>();
 
@@ -125,6 +126,7 @@
 <Shortcuts />
 <Guide />
 <MusicHost />
+<Tour />
 <Settings />
 <ProfilePicker />
 <QuickLookup />

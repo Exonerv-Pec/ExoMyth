@@ -52,6 +52,7 @@ try {
           localStorage.setItem('guide-shots', '1');
           localStorage.setItem('exomyth:lang', l);
           localStorage.setItem('exomyth:theme', 'dark');
+          localStorage.setItem('exomyth:tour', 'done'); // the tour would cover the pictures
         }
       } catch {
         /* A page without storage keeps the defaults. */

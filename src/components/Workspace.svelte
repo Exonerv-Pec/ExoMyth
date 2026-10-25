@@ -57,7 +57,7 @@
 
   <main class="center">
     <div class="topbar">
-      <button class="icon-btn mobile-only" aria-label={t('nav.sidebar')} title={t('nav.sidebar')} onclick={() => (app.sidebarOpen = !app.sidebarOpen)}>
+      <button class="icon-btn mobile-only" aria-label={t('nav.sidebar')} title={t('nav.sidebar')} data-tour="menu" onclick={() => (app.sidebarOpen = !app.sidebarOpen)}>
         <Icon name="menu" />
       </button>
       <button class="icon-btn" aria-label={t('nav.back')} title={t('nav.back')} disabled={!app.canGoBack} onclick={() => app.back()}>
@@ -73,7 +73,7 @@
         {/if}
       </div>
       {#if app.on('quickLookup')}
-        <button class="icon-btn" title="{t('lookup.title')} (Ctrl+K)" aria-label={t('lookup.title')} onclick={() => (app.lookupOpen = true)}>
+        <button class="icon-btn" title="{t('lookup.title')} (Ctrl+K)" aria-label={t('lookup.title')} data-tour="lookup" onclick={() => (app.lookupOpen = true)}>
           <Icon name="search" />
         </button>
       {/if}
@@ -137,7 +137,7 @@
         </span>
       {/if}
       {#if page || inGraph}
-        <div class="seg" role="group" aria-label="{t('mode.edit')} / {t('mode.preview')} / {t('mode.graph')}">
+        <div class="seg" role="group" aria-label="{t('mode.edit')} / {t('mode.preview')} / {t('mode.graph')}" data-tour="modes">
           {#each modes.filter((m) => app.modeOn(m)) as m (m)}
             <button aria-pressed={app.mode === m} onclick={() => app.setMode(m)} disabled={!WORLD_MODES.includes(m) && !page}>
               {t(`mode.${m}` as 'mode.edit')}
@@ -148,6 +148,7 @@
       {#if app.on('relationsPanel')}
         <button
           class="icon-btn mobile-only"
+          data-tour="panel-button"
           aria-label={t('nav.panel')}
           title={t('nav.panel')}
           onclick={() => {

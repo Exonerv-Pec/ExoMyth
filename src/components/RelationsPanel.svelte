@@ -75,7 +75,7 @@
   }
 </script>
 
-<aside class="relpanel" class:open={app.panelOpen} aria-label={t('panel.title')}>
+<aside class="relpanel" class:open={app.panelOpen} aria-label={t('panel.title')} data-tour="panel">
   <Resizer edge="panel-edge" value={app.panelW} onresize={(w) => app.setPanelW(w)} label={t('panel.title')} />
 
   <header class="panel-head">

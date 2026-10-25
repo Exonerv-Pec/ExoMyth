@@ -26,6 +26,9 @@ screen you can:
 
 Nothing is ever sent anywhere: there are no accounts and no servers.
 
+The first time you open a world, a short tour points out the main parts of the screen. **Show the
+tour** at the top of this guide takes it again.
+
 ## Pages and links
 <!-- guide: pages | try: mode:split -->
 

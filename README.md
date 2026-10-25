@@ -29,7 +29,8 @@ the app to your browser; your worlds stay on your device.
 
 **Guide with pictures:** [docs/GUIDE.md](docs/GUIDE.md). The same guide opens inside the app: **F1** or
 the **?** button at the bottom of the sidebar (and **Guide** on the start screen). Every topic has a
-**Try it** button that opens the right place.
+**Try it** button that opens the right place. The first time you open a world, a short tour points
+out the main parts of the screen (Esc skips it; **Show the tour** in the guide brings it back).
 
 ### Run it yourself
 

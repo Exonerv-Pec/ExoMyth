@@ -63,7 +63,10 @@
     <div class="dialog guide" role="dialog" aria-modal="true" aria-labelledby="guide-title">
       <div class="shortcuts-head">
         <h2 id="guide-title">{t('guide.title')}</h2>
-        <button class="btn ghost" onclick={close}>{t('keys.done')}</button>
+        <span class="guide-head-actions">
+          {#if app.vault}<button class="btn ghost" onclick={() => app.startTour()}>{t('guide.tour')}</button>{/if}
+          <button class="btn ghost" onclick={close}>{t('keys.done')}</button>
+        </span>
       </div>
       <div class="guide-body" class:reading={narrow && !!current}>
         <nav class="guide-nav" aria-label={t('guide.topics')}>

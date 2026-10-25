@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.29.0 — 2026-10-25
+
+### Added
+
+- **A first-run tour.** The first time a world is opened in a browser, six short hints point out the
+  main parts of the screen: the pages of the world, the ways to look at it, the relations panel, the
+  quick keys and the guide. The part being talked about is lit up and the hint stands beside it (in
+  the middle on a phone when the part is tucked away). **Next**, **Back**, the arrow keys, and **Skip**
+  or **Esc**; once finished or skipped it does not come back by itself.
+- **Show the tour** at the top of the guide takes it again.
+
 ## 0.28.0 — 2026-10-25
 
 ### Added

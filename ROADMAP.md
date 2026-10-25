@@ -16,12 +16,13 @@ room** (our own code and words, nothing copied from other apps; see [CONTRIBUTIN
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 31 releases, latest 0.28.0 (2026-10-25)</summary>
+<summary><b>✅ Done</b> · 32 releases, latest 0.29.0 (2026-10-25)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.29.0** | 2026-10-25 | 👋 A first-run tour of the screen, shown once and easy to skip |
 | **0.28.0** | 2026-10-25 | 🎵 Music that keeps playing while you browse, with a small player in the corner |
 | **0.27.0** | 2026-10-25 | 📖 A guide with pictures: in the app (F1) with a Try it button for every topic, and on GitHub |
 | **0.26.0** | 2026-10-25 | ✍️ Editing extras: suggest changes while typing (Ctrl+Shift+E), replies under comments, comments from the reading view |
@@ -64,13 +65,11 @@ Every change in detail: [CHANGELOG.md](CHANGELOG.md).
 </details>
 
 <details open>
-<summary><b>🔜 Next: small and useful</b> · 1 idea</summary>
+<summary><b>🔜 Next: small and useful</b> · 0 ideas</summary>
 
 <br>
 
-| | Idea | Size | Notes |
-| --- | --- | :---: | --- |
-| ⬜ | A first-run tour | S | Four or five hints over the interface for a new world, pointing to the guide (F1). Easy to skip and never shown again |
+Nothing waiting here right now: the next piece of work comes from the sections below.
 
 </details>
 

@@ -31,6 +31,7 @@ import {
 } from './core/critic';
 import { dueForVersion, type PageVersion } from './core/versions';
 import type { GuideTry } from './core/guide';
+import { TOUR_KEY } from './core/tour';
 import { music } from './music.svelte';
 import {
   addChapterToText,
@@ -286,6 +287,8 @@ class App {
   editorPath = $state<string | null>(null);
   /** The editing panel (comments, notes, versions) is shown instead of the relations panel. */
   revisionOpen = $state(false);
+  /** The step of the first-run tour on screen, or null. */
+  tourStep = $state<number | null>(null);
   /** The guide window, and the topic it shows (null: the list, on narrow screens). */
   guideOpen = $state(false);
   guideTopic = $state<string | null>(null);
@@ -555,6 +558,7 @@ class App {
     this.compare = null;
     this.versionSeen.clear();
     this.suggesting = false;
+    this.tourStep = null;
   }
 
   /** Per-world preference stored in this browser (view position of the graph, etc.). */
@@ -1397,6 +1401,25 @@ class App {
       this.revisionOpen = true;
       this.panelOpen = true;
     }
+  }
+
+  /** Starts the tour of the interface from its first step. */
+  startTour(): void {
+    this.guideOpen = false;
+    this.settingsOpen = false;
+    this.shortcutsOpen = false;
+    this.tourStep = 0;
+  }
+
+  /** Ends the tour (finished or skipped); it does not start by itself again in this browser. */
+  endTour(): void {
+    this.tourStep = null;
+    save(TOUR_KEY, 'done');
+  }
+
+  /** Whether the tour should start by itself: never seen in this browser. */
+  get tourDue(): boolean {
+    return read(TOUR_KEY) !== 'done';
   }
 
   /** Opens the guide, at a topic if given. */

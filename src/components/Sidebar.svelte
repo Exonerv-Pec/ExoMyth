@@ -96,7 +96,7 @@
   }
 </script>
 
-<aside class="sidebar" class:open={app.sidebarOpen} aria-label={t('side.files')}>
+<aside class="sidebar" class:open={app.sidebarOpen} aria-label={t('side.files')} data-tour="sidebar">
   <Resizer edge="sidebar-edge" value={app.sidebarW} onresize={(w) => app.setSidebarW(w)} label={t('side.files')} />
   <div class="side-head">
     <span
@@ -187,7 +187,7 @@
     <button class="icon-btn" title="{t('keys.title')} (Ctrl+/)" aria-label={t('keys.title')} onclick={() => (app.shortcutsOpen = true)}>
       <Icon name="keyboard" />
     </button>
-    <button class="icon-btn" title={t('guide.open')} aria-label={t('guide.title')} onclick={() => app.openGuide()}>
+    <button class="icon-btn" title={t('guide.open')} aria-label={t('guide.title')} data-tour="guide" onclick={() => app.openGuide()}>
       <Icon name="help" />
     </button>
     <button class="icon-btn" title={t(`theme.${app.theme}` as 'theme.auto')} aria-label={t(`theme.${app.theme}` as 'theme.auto')} onclick={() => app.cycleTheme()}>
