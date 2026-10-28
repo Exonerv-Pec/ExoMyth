@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { pwa } from '../pwa.svelte';
   import { app, readBytes } from '../app.svelte';
   import { readWorldZip, uniqueName, worldNameFromZip, ZipTooLargeError } from '../core/archive';
   import { Vault } from '../core/vault';
@@ -61,7 +62,28 @@
       },
     };
   }
-  onMount(loadLists);
+  onMount(async () => {
+    await loadLists();
+    await reopen();
+  });
+
+  /** After a reload into a new version, the same world and page open again by themselves. */
+  async function reopen() {
+    const back = app.takeReopen();
+    if (!back) return;
+    try {
+      if (back.kind === 'browser' && browserWorlds.includes(back.label)) {
+        await openBrowserWorld(back.label);
+      } else if (back.kind === 'folder') {
+        // Only when the browser still allows the folder: asking needs a click, so otherwise the list shows.
+        const f = folders.find((x) => x.name === back.label);
+        if (f && (await f.handle.queryPermission?.({ mode: 'readwrite' })) === 'granted') await openFolderHandle(f.handle);
+      }
+      if (back.page && app.vault?.getPage(back.page)) await app.openText(back.page);
+    } catch {
+      busy = false;
+    }
+  }
 
   function fail(e: unknown) {
     error = app.t('welcome.error', e instanceof Error ? e.message : String(e));
@@ -264,6 +286,13 @@
       <button class="btn" onclick={openDemo} disabled={busy}>{t('welcome.demo')}</button>
       <p class="hint">{t('welcome.demo.hint')}</p>
     </section>
+
+    {#if pwa.canInstall}
+      <section>
+        <button class="btn" onclick={() => pwa.install()}>{t('pwa.install.long')}</button>
+        <p class="hint">{t('pwa.install.why')}</p>
+      </section>
+    {/if}
 
     {#if error}<p class="error" role="alert">{error}</p>{/if}
     <p class="privacy">{t('welcome.privacy')}</p>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { pwa } from '../pwa.svelte';
   import { app, type Feature } from '../app.svelte';
   import { countPages, type Key } from '../i18n';
   import { featureUsage, type UsedFeature } from '../core/usage';
@@ -65,6 +66,17 @@
             <button class="btn" onclick={() => ((app.settingsOpen = false), (app.profilePicker = 'settings'))}>{t('profile.choose')}</button>
           </div>
         {/if}
+
+        <div class="setting-row profile-row app-row">
+          <span>
+            <span class="setting-name">{t('pwa.label')}</span>
+            <span class="setting-about">
+              {pwa.installed ? t('pwa.installed') : pwa.offlineReady ? t('pwa.ready') : t('pwa.online')}
+              {#if !pwa.installed && !pwa.canInstall}{' '}{t('pwa.install.hint')}{/if}
+            </span>
+          </span>
+          {#if pwa.canInstall}<button class="btn" onclick={() => pwa.install()}>{t('pwa.install')}</button>{/if}
+        </div>
 
         {#each groups as g (g.title)}
           <section>

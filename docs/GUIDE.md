@@ -26,6 +26,10 @@ screen you can:
 
 Nothing is ever sent anywhere: there are no accounts and no servers.
 
+After the first visit Exomyth starts **without a connection**. **Install** (on the start screen or in
+Settings) makes it an app with its own window and icon; on iPhone and iPad use Share → Add to Home
+Screen. When a new version is out, a notice at the bottom offers to **Reload**.
+
 The first time you open a world, a short tour points out the main parts of the screen. **Show the
 tour** at the top of this guide takes it again.
 

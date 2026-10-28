@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.32.0 — 2026-10-28
+
+### Added
+
+- **Works without a connection.** After the first visit the app keeps a copy of itself in the
+  browser (a service worker made at build time, with no new dependencies) and starts from it, online
+  or not: every view, the guide and its pictures. Worlds were always on your device; now the app is
+  too.
+- **Install as an app.** **Install** on the start screen and in Settings (where the browser offers
+  it) gives Exomyth its own window and icon; Settings say whether the app is kept on this device, and
+  how to install it on iPhone and iPad.
+- **Updates wait for you.** A new version downloads in the background and a notice offers to
+  **Reload**; the text being typed is saved first, and the same world and page open again.
+- An icon: the small constellation of the start screen, for browser tabs, home screens and the
+  installed app (`scripts/make-icons.mjs` makes the pictures).
+
 ## 0.31.0 — 2026-10-28
 
 ### Added

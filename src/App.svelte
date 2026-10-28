@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { app } from './app.svelte';
+  import { pwa } from './pwa.svelte';
   import Welcome from './components/Welcome.svelte';
   import Workspace from './components/Workspace.svelte';
   import Dialog from './components/Dialog.svelte';
@@ -130,6 +131,13 @@
 <Settings />
 <ProfilePicker />
 <QuickLookup />
+
+{#if pwa.updateReady}
+  <div class="update-bar" role="status">
+    <span>{app.t('pwa.update')}</span>
+    <button class="btn primary" onclick={() => pwa.update()}>{app.t('pwa.reload')}</button>
+  </div>
+{/if}
 
 {#if app.toast}
   <div class="toast" class:error={app.toast.error} role="status">{app.toast.text}</div>

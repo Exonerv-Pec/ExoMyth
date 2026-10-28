@@ -166,6 +166,8 @@ export interface EditorApi {
   reveal(from: number, to: number): void;
 }
 
+const REOPEN_KEY = 'exomyth:reopen';
+
 /** Hands a .zip to the browser to save. */
 function saveZip(data: Uint8Array, name: string): void {
   const url = URL.createObjectURL(new Blob([data as BlobPart], { type: 'application/zip' }));
@@ -612,6 +614,33 @@ class App {
       this.notify(this.t('zip.saved', files));
     } catch (e) {
       this.fail(e);
+    }
+  }
+
+  /**
+   * Before the app reloads into a new version: which world and page to come back to. Kept for this
+   * tab only (sessionStorage), and read once by the start screen.
+   */
+  rememberForReload(): void {
+    const v = this.vault;
+    if (!v) return;
+    try {
+      sessionStorage.setItem(REOPEN_KEY, JSON.stringify({ kind: v.storage.kind, label: v.storage.label, page: this.current }));
+    } catch {
+      /* Without storage the start screen simply shows. */
+    }
+  }
+
+  /** The world to come back to after a reload into a new version, once. */
+  takeReopen(): { kind: string; label: string; page: string | null } | null {
+    try {
+      const raw = sessionStorage.getItem(REOPEN_KEY);
+      sessionStorage.removeItem(REOPEN_KEY);
+      const v = raw ? (JSON.parse(raw) as { kind?: unknown; label?: unknown; page?: unknown }) : null;
+      if (!v || typeof v.kind !== 'string' || typeof v.label !== 'string') return null;
+      return { kind: v.kind, label: v.label, page: typeof v.page === 'string' ? v.page : null };
+    } catch {
+      return null;
     }
   }
 

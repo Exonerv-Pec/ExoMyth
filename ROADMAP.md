@@ -22,6 +22,7 @@ Click a section to open it.
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.32.0** | 2026-10-28 | 📲 Works offline and installs as an app, with updates that wait until you reload |
 | **0.31.0** | 2026-10-28 | 🌐 A site for readers: the world as plain HTML pages, without the editor or your private pages |
 | **0.30.0** | 2026-10-25 | 📅 Calendars of your own: months, weeks and eras, and dates with months and days |
 | **0.29.0** | 2026-10-25 | 👋 A first-run tour of the screen, shown once and easy to skip |
@@ -102,14 +103,13 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 </details>
 
 <details>
-<summary><b>💻 Platforms</b> · 5 ideas</summary>
+<summary><b>💻 Platforms</b> · 4 ideas</summary>
 
 <br>
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
-| ⬜ | Install as an app (PWA), fully offline | M | Works without a connection after the first visit; can be installed on phones. Planned together with the first stable release |
-| ⬜ | Mobile version 💬 | M–L | A layout made for phones first, installable from the browser; later perhaps a store app |
+| ⬜ | Mobile version 💬 | M–L | A layout made for phones first (installing from the browser works since 0.32); later perhaps a store app |
 | ⬜ | Desktop app (Tauri) 💬 | L | Windows, macOS, Linux; no browser limits on folders |
 | ⬜ | Sync between devices 💬 | L | Without a server of our own: through a folder the user already syncs (Syncthing, iCloud Drive, Dropbox, Git) |
 | ⬜ | Voice notes to text 💬 | L | Needs an offline speech engine: the browser's built-in one sends audio to a server, which Exomyth must not do |

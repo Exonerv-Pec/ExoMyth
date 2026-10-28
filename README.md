@@ -27,6 +27,12 @@ Markdown files on your own device. No account, no server, no tracking.
 **Open the app: https://exonerv-pec.github.io/Exomyth/** — nothing to install. The site only delivers
 the app to your browser; your worlds stay on your device.
 
+After the first visit the app is kept in the browser and starts **without a connection**. It can be
+**installed as an app** with its own window and icon: **Install** on the start screen or in Settings
+(in Chrome and Edge also the install button in the address bar; on iPhone and iPad, Share → Add to
+Home Screen). When a new version comes out, a notice offers to reload; nothing changes while you
+write, and the same world and page open again after the reload.
+
 **Guide with pictures:** [docs/GUIDE.md](docs/GUIDE.md). The same guide opens inside the app: **F1** or
 the **?** button at the bottom of the sidebar (and **Guide** on the start screen). Every topic has a
 **Try it** button that opens the right place. The first time you open a world, a short tour points

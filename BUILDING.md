@@ -68,6 +68,11 @@ npm run preview   # serves dist/ at http://localhost:4173
 Opening `dist/index.html` straight from the disk does **not** work: browsers do not run the app's
 module scripts from `file://` addresses. Use `npm run preview` or any static web server.
 
+The build also writes `dist/sw.js`, which keeps the app for working offline. It runs only over
+`https://` or on `localhost`, so after `npm run preview` the browser keeps that copy too: when you
+build again, the page shows **Reload** to take the new one (or clear the site's data in the browser).
+The dev server (`npm run dev`) never uses it.
+
 There is also a single-file build, used for previews:
 
 ```bash

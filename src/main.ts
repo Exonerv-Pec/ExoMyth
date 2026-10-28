@@ -2,6 +2,8 @@ import { mount } from 'svelte';
 import './styles.css';
 import App from './App.svelte';
 import { migrateBrowserData } from './migrate';
+import { pwa } from './pwa.svelte';
+import { app } from './app.svelte';
 
 const target = document.getElementById('app')!;
 
@@ -24,3 +26,11 @@ void migrateBriefly().then(() => {
     throw e;
   }
 });
+
+// Working offline and installing as an app: only in the build made for it.
+if (__EXOMYTH_PWA__) {
+  pwa.start(async () => {
+    await app.flush();
+    app.rememberForReload();
+  });
+}
