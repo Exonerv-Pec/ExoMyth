@@ -229,6 +229,24 @@ The chart button at the top shows the words you added and the time you spent wri
 the last 7 days, your streak of days, and the last 30 days as a chart. Set a **daily goal** and the
 top bar shows how far you are. The numbers are kept in your world, never sent anywhere.
 
+## A site for readers
+<!-- guide: site | feature: siteExport | try: site -->
+
+![The window that makes a site of the world](../public/guide/en/site.webp)
+
+The globe button at the top of the sidebar makes the world into a **static site**: plain HTML pages
+for players and readers, without the editor. Every page keeps its links, facts, pictures and
+relations; maps keep their pins, playlists play, and a book can be read straight through.
+
+- Untick the **folders** that are only for you, and give private pages a tag (`secret` by default)
+  to leave them out. Links to pages that are left out become plain words, and their names show
+  nowhere else on the site.
+- **Spoilers** open when clicked, or are left out.
+- Comments and suggested changes never go on the site.
+
+Unpack the .zip and open `index.html`, or upload the folder to any static web host. The site loads
+nothing from the network.
+
 ## Settings and profiles
 <!-- guide: settings | try: settings -->
 

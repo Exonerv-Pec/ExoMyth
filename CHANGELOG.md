@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.31.0 — 2026-10-28
+
+### Added
+
+- **A site for readers.** The globe button at the top of the sidebar makes the world into a static
+  site, saved as a .zip: plain HTML pages for players and readers that open in any browser or on any
+  static web host, without the editor. A front page with a start page of your choice and every page
+  by folder (with a search field); each page with its facts, pictures, relations both ways, maps
+  with pins and areas, mood boards, calendars, playlists, and books read straight through.
+- **Leave things out.** Choose the folders that go on the site and a tag (`secret` by default) for
+  pages that stay private; links to them become plain words and their names show nowhere on the
+  site. Spoilers open when clicked, or are left out. Comments, suggested changes, templates,
+  versions and settings never go on the site; only the pictures and sounds the pages show are copied.
+- The choices are remembered for each world. **Site for readers** in Settings hides the button.
+- A guide topic, **A site for readers**, with its picture; the other pictures are made again.
+
+### Changed
+
+- Tall windows (a new page, the site) scroll on small screens instead of running off the bottom.
+
 ## 0.30.0 — 2026-10-25
 
 ### Added

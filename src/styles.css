@@ -2746,6 +2746,8 @@ svg.graph:focus-visible {
 
 .dialog.wide {
   width: min(34rem, 100%);
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
 }
 .new-page {
   display: grid;
@@ -5276,4 +5278,34 @@ button.b-card:focus-visible {
   padding: 0.12rem 0;
   text-align: center;
   color: var(--ink-soft);
+}
+
+/* ============================================================ site for readers (v0.31) */
+
+.site-form select {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-s);
+  padding: 0.45rem 0.6rem;
+}
+.site-form select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+  border-color: var(--accent);
+}
+.site-folders {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+}
+.site-folders .tool-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--ink);
+}
+.site-count {
+  color: var(--ink) !important;
+  font-weight: 600;
 }

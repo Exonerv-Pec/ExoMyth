@@ -22,6 +22,7 @@ Click a section to open it.
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **0.31.0** | 2026-10-28 | 🌐 A site for readers: the world as plain HTML pages, without the editor or your private pages |
 | **0.30.0** | 2026-10-25 | 📅 Calendars of your own: months, weeks and eras, and dates with months and days |
 | **0.29.0** | 2026-10-25 | 👋 A first-run tour of the screen, shown once and easy to skip |
 | **0.28.0** | 2026-10-25 | 🎵 Music that keeps playing while you browse, with a small player in the corner |
@@ -89,14 +90,13 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 </details>
 
 <details>
-<summary><b>🗺️ Worldbuilding</b> · 3 ideas</summary>
+<summary><b>🗺️ Worldbuilding</b> · 2 ideas</summary>
 
 <br>
 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
 | ⬜ | Calendar extras | M | Dates on map pins and areas, leap years, moons and holidays shown on the calendar page, more than one calendar in a world (one per culture) |
-| ⬜ | Export a world as a static site | M | To share with players or readers, without the editor |
 | ⬜ | Infinite whiteboard / canvas 💬 | L | Cards, images and notes placed freely, linked to pages |
 
 </details>

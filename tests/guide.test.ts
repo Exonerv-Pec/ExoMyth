@@ -28,7 +28,7 @@ describe('the guide', () => {
   });
 
   it('names only real parts of Settings, real views and pages of the demo world', () => {
-    const actions = ['lookup', 'family', 'newPage', 'focus', 'stats', 'settings', 'shortcuts'];
+    const actions = ['lookup', 'family', 'newPage', 'focus', 'stats', 'settings', 'shortcuts', 'site'];
     for (const t of en) {
       if (t.feature) expect(FEATURES as readonly string[], t.id).toContain(t.feature);
       if (t.try?.kind === 'mode') expect(['edit', 'split', 'preview', 'graph', 'cards', 'timeline', 'book'], t.id).toContain(t.try.mode);

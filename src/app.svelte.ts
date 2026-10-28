@@ -6,6 +6,7 @@ import { mediaKind } from './core/media';
 import { addPin, addRegion, changePin, changeRegion, removePin, removeRegion, type PinData, type RegionData } from './core/maps';
 import { existsIn, pageYears, setYearsInText, worldYearSpan } from './core/years';
 import { worldToZip, zipFolderName } from './core/archive';
+import { buildSite, siteToZip, type SiteOptions } from './core/site';
 import { appendIdea } from './core/writing';
 import { addSeconds, addWords, cleanGoal, dayKey, emptyStats, IDLE_SECONDS, mergeStats, setGoal, type WritingStats } from './core/stats';
 import { applyTemplate, builtInTemplateFiles, builtInTemplates, worldTemplates, type TemplateChoice } from './core/templates';
@@ -79,6 +80,7 @@ export const FEATURES = [
   'revision',
   'versions',
   'musicKeepsPlaying',
+  'siteExport',
 ] as const;
 export type Feature = (typeof FEATURES)[number];
 
@@ -150,7 +152,8 @@ export type DialogState =
       confirmLabel: string;
       danger?: boolean;
       onConfirm: () => void | Promise<void>;
-    };
+    }
+  | { kind: 'site' };
 
 /** What the open editor lets the rest of the app do with its text. */
 export interface EditorApi {
@@ -161,6 +164,18 @@ export interface EditorApi {
   apply(fn: (text: string) => string): void;
   /** Selects a range and scrolls it into view. */
   reveal(from: number, to: number): void;
+}
+
+/** Hands a .zip to the browser to save. */
+function saveZip(data: Uint8Array, name: string): void {
+  const url = URL.createObjectURL(new Blob([data as BlobPart], { type: 'application/zip' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
 
 function load<T extends string>(key: string, allowed: readonly T[], fallback: T): T {
@@ -593,15 +608,39 @@ class App {
     try {
       await this.flush();
       const { data, files } = await worldToZip(vault.storage);
-      const url = URL.createObjectURL(new Blob([data as BlobPart], { type: 'application/zip' }));
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${zipFolderName(vault.storage.label)}.zip`;
-      document.body.append(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 10_000);
+      saveZip(data, `${zipFolderName(vault.storage.label)}.zip`);
       this.notify(this.t('zip.saved', files));
+    } catch (e) {
+      this.fail(e);
+    }
+  }
+
+  /** The choices made the last time this world was made into a site. */
+  savedSiteOptions(): Partial<Omit<SiteOptions, 't' | 'lang'>> {
+    try {
+      const v = JSON.parse(read(this.prefKey('site')) ?? '{}') as unknown;
+      return v && typeof v === 'object' ? (v as Partial<Omit<SiteOptions, 't' | 'lang'>>) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  /** Opens the window that makes a static site of the world. */
+  askSite(): void {
+    if (this.vault) this.dialog = { kind: 'site' };
+  }
+
+  /** Makes the world into a static site for readers and saves it as a .zip. */
+  async downloadSite(options: Omit<SiteOptions, 't' | 'lang'>): Promise<void> {
+    const vault = this.vault;
+    if (!vault) return;
+    try {
+      await this.flush();
+      save(this.prefKey('site'), JSON.stringify(options));
+      const site = await buildSite(vault, { ...options, lang: this.lang, t: this.t });
+      const name = this.t('site.zipName', zipFolderName(options.title || vault.storage.label));
+      saveZip(siteToZip(site, name), `${zipFolderName(name)}.zip`);
+      this.notify(this.t('site.saved', site.pages, site.media));
     } catch (e) {
       this.fail(e);
     }
@@ -1443,6 +1482,7 @@ class App {
     if (action.name === 'family') return this.on('cards') && this.on('family');
     if (action.name === 'lookup') return this.on('quickLookup');
     if (action.name === 'stats') return this.on('writingStats');
+    if (action.name === 'site') return this.on('siteExport');
     return true;
   }
 
@@ -1471,6 +1511,9 @@ class App {
         break;
       case 'newPage':
         this.askNewPage();
+        break;
+      case 'site':
+        this.askSite();
         break;
       case 'focus':
         if (WORLD_MODES.includes(this.mode)) this.setMode(this.textMode);

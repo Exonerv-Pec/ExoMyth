@@ -419,6 +419,22 @@ new world in the browser. Nothing is uploaded anywhere; the file is made on your
 Worlds kept in the browser can be cleared by the browser when the disk is nearly full. Exomyth asks
 the browser to keep them, but a .zip now and then is the safe way to back up.
 
+## A site for readers
+
+The globe button at the top of the sidebar makes the world into a static site for players and
+readers: plain HTML pages that open in any browser, straight from the unpacked folder or from any
+static web host, without the editor. The front page shows a start page of your choice and every
+page by folder, with a field to find one by name. Pages keep their links, header facts, pictures
+and relations (both ways, as in the panel); maps keep their pins and areas, mood boards and
+calendars are drawn, playlists play, and a book can be read straight through.
+
+What readers should not see stays out: untick folders, or tag pages (`secret` by default). Links to
+pages that are left out become plain words, and those pages are missing from relations, mentions,
+maps, boards and books too. Spoilers open when clicked, or are left out. Templates, comments,
+suggested changes, versions and settings never go on the site, and only the pictures and sounds
+the pages show are copied. The site loads nothing from the network: pictures from other sites
+written in a page become links.
+
 ## Family trees
 
 In **Cards**, the **Family tree** tab draws the family of the selected character: grandparents,

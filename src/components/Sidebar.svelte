@@ -113,6 +113,11 @@
         <Icon name="bulb" />
       </button>
     {/if}
+    {#if app.on('siteExport')}
+      <button class="icon-btn" title={t('site.export')} aria-label={t('site.export')} onclick={() => app.askSite()}>
+        <Icon name="globe" />
+      </button>
+    {/if}
     <button class="icon-btn" title={t('zip.download')} aria-label={t('zip.download')} onclick={() => app.downloadWorld()}>
       <Icon name="download" />
     </button>

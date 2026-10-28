@@ -33,8 +33,8 @@ const base = server.resolvedUrls.local[0];
 
 /** What the buttons are called, so they can be found in each language. */
 const LABELS = {
-  en: { demo: 'Open the demo world', editing: 'Editing', closeEditing: 'Close editing', compare: 'Compare', stats: 'Writing stats', newPage: 'New page', family: 'Family tree' },
-  ru: { demo: 'Открыть демо-мир', editing: 'Правка', closeEditing: 'Закрыть правку', compare: 'Сравнить', stats: 'Статистика письма', newPage: 'Новая страница', family: 'Семейное древо' },
+  en: { demo: 'Open the demo world', site: 'Site for readers', editing: 'Editing', closeEditing: 'Close editing', compare: 'Compare', stats: 'Writing stats', newPage: 'New page', family: 'Family tree' },
+  ru: { demo: 'Открыть демо-мир', site: 'Сайт для читателей', editing: 'Правка', closeEditing: 'Закрыть правку', compare: 'Сравнить', stats: 'Статистика письма', newPage: 'Новая страница', family: 'Семейное древо' },
 };
 const MODES = ['edit', 'split', 'preview', 'graph', 'cards', 'timeline', 'book'];
 
@@ -196,6 +196,11 @@ try {
     await escape();
 
     await mode('preview');
+    await page.locator(`.sidebar button[aria-label="${L.site}"]`).click();
+    await wait(300);
+    await shot('site');
+    await escape();
+
     await page.keyboard.press('Control+,');
     await wait(300);
     await shot('settings');
