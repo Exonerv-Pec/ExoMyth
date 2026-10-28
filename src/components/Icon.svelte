@@ -29,7 +29,8 @@
     | 'review'
     | 'help'
     | 'play'
-    | 'pause';
+    | 'pause'
+    | 'globe';
 
   let { name }: { name: Name } = $props();
 </script>
@@ -73,6 +74,8 @@
     <path d="M8 6.4l8 2M7 8l1.6 8M17 11l-6.5 6" />
   {:else if name === 'swap'}
     <path d="M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7" />
+  {:else if name === 'globe'}
+    <circle cx="12" cy="12" r="8.5" /><path d="M3.5 12h17M12 3.5c2.4 2.4 3.6 5.2 3.6 8.5s-1.2 6.1-3.6 8.5c-2.4-2.4-3.6-5.2-3.6-8.5S9.6 5.9 12 3.5z" />
   {:else if name === 'download'}
     <path d="M12 4v11M7 10.5l5 5 5-5M5 19.5h14" />
   {:else if name === 'move'}

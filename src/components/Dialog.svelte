@@ -1,6 +1,7 @@
 <script lang="ts">
   import { app } from '../app.svelte';
   import NewPageForm from './NewPageForm.svelte';
+  import SiteExportForm from './SiteExportForm.svelte';
 
   const t = app.t;
   let value = $state('');
@@ -54,9 +55,11 @@
   {@const d = app.dialog}
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
   <div class="scrim" onclick={(e) => e.target === e.currentTarget && close()} onkeydown={keydown}>
-    <div class="dialog" class:wide={d.kind === 'newPage'} role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+    <div class="dialog" class:wide={d.kind === 'newPage' || d.kind === 'site'} role="dialog" aria-modal="true" aria-labelledby="dlg-title">
     {#if d.kind === 'newPage'}
       {#key d}<NewPageForm {d} onclose={close} />{/key}
+    {:else if d.kind === 'site'}
+      {#key d}<SiteExportForm onclose={close} />{/key}
     {:else}
     <form onsubmit={submit} style="display:grid;gap:0.8rem">
       <h2 id="dlg-title">{d.title}</h2>
