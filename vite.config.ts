@@ -81,6 +81,7 @@ export default defineConfig({
   // Relative base so the built app works from any folder or static host.
   base: './',
   build: { target: 'es2022', outDir: single ? 'dist-single' : 'dist' },
+  worker: { format: 'es' },
   // Tests run in jsdom: make Svelte resolve its browser build there.
   resolve: process.env.VITEST ? { conditions: ['browser'] } : undefined,
   test: {

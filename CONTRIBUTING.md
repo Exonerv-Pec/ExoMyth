@@ -58,6 +58,9 @@ npm test        # unit and interface tests
 ```
 
 - Keep `src/core` free of interface and network code; it must stay testable without a browser.
+- **The file format is stable** (see [docs/FORMAT.md](docs/FORMAT.md)): a 1.x change may add header
+  fields and files, but never rename, drop or change the meaning of existing ones. Worlds from every
+  earlier version must keep opening (`tests/old-worlds.test.ts` opens each demo from the history).
 - Add tests for behaviour you change. The stability of the relations panel and of the graph
   layout is covered by tests; changes must keep them passing.
 - The app must never make network requests. The production build ships a Content Security Policy

@@ -3,10 +3,10 @@
 A private, offline-first wiki for writers and world builders. Your world is a folder of plain
 Markdown files on your own device. No account, no server, no tracking.
 
-> **Status: early alpha (v0.8).** Pages, typed relations, a stable relations panel, a relations
-> graph with a stable layout, cards, a timeline, interactive maps with pins, moving through the
-> years, images, video and audio, word count, quick notes, .zip backups, page previews on hover,
-> search, tags, rename with link updates.
+> **Status: 1.0, stable.** Worlds made with 1.0 open in every later 1.x version: the file format is
+> written down in [docs/FORMAT.md](docs/FORMAT.md) and only grows. Pages and links, typed relations,
+> a graph, cards, family trees, maps, a timeline with calendars of your own, books, mood boards,
+> playlists, comments and versions, a site for readers; offline, installable, in English and Russian.
 > [Русская версия](README.ru.md)
 
 ## Principles
@@ -57,6 +57,8 @@ the app, or press "Open the demo world" on the welcome screen to get a copy in y
 files are plain Markdown, so they also show what the file format looks like.
 
 ## File format
+
+The full reference, with what 1.0 promises about it: [docs/FORMAT.md](docs/FORMAT.md). In short:
 
 A page is a Markdown file. An optional YAML header at the top holds metadata and typed relations:
 

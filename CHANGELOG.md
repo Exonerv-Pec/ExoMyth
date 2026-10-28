@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.0.0 — 2026-10-28
+
+The first stable version. Worlds made with it open in every later 1.x version.
+
+### The promise
+
+- **The file format is written down** in [docs/FORMAT.md](docs/FORMAT.md) (and in Russian): every
+  page, header field and file Exomyth reads and writes. From 1.0 on it only grows: new features add
+  fields and files, and nothing that is there is renamed, dropped or given another meaning.
+- **Worlds from 0.x open as they are.** A new test opens every version of the demo world in the
+  project's history, looks at it through every view and brings it up to date.
+
+### Changed
+
+- **Big worlds.** The first layout of the graph runs in the background, so the app stays usable
+  while it is made (a world of 2,000 pages used to freeze the window for over ten seconds), and very
+  large groups of pages are laid out in fewer, still careful, rounds. Saved layouts do not move.
+
+### Fixed
+
+- The buttons at the bottom of the sidebar no longer stick out of it (on phones the language button
+  showed at the edge of the screen).
+- A long legend under the graph no longer runs into the help text beside it.
+
 ## 0.32.0 — 2026-10-28
 
 ### Added

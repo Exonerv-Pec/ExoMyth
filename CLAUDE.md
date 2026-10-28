@@ -13,6 +13,9 @@ Markdown pages with YAML headers. Read [README.md](README.md), [ROADMAP.md](ROAD
 - **Clean room.** Write the code yourself. Never copy or closely paraphrase code from Obsidian,
   World Anvil, LegendKeeper or similar apps. Third-party code is allowed only under an
   AGPL-compatible licence and must be listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+- **Stable format.** Since 1.0, [docs/FORMAT.md](docs/FORMAT.md) is a promise: add header fields and
+  files, never rename, drop or change the meaning of existing ones. Update that page (both languages)
+  when you add to the format.
 - **Safe rendering.** Markdown goes through the sanitizer (`marked` + DOMPurify). Never insert raw
   HTML from a page. Validate any value from a page that ends up in styles or attributes, such as
   colours.

@@ -3,6 +3,7 @@
   import { app } from '../app.svelte';
   import { buildGraph, neighbourhood, type GraphEdge, type WorldGraph } from '../core/graph';
   import { layoutGraph, SHELF_CELL, type LayoutResult, type Point } from '../core/layout';
+  import { layoutInBackground } from '../layoutWorker';
   import { stripMd } from '../core/names';
   import { rectOf } from '../actions';
   import Icon from './Icon.svelte';
@@ -51,25 +52,31 @@
   // Lay out whenever the pages or the saved layout change. Big first layouts run after a
   // paint, so the "laying out" note shows instead of a frozen window.
   let layoutRun = 0;
+  /** "Lay out again" shows the whole new layout once it is ready. */
+  let fitAfterLayout = false;
   $effect(() => {
     const g = graph;
     const stored = app.layout;
     if (!g || !stored) return;
     const unplaced = g.nodes.filter((n) => !stored.nodes[n.id]).length;
     const run = ++layoutRun;
-    const compute = () => {
+    const apply = (r: LayoutResult) => {
       if (run !== layoutRun) return;
-      const r = layoutGraph(g, stored);
       result = r;
       computing = false;
       // A dropped node now has its saved place; stop showing the temporary drag position.
       if (!gesture) dragPos = null;
       if (r.changed) app.setLayout(r.stored);
+      if (fitAfterLayout) {
+        fitAfterLayout = false;
+        setTimeout(() => fit(), 0);
+      }
     };
     if (unplaced > 120) {
+      // A big first layout runs in the background, with a "laying out" note, so the app stays usable.
       computing = true;
-      setTimeout(compute, 30);
-    } else compute();
+      void layoutInBackground(g, stored).then(apply);
+    } else apply(layoutGraph(g, stored));
   });
 
   const adjacency = $derived.by(() => {
@@ -403,8 +410,8 @@
       confirmLabel: t('graph.relayout.confirm'),
       onConfirm: () => {
         viewReady = true;
+        fitAfterLayout = true;
         app.resetLayout();
-        setTimeout(() => fit(), 80);
       },
     };
   }
@@ -577,15 +584,18 @@
     {/if}
   </svg>
 
-  {#if legend.length > 1}
-    <div class="graph-legend" aria-label={t('graph.legend')}>
-      <span class="legend-title">{t('graph.legend')}</span>
-      {#each legend as l (l.name)}
-        <span class="legend-item"><span class="dot" style:background={l.color}></span>{l.name}</span>
-      {/each}
-    </div>
-  {/if}
-  <p class="graph-help">{t('graph.help')}</p>
+  <!-- The legend and the help share the bottom edge, so a long legend never runs into the help. -->
+  <div class="graph-foot">
+    {#if legend.length > 1}
+      <div class="graph-legend" aria-label={t('graph.legend')}>
+        <span class="legend-title">{t('graph.legend')}</span>
+        {#each legend as l (l.name)}
+          <span class="legend-item"><span class="dot" style:background={l.color}></span>{l.name}</span>
+        {/each}
+      </div>
+    {/if}
+    <p class="graph-help">{t('graph.help')}</p>
+  </div>
   </div>
   <YearSlider id="graph" hidden={app.outOfTime ? (graph?.nodes.filter((n) => app.outOfTime!.has(n.id)).length ?? 0) : 0} />
 </div>

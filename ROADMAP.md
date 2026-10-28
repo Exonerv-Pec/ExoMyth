@@ -12,16 +12,19 @@ piece of work from. Ideas from testers and contributors are welcome: open an iss
 Every feature keeps three rules: **private by design** (nothing leaves the device, no accounts or
 servers), **plain files** (everything is readable Markdown, YAML or normal media files) and **clean
 room** (our own code and words, nothing copied from other apps; see [CONTRIBUTING.md](CONTRIBUTING.md)).
+Since 1.0 there is a fourth: the **file format only grows** ([docs/FORMAT.md](docs/FORMAT.md)), so
+worlds keep working in every 1.x version.
 
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 33 releases, latest 0.30.0 (2026-10-25)</summary>
+<summary><b>✅ Done</b> · 36 releases, latest 1.0.0 (2026-10-28)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **1.0.0** | 2026-10-28 | 🎉 The first stable version: the file format written down and kept, old worlds tested, big worlds smooth |
 | **0.32.0** | 2026-10-28 | 📲 Works offline and installs as an app, with updates that wait until you reload |
 | **0.31.0** | 2026-10-28 | 🌐 A site for readers: the world as plain HTML pages, without the editor or your private pages |
 | **0.30.0** | 2026-10-25 | 📅 Calendars of your own: months, weeks and eras, and dates with months and days |

@@ -228,7 +228,8 @@ function relax(ids: string[], pos: Map<string, Point>, adj: Map<string, string[]
   const k2 = k * k;
   const cutoff = k * 4;
   const cutoff2 = cutoff * cutoff;
-  const iterations = opts.iterations ?? Math.min(420, 160 + ids.length * 2);
+  // Big groups start from a good spiral and need fewer rounds; each round costs more there.
+  const iterations = opts.iterations ?? (ids.length <= 300 ? Math.min(420, 160 + ids.length * 2) : Math.max(150, Math.round((420 * 300) / ids.length)));
   const t0 = opts.temperature ?? k * 1.5;
   const dx = new Float64Array(moving.length);
   const dy = new Float64Array(moving.length);

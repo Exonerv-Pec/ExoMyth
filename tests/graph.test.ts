@@ -145,3 +145,19 @@ describe('stable layout', () => {
     expect(l.nodes).toEqual({ 'A.md': [1, 2, 1] });
   });
 });
+
+describe('laying out in the background', () => {
+  it('gives the same layout as on the main thread, even where workers cannot start', async () => {
+    const { layoutInBackground } = await import('../src/layoutWorker');
+    const { buildGraph } = await import('../src/core/graph');
+    const { layoutGraph, emptyLayout } = await import('../src/core/layout');
+    const { Vault } = await import('../src/core/vault');
+    const { MemoryStorage } = await import('../src/core/storage');
+    const { DEMO_FILES } = await import('../src/demo');
+    const vault = await Vault.open(new MemoryStorage('bg-layout', DEMO_FILES));
+    const g = buildGraph(vault.index);
+    const here = layoutGraph(g, emptyLayout());
+    const there = await layoutInBackground(g, emptyLayout());
+    expect(there.stored).toEqual(here.stored);
+  });
+});
