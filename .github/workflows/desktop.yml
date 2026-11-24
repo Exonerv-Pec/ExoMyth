@@ -1,0 +1,63 @@
+# Builds Exomyth for the desktop (Windows for now) with Tauri, see src-tauri/.
+#
+# - On a pull request that changes the desktop app: builds the installer to show it still works,
+#   and keeps it as a download on the run's page for a week.
+# - When a release is published on GitHub: builds the installer and attaches it to that release.
+# - By hand (Actions → Desktop app → Run workflow): a test build, kept on the run's page.
+#
+# The installer is not signed yet, so Windows shows "Windows protected your PC" on first start.
+name: Desktop app
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ['src-tauri/**', 'src/desktop.ts', 'src/save.ts', 'package.json', 'package-lock.json', 'vite.config.ts', '.github/workflows/desktop.yml']
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desktop-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: Windows installer
+    runs-on: windows-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write # only used to attach the installer to a published release
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - run: npm ci
+      - name: Build the installer
+        run: npx tauri build --bundles nsis
+      # After the build: the Rust side expects the built app (dist-desktop) to be there.
+      - name: Rust tests
+        run: cargo test --manifest-path src-tauri/Cargo.toml
+      - name: Keep the installer on this run's page
+        uses: actions/upload-artifact@v4
+        with:
+          name: Exomyth-windows
+          path: src-tauri/target/release/bundle/nsis/*.exe
+          retention-days: 7
+      - name: Attach the installer to the release
+        if: github.event_name == 'release'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: gh release upload "$TAG" src-tauri/target/release/bundle/nsis/*.exe --clobber --repo "$GITHUB_REPOSITORY"

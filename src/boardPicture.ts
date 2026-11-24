@@ -231,15 +231,3 @@ export async function boardPicture({ items, heights, screenWidth, styleFrom, wid
 
   return new Promise((resolve, reject) => canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('The picture could not be made'))), 'image/png'));
 }
-
-/** Hands a file made on this device to the browser to save. */
-export function saveBlob(blob: Blob, name: string): void {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = name;
-  document.body.append(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 10_000);
-}

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { pwa } from '../pwa.svelte';
+  import { checkUpdate, isDesktop, openReleases, type UpdateInfo } from '../desktop';
   import { app, type Feature } from '../app.svelte';
   import { countPages, type Key } from '../i18n';
   import { featureUsage, type UsedFeature } from '../core/usage';
@@ -42,6 +43,22 @@
     close();
     void app.openText(path);
   }
+
+  // Desktop app: the version, and "Check for updates" (the only time it goes online).
+  let update = $state<UpdateInfo>();
+  let checking = $state(false);
+  let checkError = $state('');
+  async function check() {
+    checking = true;
+    checkError = '';
+    try {
+      update = await checkUpdate();
+    } catch (e) {
+      checkError = e instanceof Error ? e.message : String(e);
+    } finally {
+      checking = false;
+    }
+  }
 </script>
 
 <svelte:window onkeydown={(e) => e.key === 'Escape' && app.settingsOpen && close()} />
@@ -67,6 +84,24 @@
           </div>
         {/if}
 
+        {#if isDesktop}
+          <div class="setting-row profile-row app-row">
+            <span>
+              <span class="setting-name">{t('desktop.label')}</span>
+              <span class="setting-about">
+                {t('desktop.version', __EXOMYTH_VERSION__)}
+                {#if update}{' '}<strong>{update.newer && update.latest ? t('desktop.newer', update.latest) : t('desktop.latest')}</strong>{/if}
+                {#if checkError}{' '}<span class="error">{t('desktop.failed', checkError)}</span>{/if}
+                <br />{t('desktop.note')}
+              </span>
+            </span>
+            {#if update?.newer}
+              <button class="btn primary" onclick={() => void openReleases()}>{t('desktop.download')}</button>
+            {:else}
+              <button class="btn" disabled={checking} onclick={check}>{checking ? t('desktop.checking') : t('desktop.check')}</button>
+            {/if}
+          </div>
+        {:else}
         <div class="setting-row profile-row app-row">
           <span>
             <span class="setting-name">{t('pwa.label')}</span>
@@ -77,6 +112,7 @@
           </span>
           {#if pwa.canInstall}<button class="btn" onclick={() => pwa.install()}>{t('pwa.install')}</button>{/if}
         </div>
+        {/if}
 
         {#each groups as g (g.title)}
           <section>

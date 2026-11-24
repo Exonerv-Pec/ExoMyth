@@ -11,7 +11,7 @@ import { cachedFiles, serviceWorkerSource } from './src/pwa/worker';
  * origin. The app therefore cannot contact other servers, even by accident or through a dependency.
  * (Skipped in the dev server, whose hot-reload client needs more, and in the single-file preview.)
  */
-function contentSecurityPolicy(): Plugin {
+function contentSecurityPolicy(desktop: boolean): Plugin {
   const policy = [
     "default-src 'self'",
     "script-src 'self'",
@@ -19,7 +19,8 @@ function contentSecurityPolicy(): Plugin {
     "img-src 'self' data: blob:",
     "media-src 'self' blob:",
     "font-src 'self' data:",
-    "connect-src 'self'",
+    // The desktop app talks to its own Rust side through Tauri's "ipc" address, which is not online.
+    desktop ? "connect-src 'self' ipc: http://ipc.localhost" : "connect-src 'self'",
     "object-src 'none'",
     "base-uri 'none'",
     "form-action 'none'",
@@ -73,14 +74,27 @@ function serviceWorker(): Plugin {
 }
 
 const single = process.env.SINGLE_FILE === '1';
+/** Built by Tauri for the desktop app (see src-tauri): no service worker, it is already installed. */
+const desktop = !!process.env.TAURI_ENV_PLATFORM;
+
+function plugins(): Plugin[] {
+  if (single) return [viteSingleFile() as Plugin];
+  if (desktop) return [contentSecurityPolicy(true)];
+  return [contentSecurityPolicy(false), serviceWorker()];
+}
 
 export default defineConfig({
-  plugins: [svelte(), ...(single ? [viteSingleFile()] : [contentSecurityPolicy(), serviceWorker()])],
+  plugins: [svelte(), ...plugins()],
   // The single-file copy runs from anywhere (even a file), where an offline service worker cannot.
-  define: { __EXOMYTH_PWA__: JSON.stringify(!single && !process.env.VITEST) },
+  define: {
+    __EXOMYTH_PWA__: JSON.stringify(!single && !desktop && !process.env.VITEST),
+    __EXOMYTH_VERSION__: JSON.stringify(JSON.parse(readFileSync('package.json', 'utf8')).version),
+  },
   // Relative base so the built app works from any folder or static host.
   base: './',
-  build: { target: 'es2022', outDir: single ? 'dist-single' : 'dist' },
+  build: { target: 'es2022', outDir: single ? 'dist-single' : desktop ? 'dist-desktop' : 'dist' },
+  // `tauri dev` opens the dev server in the desktop window, which needs it on this fixed port.
+  server: desktop ? { port: 5173, strictPort: true } : undefined,
   worker: { format: 'es' },
   // Tests run in jsdom: make Svelte resolve its browser build there.
   resolve: process.env.VITEST ? { conditions: ['browser'] } : undefined,

@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "The main window. Exomyth's own commands (folders, saving, updates) are checked in Rust; no plugin is reachable from the window.",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}

@@ -4,6 +4,7 @@ import App from './App.svelte';
 import { migrateBrowserData } from './migrate';
 import { pwa } from './pwa.svelte';
 import { app } from './app.svelte';
+import { isDesktop, startDesktop } from './desktop';
 
 const target = document.getElementById('app')!;
 
@@ -27,8 +28,11 @@ void migrateBriefly().then(() => {
   }
 });
 
+// The desktop app is installed already and keeps no copy of a website.
+if (isDesktop) startDesktop();
+
 // Working offline and installing as an app: only in the build made for it.
-if (__EXOMYTH_PWA__) {
+if (__EXOMYTH_PWA__ && !isDesktop) {
   pwa.start(async () => {
     await app.flush();
     app.rememberForReload();

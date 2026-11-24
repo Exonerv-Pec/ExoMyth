@@ -15,13 +15,19 @@
   import { sanitizePageName } from '../core/names';
   import { ensureReadWrite, forgetFolder, listFolders, rememberFolder, type SavedFolder } from '../handles';
   import { DEMO_FILES, DEMO_MEDIA, DEMO_WORLD_NAME, updateDemoWorld } from '../demo';
+  import * as desktop from '../desktop';
 
   const t = app.t;
   // Browsers refuse the folder picker inside an embedded frame, so say so instead of failing on click.
   const inFrame = typeof window !== 'undefined' && window.self !== window.top;
-  const hasFolderAccess = typeof window !== 'undefined' && typeof window.showDirectoryPicker === 'function' && !inFrame;
+  // The desktop app opens folders through its own side, with the system's folder dialog.
+  const onDesktop = desktop.isDesktop;
+  const hasFolderAccess = onDesktop || (typeof window !== 'undefined' && typeof window.showDirectoryPicker === 'function' && !inFrame);
 
   let folders = $state<SavedFolder[]>([]);
+  let desktopFolders = $state<desktop.DesktopFolder[]>([]);
+  /** Recently opened folders, in the browser or in the desktop app. */
+  const recent = $derived(onDesktop ? desktopFolders.map((f) => ({ id: f.id, name: f.name, title: f.path })) : folders.map((f) => ({ id: f.id, name: f.name, title: f.name })));
   let browserWorlds = $state<string[]>([]);
   /** Browser worlds holding the Russian demo that versions before 0.2.1 created as "Demo". */
   let legacyDemos = $state<Set<string>>(new Set());
@@ -30,7 +36,8 @@
   let busy = $state(false);
 
   async function loadLists() {
-    folders = hasFolderAccess ? await listFolders() : [];
+    if (onDesktop) desktopFolders = await desktop.listFolders().catch(() => []);
+    else folders = hasFolderAccess ? await listFolders() : [];
     browserWorlds = await listBrowserVaults().catch(() => []);
     const legacy = new Set<string>();
     for (const w of browserWorlds) {
@@ -74,6 +81,9 @@
     try {
       if (back.kind === 'browser' && browserWorlds.includes(back.label)) {
         await openBrowserWorld(back.label);
+      } else if (back.kind === 'folder' && onDesktop) {
+        const f = desktopFolders.find((x) => x.name === back.label);
+        if (f) await openDesktopFolder(f.id);
       } else if (back.kind === 'folder') {
         // Only when the browser still allows the folder: asking needs a click, so otherwise the list shows.
         const f = folders.find((x) => x.name === back.label);
@@ -102,7 +112,24 @@
     app.setVault(vault);
   }
 
+  /** Opens a folder the desktop app knows (it has just been picked, or was opened before). */
+  async function openDesktopFolder(id: string) {
+    error = '';
+    busy = true;
+    const folder = await desktop.openFolder(id);
+    app.setVault(await Vault.open(new desktop.DesktopStorage(folder)));
+  }
+
   async function pickFolder() {
+    if (onDesktop) {
+      try {
+        const folder = await desktop.pickFolder(t('welcome.pick'));
+        if (folder) await openDesktopFolder(folder.id);
+      } catch (e) {
+        fail(e);
+      }
+      return;
+    }
     try {
       const handle = await window.showDirectoryPicker!({ mode: 'readwrite' });
       await openFolderHandle(handle);
@@ -112,9 +139,11 @@
     }
   }
 
-  async function openSaved(f: SavedFolder) {
+  async function openSaved(id: string) {
     try {
-      await openFolderHandle(f.handle);
+      if (onDesktop) return await openDesktopFolder(id);
+      const f = folders.find((x) => x.id === id);
+      if (f) await openFolderHandle(f.handle);
     } catch (e) {
       fail(e);
     }
@@ -153,6 +182,16 @@
     e.preventDefault();
     const name = sanitizePageName(newName);
     if (!name) return;
+    // On the desktop a new world is a new folder, wherever the person wants it.
+    if (onDesktop) {
+      try {
+        const folder = await desktop.createFolder(t('welcome.where', name), name);
+        if (folder) await openDesktopFolder(folder.id);
+      } catch (e) {
+        fail(e);
+      }
+      return;
+    }
     await openBrowserWorld(name);
   }
 
@@ -192,9 +231,23 @@
       return;
     }
     try {
-      const taken = await listBrowserVaults().catch(() => browserWorlds);
-      const name = uniqueName(sanitizePageName(worldNameFromZip(file.name)) || 'World', taken);
-      const storage = await browserStorage(name);
+      let name: string;
+      let storage: VaultStorage;
+      if (onDesktop) {
+        // A new folder for the world, next to wherever the person keeps their worlds.
+        const base = sanitizePageName(worldNameFromZip(file.name)) || 'World';
+        const folder = await desktop.createFolder(t('welcome.where', base), base);
+        if (!folder) {
+          busy = false;
+          return;
+        }
+        name = folder.name;
+        storage = new desktop.DesktopStorage(await desktop.openFolder(folder.id));
+      } else {
+        const taken = await listBrowserVaults().catch(() => browserWorlds);
+        name = uniqueName(sanitizePageName(worldNameFromZip(file.name)) || 'World', taken);
+        storage = await browserStorage(name);
+      }
       for (const [path, data] of parsed.files) await storage.writeBytes(path, data);
       app.setVault(await Vault.open(storage));
       app.notify(
@@ -206,8 +259,9 @@
     }
   }
 
-  async function forget(f: SavedFolder) {
-    await forgetFolder(f.id);
+  async function forget(id: string) {
+    if (onDesktop) await desktop.forgetFolder(id);
+    else await forgetFolder(id);
     await loadLists();
   }
 </script>
@@ -221,13 +275,13 @@
       <section>
         <button class="btn primary" onclick={pickFolder} disabled={busy}>{t('welcome.open')}</button>
         <p class="hint">{t('welcome.open.hint')}</p>
-        {#if folders.length > 0}
+        {#if recent.length > 0}
           <h2 style="margin-top:1rem">{t('welcome.recent')}</h2>
           <ul class="world-list">
-            {#each folders as f (f.id)}
+            {#each recent as f (f.id)}
               <li>
-                <button class="world" onclick={() => openSaved(f)}>{f.name}</button>
-                <button class="icon-btn" title={t('welcome.forget')} aria-label={t('welcome.forget')} onclick={() => forget(f)}>
+                <button class="world" title={f.title} onclick={() => openSaved(f.id)}>{f.name}</button>
+                <button class="icon-btn" title={t('welcome.forget')} aria-label={t('welcome.forget')} onclick={() => forget(f.id)}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
                 </button>
               </li>
@@ -247,9 +301,9 @@
         <input id="new-world" type="text" placeholder={t('welcome.create.placeholder')} bind:value={newName} />
         <button class="btn" type="submit" disabled={busy || !sanitizePageName(newName)}>{t('welcome.create.button')}</button>
       </form>
-      <p class="hint">{t('welcome.create')}</p>
+      <p class="hint">{onDesktop ? t('welcome.create.desktop') : t('welcome.create')}</p>
       {#if browserWorlds.length > 0}
-        <h2 style="margin-top:1rem">{t('welcome.browser')}</h2>
+        <h2 style="margin-top:1rem">{onDesktop ? t('welcome.browser.desktop') : t('welcome.browser')}</h2>
         <ul class="world-list">
           {#each browserWorlds as w (w)}
             <li>
@@ -279,12 +333,12 @@
           if (file) void openZip(file);
         }}
       />
-      <p class="hint">{t('zip.open.hint')}</p>
+      <p class="hint">{onDesktop ? t('zip.open.hint.desktop') : t('zip.open.hint')}</p>
     </section>
 
     <section>
       <button class="btn" onclick={openDemo} disabled={busy}>{t('welcome.demo')}</button>
-      <p class="hint">{t('welcome.demo.hint')}</p>
+      <p class="hint">{onDesktop ? t('welcome.demo.hint.desktop') : t('welcome.demo.hint')}</p>
     </section>
 
     {#if pwa.canInstall}

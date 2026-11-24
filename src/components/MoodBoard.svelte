@@ -17,7 +17,8 @@
     type Box,
   } from '../core/board';
   import { pageImage } from '../core/cards';
-  import { boardPicture, saveBlob } from '../boardPicture';
+  import { boardPicture } from '../boardPicture';
+  import { saveToDevice } from '../save';
   import MediaThumb from './MediaThumb.svelte';
 
   let { path }: { path: string } = $props();
@@ -237,8 +238,7 @@
     try {
       const blob = await boardPicture({ items, heights, screenWidth: frameW, styleFrom: canvasEl });
       const name = `${(page?.title ?? 'Board').replace(/[\\/:*?"<>|]+/g, ' ').trim() || 'Board'}.png`;
-      saveBlob(blob, name);
-      app.notify(t('board.png.saved', name));
+      if (await saveToDevice(blob, name, 'image/png')) app.notify(t('board.png.saved', name));
     } catch (e) {
       app.fail(e);
     } finally {
