@@ -30,6 +30,11 @@ After the first visit Exomyth starts **without a connection**. **Install** (on t
 Settings) makes it an app with its own window and icon; on iPhone and iPad use Share → Add to Home
 Screen. When a new version is out, a notice at the bottom offers to **Reload**.
 
+There is also **Exomyth for Windows**, a program of its own from the
+[releases page](https://github.com/Exonerv-Pec/Exomyth/releases/latest). There a new world is a new
+folder wherever you choose, and **Check for updates** in Settings looks for a new version when you
+ask.
+
 The first time you open a world, a short tour points out the main parts of the screen. **Show the
 tour** at the top of this guide takes it again.
 

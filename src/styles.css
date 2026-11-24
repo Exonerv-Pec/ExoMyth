@@ -211,6 +211,8 @@ textarea:focus {
   gap: 3rem;
   padding: clamp(1.5rem, 6vw, 5rem);
   align-content: center;
+  /* In a short window, start at the top instead of cutting the title off above the scroll area. */
+  align-content: safe center;
 }
 .welcome h1 {
   font-family: var(--font-text);

@@ -104,6 +104,41 @@ GitHub Pages and GitHub Actions are free for public repositories on standard Git
 Your fork is under the same AGPL-3.0 license: if you publish a changed version, its source must stay
 open. See [LICENSE-NOTE.md](LICENSE-NOTE.md).
 
+## 7. The desktop app (Tauri)
+
+The desktop app in `src-tauri/` puts the same app in a window of its own, with
+[Tauri](https://tauri.app). Its Rust side keeps worlds in folders the person picked, saves files
+where they choose, opens web links in their browser and, only on request, checks for updates.
+
+You also need **Rust** (from [rustup.rs](https://rustup.rs)) and:
+
+- **Windows:** the "Desktop development with C++" tools from Visual Studio Build Tools. WebView2 is
+  already part of Windows 10 and 11.
+- **Linux:** the WebKitGTK libraries, on Debian and Ubuntu
+  `sudo apt install libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev libxdo-dev build-essential`.
+- **macOS:** the Xcode command-line tools (`xcode-select --install`).
+
+```bash
+npm run desktop:dev     # the app in its window, with the dev server behind it
+npm run desktop:build   # the installer, in src-tauri/target/release/bundle/
+cargo test --manifest-path src-tauri/Cargo.toml   # the Rust side's tests (after a build)
+```
+
+When Tauri builds the app it sets `TAURI_ENV_PLATFORM`, and `vite.config.ts` then makes the desktop
+version in `dist-desktop/`: no offline service worker (the app is installed already), and a Content
+Security Policy that lets the window talk to its Rust side and to nothing else.
+
+**Windows installers are made by GitHub.** The workflow `.github/workflows/desktop.yml` builds
+`Exomyth_<version>_x64-setup.exe`:
+
+- on pull requests that change the desktop app (the file is on the run's page for a week);
+- when you **publish a release** on GitHub: the installer is attached to that release, where
+  **Check for updates** in the app sends people. Tag releases with the version, for example `v1.1.0`;
+- by hand: **Actions → Desktop app → Run workflow**.
+
+The installer is not signed. Windows shows "Windows protected your PC" the first time; **More info →
+Run anyway** starts it.
+
 ## Troubleshooting
 
 | Problem | What to do |
@@ -113,6 +148,8 @@ open. See [LICENSE-NOTE.md](LICENSE-NOTE.md).
 | The deploy fails with a Pages error | In **Settings → Environments → github-pages**, allow deployments from the `main` branch. |
 | A blank page after opening `dist/index.html` from the disk | Expected; use `npm run preview` (see step 5). |
 | "Open a world folder" is missing | The browser does not support folder access (Firefox, Safari) or the app is shown inside another page. Use Chrome, Edge or Opera, and open the app directly. |
+| `npm run desktop:dev` says Rust or `cargo` is missing | Install Rust from [rustup.rs](https://rustup.rs) and open a new terminal. |
+| The Rust tests fail with "frontendDist … doesn't exist" | Build once first (`npm run desktop:build`): the Rust side includes the built app. |
 | Tests fail after you changed the demo world | `tests/demo.test.ts` checks that the demo has no broken links. Fix the link or add the missing page. |
 
 ## Where things are
@@ -121,10 +158,12 @@ open. See [LICENSE-NOTE.md](LICENSE-NOTE.md).
 src/core/         logic without interface: parsing, links, relations panel, graph layout,
                   page previews, media, storage, world operations
 src/components/   the interface (Svelte 5)
+src/desktop.ts    the window's side of the desktop app
+src-tauri/        the desktop app (Rust): folders, saving files, update check
 src/i18n.ts       interface text in Russian and English
 examples/         the demo world, bundled into the app
 tests/            automated tests (Vitest)
-.github/          the GitHub Pages workflow
+.github/          the GitHub Pages workflow and the Windows build
 ```
 
 More about the rules for contributions: [CONTRIBUTING.md](CONTRIBUTING.md).

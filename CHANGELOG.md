@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.1.0 — 2026-11-24
+
+### Added
+
+- **Exomyth for Windows**, a program of its own made with [Tauri](https://tauri.app): an installer
+  (`Exomyth_1.1.0_x64-setup.exe`) that needs no administrator rights, a window and a Start menu entry,
+  and no browser underneath.
+  - Worlds are folders on the computer, opened with the Windows folder dialog and remembered in the
+    list of recent worlds. **Create** makes a new folder wherever you choose, and a .zip opens into a
+    new folder too.
+  - The window can reach only the folders you picked: paths that lead out of a world, even through a
+    link inside it, are refused. Pages are written to a temporary file first and then swapped in.
+  - Saving a .zip, a book, a site for readers or a board picture asks where to put the file.
+  - Links in pages open in your usual browser; the window only ever shows Exomyth.
+  - **Check for updates** in Settings asks GitHub for the newest version: the only time the program
+    goes online, and only when you press it. **Download** opens the release page.
+- GitHub builds the Windows installer for every published release and attaches it there
+  (`.github/workflows/desktop.yml`).
+
+### Fixed
+
+- In a short window the start screen no longer cuts off its title: it starts at the top and scrolls.
+
 ## 1.0.0 — 2026-10-28
 
 The first stable version. Worlds made with it open in every later 1.x version.

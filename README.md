@@ -13,6 +13,8 @@ Markdown files on your own device. No account, no server, no tracking.
 
 - **Private by design.** The app makes no network requests (the page ships with a Content Security
   Policy that forbids them). Worlds live in a folder you choose, or in your browser's own storage.
+  The desktop app goes online only when you press **Check for updates**, and then only asks GitHub
+  for the newest version number.
 - **Your files, your format.** Every page is a `.md` file with a small YAML header. You can open the
   folder in any editor, sync it with any tool, or put it in Git. If Exomyth disappears, nothing is lost.
 - **Stable, findable relations.** Relations are shown in a fixed panel next to the page, always in the
@@ -32,6 +34,26 @@ After the first visit the app is kept in the browser and starts **without a conn
 (in Chrome and Edge also the install button in the address bar; on iPhone and iPad, Share → Add to
 Home Screen). When a new version comes out, a notice offers to reload; nothing changes while you
 write, and the same world and page open again after the reload.
+
+### Exomyth for Windows
+
+A program of its own, without a browser: download `Exomyth_…_x64-setup.exe` from the newest
+[release](https://github.com/Exonerv-Pec/Exomyth/releases/latest) and run it. It installs for your
+Windows account only (no administrator rights needed) and appears in the Start menu.
+
+- **Worlds are folders on your computer.** **Open a world folder** picks one in the Windows folder
+  dialog; **Create** makes a new folder wherever you choose; a .zip opens into a new folder too. The
+  same folders open in the website version and in any Markdown editor.
+- **No browser underneath.** Clearing a browser's data never touches your worlds, and folders work
+  the same way everywhere.
+- **Saving** a .zip, a book or a board picture asks where to put the file.
+- **Links** in pages open in your usual browser.
+- **Updates are yours to start.** Settings → **Check for updates** asks GitHub whether a newer
+  version is out (the only time the app goes online); **Download** opens the release page. A new
+  version installs over the old one, and your worlds stay where they are.
+
+The installer is not signed yet, so the first time Windows may show **"Windows protected your PC"**:
+click **More info**, then **Run anyway**. macOS and Linux versions are on the roadmap.
 
 **Guide with pictures:** [docs/GUIDE.md](docs/GUIDE.md). The same guide opens inside the app: **F1** or
 the **?** button at the bottom of the sidebar (and **Guide** on the start screen). Every topic has a
@@ -572,6 +594,8 @@ src/core/      Pure TypeScript, no UI: parsing, link index, relations panel mode
                graph model and stable layout, page previews,
                storage (folder / browser / memory), vault operations
 src/components Svelte 5 interface
+src/desktop.ts The window's side of the desktop app
+src-tauri/     The desktop app (Tauri, Rust): folders, saving files, update check
 tests/         Vitest: core logic and rendered interface (jsdom)
 ```
 

@@ -1,6 +1,6 @@
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { flushSync, mount, unmount } from 'svelte';
-import App from '../src/App.svelte';
+import Root from '../src/Root.svelte';
 import { app } from '../src/app.svelte';
 import { Vault } from '../src/core/vault';
 import { MemoryStorage } from '../src/core/storage';
@@ -75,7 +75,7 @@ describe('mood boards in the app', () => {
     app.current = Object.keys(files)[0] ?? null;
     const target = document.createElement('div');
     document.body.append(target);
-    mounted.push(mount(App, { target }));
+    mounted.push(mount(Root, { target }));
     flushSync();
     await wait();
     flushSync();

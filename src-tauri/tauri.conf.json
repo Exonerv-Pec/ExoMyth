@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Exomyth",
+  "version": "../package.json",
+  "identifier": "io.github.exonerv-pec.exomyth",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:5173",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist-desktop"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "category": "Productivity",
+    "shortDescription": "A private, offline-first wiki for writers and worldbuilders",
+    "longDescription": "Exomyth keeps your world in plain Markdown files on your computer: pages, relations, timelines, maps, family trees and books. Nothing is sent anywhere.",
+    "copyright": "Exomyth contributors, AGPL-3.0",
+    "license": "AGPL-3.0-only",
+    "licenseFile": "../LICENSE",
+    "publisher": "Exomyth",
+    "homepage": "https://github.com/Exonerv-Pec/Exomyth",
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": ["English", "Russian"],
+        "displayLanguageSelector": false
+      }
+    }
+  }
+}

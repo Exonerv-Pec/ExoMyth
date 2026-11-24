@@ -35,6 +35,7 @@ import type { GuideTry } from './core/guide';
 import { TOUR_KEY } from './core/tour';
 import { useCalendar, useCalendarLanguage } from './core/calendar';
 import { music } from './music.svelte';
+import { saveToDevice } from './save';
 import {
   addChapterToText,
   addSceneToText,
@@ -167,18 +168,6 @@ export interface EditorApi {
 }
 
 const REOPEN_KEY = 'exomyth:reopen';
-
-/** Hands a .zip to the browser to save. */
-function saveZip(data: Uint8Array, name: string): void {
-  const url = URL.createObjectURL(new Blob([data as BlobPart], { type: 'application/zip' }));
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = name;
-  document.body.append(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 10_000);
-}
 
 function load<T extends string>(key: string, allowed: readonly T[], fallback: T): T {
   try {
@@ -610,8 +599,7 @@ class App {
     try {
       await this.flush();
       const { data, files } = await worldToZip(vault.storage);
-      saveZip(data, `${zipFolderName(vault.storage.label)}.zip`);
-      this.notify(this.t('zip.saved', files));
+      if (await saveToDevice(data, `${zipFolderName(vault.storage.label)}.zip`, 'application/zip')) this.notify(this.t('zip.saved', files));
     } catch (e) {
       this.fail(e);
     }
@@ -668,8 +656,7 @@ class App {
       save(this.prefKey('site'), JSON.stringify(options));
       const site = await buildSite(vault, { ...options, lang: this.lang, t: this.t });
       const name = this.t('site.zipName', zipFolderName(options.title || vault.storage.label));
-      saveZip(siteToZip(site, name), `${zipFolderName(name)}.zip`);
-      this.notify(this.t('site.saved', site.pages, site.media));
+      if (await saveToDevice(siteToZip(site, name), `${zipFolderName(name)}.zip`, 'application/zip')) this.notify(this.t('site.saved', site.pages, site.media));
     } catch (e) {
       this.fail(e);
     }
@@ -771,14 +758,7 @@ class App {
     await this.flush();
     const book = parseBook(page, vault.index);
     const md = bookMarkdown(book, vault.index, { sceneTitles });
-    const url = URL.createObjectURL(new Blob([md], { type: 'text/markdown;charset=utf-8' }));
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${zipFolderName(book.title)}.md`;
-    document.body.append(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 10_000);
+    await saveToDevice(new TextEncoder().encode(md), `${zipFolderName(book.title)}.md`, 'text/markdown;charset=utf-8');
   }
 
   askBook(): void {

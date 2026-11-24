@@ -18,12 +18,13 @@ worlds keep working in every 1.x version.
 Click a section to open it.
 
 <details>
-<summary><b>✅ Done</b> · 36 releases, latest 1.0.0 (2026-10-28)</summary>
+<summary><b>✅ Done</b> · 37 releases, latest 1.1.0 (2026-11-24)</summary>
 
 <br>
 
 | Version | Date | What came |
 | --- | --- | --- |
+| **1.1.0** | 2026-11-24 | 🖥️ Exomyth for Windows: a program of its own, worlds in folders, updates when you ask 💬 |
 | **1.0.0** | 2026-10-28 | 🎉 The first stable version: the file format written down and kept, old worlds tested, big worlds smooth |
 | **0.32.0** | 2026-10-28 | 📲 Works offline and installs as an app, with updates that wait until you reload |
 | **0.31.0** | 2026-10-28 | 🌐 A site for readers: the world as plain HTML pages, without the editor or your private pages |
@@ -113,7 +114,7 @@ Exomyth started as a world wiki. These would make it a place to write the story 
 | | Idea | Size | Notes |
 | --- | --- | :---: | --- |
 | ⬜ | Mobile version 💬 | M–L | A layout made for phones first (installing from the browser works since 0.32); later perhaps a store app |
-| ⬜ | Desktop app (Tauri) 💬 | L | Windows, macOS, Linux; no browser limits on folders |
+| 🚧 | Desktop app (Tauri) 💬 | L | ✅ Windows (1.1.0). Next: macOS and Linux builds; a signed installer, so Windows and macOS stop warning about an unknown publisher |
 | ⬜ | Sync between devices 💬 | L | Without a server of our own: through a folder the user already syncs (Syncthing, iCloud Drive, Dropbox, Git) |
 | ⬜ | Voice notes to text 💬 | L | Needs an offline speech engine: the browser's built-in one sends audio to a server, which Exomyth must not do |
 
