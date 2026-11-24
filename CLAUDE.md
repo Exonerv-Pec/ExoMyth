@@ -27,6 +27,8 @@ Markdown pages with YAML headers. Read [README.md](README.md), [ROADMAP.md](ROAD
 - Svelte 5 (runes), TypeScript, Vite 7, Vitest with jsdom, CodeMirror 6.
 - `src/core/`: pure logic without interface or network code, tested without a browser.
 - `src/components/`: the interface. App state lives in `src/app.svelte.ts`.
+- File names must differ by more than letter case (Windows and macOS do not tell `App.svelte` from
+  `app.svelte.ts`). The root component is `src/Root.svelte`.
 - `src-tauri/`: the desktop app (Tauri 2, Rust). `files.rs` reads and writes only inside folders the
   person picked (paths are checked, links are not followed out); `updates.rs` is the update check;
   `lib.rs` has the commands and keeps the window on Exomyth. `src/desktop.ts` is the window's side,

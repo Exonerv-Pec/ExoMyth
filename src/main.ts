@@ -1,6 +1,6 @@
 import { mount } from 'svelte';
 import './styles.css';
-import App from './App.svelte';
+import Root from './Root.svelte';
 import { migrateBrowserData } from './migrate';
 import { pwa } from './pwa.svelte';
 import { app } from './app.svelte';
@@ -18,7 +18,7 @@ void migrateBriefly().then(() => {
   // Remove the "couldn't start" note that index.html shows if this script never runs.
   target.replaceChildren();
   try {
-    mount(App, { target });
+    mount(Root, { target });
   } catch (e) {
     const p = document.createElement('p');
     p.className = 'boot-error';

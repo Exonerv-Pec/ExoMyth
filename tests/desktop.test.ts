@@ -123,11 +123,11 @@ const button = (text: string) => [...document.querySelectorAll('button')].find((
 
 async function start() {
   const { app } = await import('../src/app.svelte');
-  const { default: App } = await import('../src/App.svelte');
+  const { default: Root } = await import('../src/Root.svelte');
   app.lang = 'en';
   const target = document.createElement('div');
   document.body.append(target);
-  mounted.push(mount(App, { target }));
+  mounted.push(mount(Root, { target }));
   await wait();
   flushSync();
   return app;
